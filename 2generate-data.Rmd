@@ -162,6 +162,7 @@ plot_1d <- function(ylist, countslist=NULL, obj=NULL, x = NULL, alpha = .1, bin 
                     plot_band = TRUE){
 
   ## Basic checks
+  if(!is.null(obj))stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   if(!is.null(x)){
     stopifnot(length(x) == length(ylist))
     times = x
@@ -209,8 +210,7 @@ plot_1d <- function(ylist, countslist=NULL, obj=NULL, x = NULL, alpha = .1, bin 
     gg = gg + geom_path(aes(x = time, y = mean, linewidth = prob, group = cluster, color = cluster),
                         data = est_long,
                         lineend = "round", linejoin="mitre") +
-      scale_linewidth(range = c(0.05,5), limits = c(0, 1))
-    ## TODO: make it ignore the missing values at the gaps; currently this is not coded as NAs.
+      scale_linewidth(range = c(0.05, 5), limits = c(0, 1))
 
     if(plot_band){
       ## Add the estimated 95% probability regions for data.
@@ -241,7 +241,7 @@ dt_model <- gendat_1d(100, rep(100, 100), return_model = TRUE)
 ylist = dt %>% dt2ylist()
 x = dt %>% pull(time) %>% unique()
 
-plot_1d(ylist, NULL, x = x) +
+plot_1d(ylist = ylist, x = x) +
   geom_line(aes(x = time, y = mean, group = cluster),
             data = dt_model,
             linetype = "dashed", size=2, alpha = .7)
@@ -249,7 +249,7 @@ plot_1d(ylist, NULL, x = x) +
 Voilà!
 
 
-When we have a model fit on 3d data but want to visualize it, you can do:
+When we have a model fit on 3d data but want to visualize it in 1d, you can use:
 
 `plot_1d(ylist, countslist) %>% plot_1d_add_model(obj = obj, idim = 1)`
 
@@ -278,7 +278,7 @@ plot_1d_add_model <- function(gg0, obj, idim, plot_band = TRUE){
   ## est_long = est_long %>% mutate(cluster = factor(cluster, levels=sapply(1:10, toString)))
   gg = gg0 + geom_path(aes(x = time, y = mean, linewidth = prob, group = cluster, color = cluster),
                        data = est_long, lineend = "round", linejoin="mitre") +
-    scale_linewidth(range = c(0,1))
+    scale_linewidth(range = c(0.05, 5), limits = c(0, 1))
 
   ## Add the estimated 95% probability regions for data.
   if(plot_band){
@@ -303,7 +303,7 @@ plot_1d_add_model <- function(gg0, obj, idim, plot_band = TRUE){
 
 
 
-Also, we will want to plot the estimated cluster probabilities of a model `obj`.
+Also, we will want to plot the estimated cluster probabilities of a model `obj` of class `flowtrend`.
 
 ```{r}
 #' Makes cluster probability plot (lines over time).
@@ -314,6 +314,7 @@ Also, we will want to plot the estimated cluster probabilities of a model `obj`.
 plot_prob <- function(obj, x = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   if(!is.null(x)){
     times = x
   } else {
@@ -335,7 +336,7 @@ We can't test it out now, but we'll use it later in [1d-example](#1d-example).
 
 Here is a 1d plotting function if you have cluster memberships `memlist`.
 
-```{r,}
+```{r}
 #' Makes 1d plot of data when
 #'
 #' @param ylist Particlel-level data. A list of (|nt| by |dimdat|) matrices.
@@ -370,7 +371,7 @@ plot_1d_with_membership <- function(ylist, memlist, countslist = NULL, x = NULL,
 
   gg =
     ymat %>% ggplot() +
-    geom_point(aes(x = time, y = Y, col = cluster),##, shape = cluster),
+    geom_point(aes(x = time, y = Y, group=cluster, col = cluster),##, shape = cluster),
                alpha = alpha) + ##facet_wrap(~cluster)  +
     theme_bw() + ylab("Data") + xlab("Time") 
   return(gg)
@@ -477,16 +478,20 @@ Here's a simpler plotting function for 2d data at the particle level.
 #' @param countslist Count data.
 #' @param obj flowtrend (or flowmix) object.
 #' @param time Out of 1 through \code{lengthy(list)}, which time point to plot.
+#' @param zero_one_list_censored A list of zeros and 1s marking the censored
+#'   points.
 #' 
 #' @export
 #' @return ggplot object.
 plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
-                    point_color = "blue", raster_colours = c("white", "blue")){
+                    point_color = "blue", raster_colours = c("white", "blue"),
+                    zero_one_list_censored = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   stopifnot(ncol(ylist[[1]]) == 2)
   if(!is.null(obj)) stopifnot(obj$dimdat == 2)
-##  if(!bin) stop("2d plotting for particle level data isn't supported.")
+  ##  if(!bin) stop("2d plotting for particle level data isn't supported.")
   
 
   ## Take data from one time point
@@ -504,7 +509,6 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
   }
 
   ## Get variable names
-  ## colnames(ylist[[1]]) = c("","","")
   varnames = y %>% colnames()
   varname1 = varnames[1]
   varname2 = varnames[2]
@@ -512,13 +516,29 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
   ## Get data from one timepoint
   y = y %>% add_column(counts = counts)
 
+  ## If a list of 0's and 1's (marking censored points) is provided, plot it
+  if(!is.null(zero_one_list_censored)){
+    zero_one = zero_one_list_censored[[tt]]
+    y = y %>% add_column(censored = factor(zero_one, levels = c(FALSE, TRUE)))##c(0,1)))
+  }
+
   if(!bin){
     p = y %>% ggplot() +
       geom_point(aes(x = !!sym(varname1), y=!!sym(varname2)), size = rel(counts),
-                 alpha = .2, col = "blue") +
+                 alpha = .2, col = point_color) +
       theme_minimal() +
       theme(legend.position = "none")  + 
-      scale_size()
+      ## scale_size()
+      scale_size_area()
+    if(!is.null(zero_one_list_censored)){
+      p =
+        y %>% ggplot() + geom_point(aes(x = !!sym(varname1), 
+                                        y = !!sym(varname2), col = zero_one), size = rel(counts), alpha = 0.2) +
+        theme_minimal() + theme(legend.position = "none") + 
+        ## scale_size() +
+        scale_size_area() +
+        scale_color_manual(values=c("blue", "greenyellow"))
+    }
 
   }
   if(bin){
@@ -564,6 +584,7 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
 
 
 
+
 ## This is from the many-cruises 02-helpers.R file; come back to this.
 if(FALSE){
   p = datobj_2d %>%
@@ -588,8 +609,8 @@ plot_2d(datobj$ylist, tt=1, bin = FALSE)
 
 ## 3d data
 
-Given 3d data `ylist` and an estimated model object `obj`, we want to plot both
-in three two-dimensional plot. `plot_3d()` lets you do this.
+Given 3d data `ylist` and an estimated flowtrend model object `obj`, we want to
+plot both in three two-dimensional plot. `plot_3d()` lets you do this.
 
 ### Plotting 3d data
 
@@ -605,8 +626,6 @@ my_mfrow <- function(glist, ncol = NULL, nrow = NULL){
 }
 ```
 
-(TODO: change tt to time (and all the user-facing functions should have the same
-arguments and argument order))
 
 ```{r}
 #' Makes three 2-dimensional plots of the 3d data
@@ -617,6 +636,9 @@ arguments and argument order))
 #' @param tt Time point
 #' @param return_list_of_plots If TRUE, return the list of three plots instead
 #'   of the combined plot
+#' @param zero_one_list_censored A list of zeros and 1s marking the censored
+#'   points.
+#' 
 #' @export
 #' @return
 #'   
@@ -625,9 +647,11 @@ plot_3d <- function(ylist, obj = NULL, tt, countslist = NULL,
                     labels = NULL,
                     bin = TRUE,
                     plot_title = NULL,
-                    return_list_of_plots = FALSE){
+                    return_list_of_plots = FALSE,
+                    zero_one_list_censored = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   stopifnot(ncol(ylist[[1]]) == 3)
   if(!is.null(labels)) assertthat::assert_that(length(labels) == obj$numclust)
 ##  if(!bin) stop("This function is only for binned 3d data!")
@@ -664,15 +688,21 @@ plot_3d <- function(ylist, obj = NULL, tt, countslist = NULL,
   }
   total_range = sapply(counts2d_list, range) %>% range()
 
+
+  if(bin) zero_one = NULL
+  if(!bin & !is.null(zero_one_list_censored)) zero_one = list(zero_one_list_censored[[tt]])
+  if(!bin & is.null(zero_one_list_censored)) zero_one = NULL 
+
   ## Create three 2d plots
   plotlist = list()
   for(ii in 1:3){
     dims = list(c(1:2), c(2:3), c(3,1))[[ii]]
 
-    ## Make data plot
+    ## Make data plot 
     ##one_countslist = (if(!is.null(countslist)) list(counts2d_list[[ii]]) else NULL)
-    p = flowtrend::plot_2d(list(y2d_list[[ii]]),
-                           list(counts2d_list[[ii]]), obj = NULL, tt = 1, bin = bin) 
+    p = plot_2d(list(y2d_list[[ii]]),
+                           list(counts2d_list[[ii]]), obj = NULL, tt = 1, bin = bin,
+                           zero_one_list_censored = zero_one)
     if(bin){
       p$scales$scales <- list()
       p = p + scale_fill_gradientn(
@@ -874,19 +904,22 @@ gendat_3d <- function(TT, ntlist){
 }
 ```
 
-Now, trying this out on some synthetic data and estimated model.
 
-```{r, eval = FALSE, fig.width = 15, fig.height = 5}
-datobj = gendat_3d(100, rep(100,100))
-plot_3d(ylist = datobj$ylist, tt = 1)
+Now, trying `plot_3d` out on some synthetic data and estimated model.
+
+
+```{r plot-3d-test, eval = TRUE, fig.width = 15, fig.height = 5}
 set.seed(2321)
-obj = flowtrend(ylist = datobj$ylist,
-                l = 2, l_prob = 1,
-                lambda = .01, lambda_prob = .01,
-                numclust = 3, verbose = FALSE,
-                maxdev = 3,
-                niter = 50,
-                nrestart = 3)
-plot_3d(ylist = datobj$ylist, tt = tt, obj = obj)
+datobj = gendat_3d(100, rep(30,100))
+plot_3d(ylist = datobj$ylist, tt = 1, bin = FALSE)
+## Later when |flowtrend()| is developed, we can do this:
+## obj = flowtrend(ylist = datobj$ylist,
+##                 l = 2, l_prob = 1,
+##                 lambda = .01, lambda_prob = .01,
+##                 numclust = 3, verbose = FALSE,
+##                 maxdev = 3,
+##                 niter = 50,
+##                 nrestart = 1)
+## plot_3d(ylist = datobj$ylist, tt = 30, obj = obj, bin = FALSE)
 ```
 

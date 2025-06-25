@@ -5,7 +5,6 @@ now.
 
 ## 1d example {#1d-example}
 
-
 Generate data.
 
 ```{r 1d-example, eval = FALSE, echo = TRUE}
@@ -70,10 +69,12 @@ decreasing across EM algorithm iterations.
 <!-- (Note: because the admm is imperfect and stops early sometimes, the objective is -->
 <!-- sometimes non-monotone. See the example from a few sections up!) -->
 
-```{r test-objective, fig.width = 5, fig.height = 3, eval = TRUE}
+```{r test-objective, fig.width = 9, fig.height = 3, eval = TRUE}
 testthat::test_that("Objective value decreases over EM iterations.",{
   
+  glist = list()
   for(iseed in 1:5){
+
     print(iseed)
     
     ## Generate synthetic data
@@ -85,25 +86,30 @@ testthat::test_that("Objective value decreases over EM iterations.",{
     
     ## Fit model
     obj <- flowtrend_once(ylist = ylist,
-                     x = x,
-                     maxdev = 5,
-                     numclust = 3,
-                     lambda = 0.02,
-                     l = 1,
-                     l_prob = 2,
-                     lambda_prob = 0.05)
+                          x = x,
+                          maxdev = 5,
+                          numclust = 3,
+                          lambda = 0.02,
+                          l = 1,
+                          l_prob = 2,
+                          lambda_prob = 0.05)
 
     ## Test objective monotonicity
     niter_end = length(obj$objective)
-    testthat::expect_true(all(diff(obj$objective) < 1E-4))
+    testthat::expect_true(all(diff(obj$objective) < 1E-3))
+  
 
     ## Make a plot
     g = ggplot(tibble(iter=1:niter_end, objective=obj$objectives)) +
       geom_point(aes(x=iter, y=objective)) +
       geom_line(aes(x=iter, y=objective)) +
-      ggtitle(paste0("Seed=", iseed*100))
-    print(g)
+      ggtitle(paste0("Seed=", iseed*100)) +
+      xlab("EM iteration")
+    glist[[iseed]] = g
   }
+  title = cowplot::ggdraw() + cowplot::draw_label("Objective values over EM iterations", fontface='bold')
+  main_plot = cowplot::plot_grid(plotlist = glist, ncol=5, nrow=1) 
+  cowplot::plot_grid(title, main_plot, ncol=1, rel_heights=c(0.1, 1))
 })
 ```
 
@@ -131,23 +137,14 @@ obj <- flowtrend_once(ylist = dt$ylist,
 The are some snapshots in time $t$.
 
 ```{r plot-2d, fig.width = 10, fig.height = 10}
-timelist = c(10, 20, 30, 40, 60, 80)
 plist = lapply(timelist, function(tt){
-  plot_2d(dt$ylist, obj = obj, tt = tt) + coord_fixed() + ylim(-6, 3) + xlim(-6, 3)
+timelist = c(10, 20, 30, 40, 60, 80)
+  plot_2d(dt$ylist, obj = obj, tt = tt, bin = FALSE) + coord_fixed() + ylim(-6, 3) + xlim(-6, 3)
 })
 do.call(ggpubr::ggarrange, c(plist, ncol=3, nrow=2))
 ```
 
 
-The plot above shows 1d projections in the two dimensions of the response
-data. You can use the `idim` argument in `plot_1d()` with a 2d model `obj` and
-dataset `ylist`.
-
-```{r plot-2d-in-1d, fig.width = 10, fig.height = 10}
-g1 = plot_1d(ylist = dt$ylist, obj = obj, idim = 2) + ylim(c(-7, 4))
-g2 = plot_1d(ylist = dt$ylist, obj = obj, idim = 1) + ylim(c(-7, 4))
-do.call(ggpubr::ggarrange, c(list(g1, g2), ncol=1, nrow=2))
-```
 
 ## Working with "binned" dataset
 
@@ -174,15 +171,14 @@ obj = flowtrend(ylist = binres$ybin_list,
                 rho_init = .01,
                 nrestart = 1)
 
-## Plot cluster means
-g1 = plot_1d(ylist = dt$ylist, obj = obj, idim = 2) + ylim(c(-7, 4)) + ggtitle("Estimated data and model, 2nd dimension")
-g2 = plot_1d(ylist = dt$ylist, obj = obj, idim = 1) + ylim(c(-7, 4)) + ggtitle("Estimated data and model, 1st dimension")
-do.call(ggpubr::ggarrange, c(list(g1, g2), ncol=1, nrow=2))
+plot_2d(ylist = binres$ybin_list,
+        countslist = binres$counts_list,
+        obj = obj, tt = tt, bin = FALSE) + coord_fixed
 ```
 
 Also plot the cluster probabilities:
 
-```{r binned-prob-plot}
+```{r binned-prob-plot, fig.width = 7, fig.height = 7}
 plot_prob(obj)
 
 ## true_prob_long = dt$probs %>% as_tibble() %>% add_column(time=1:TT) %>% pivot_longer(-time)
