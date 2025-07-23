@@ -12,7 +12,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2 Overview | Creating the flowtrend R package">
 <meta name="author" content="Sangwon Hyun, Tim Coleman, Francois Ribalet, Jacob Bien">
-<meta name="date" content="2025-07-22">
+<meta name="date" content="2025-07-23">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -225,24 +225,25 @@ simple commands:</p>
 <span id="cb1-2"><a href="overview.html#cb1-2" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>), <span class="at">output_dir =</span> <span class="st">"docs/create"</span>)</span>
 <span id="cb1-3"><a href="overview.html#cb1-3" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="overview.html#cb1-4" tabindex="-1"></a><span class="do">## To render full evaluation -- running all code.</span></span>
-<span id="cb1-5"><a href="overview.html#cb1-5" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowtrend-project/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb1-6"><a href="overview.html#cb1-6" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="overview.html#cb1-7" tabindex="-1"></a><span class="do">## Installing the package locally</span></span>
-<span id="cb1-8"><a href="overview.html#cb1-8" tabindex="-1"></a><span class="do">## litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))</span></span>
-<span id="cb1-9"><a href="overview.html#cb1-9" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"~/repos/flowtrend-project/flowtrend"</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">type =</span> <span class="st">"source"</span>)</span>
-<span id="cb1-10"><a href="overview.html#cb1-10" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="overview.html#cb1-11" tabindex="-1"></a><span class="do">## Loading the packaging</span></span>
-<span id="cb1-12"><a href="overview.html#cb1-12" tabindex="-1"></a><span class="fu">library</span>(flowtrend)</span>
-<span id="cb1-13"><a href="overview.html#cb1-13" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="overview.html#cb1-14" tabindex="-1"></a><span class="do">## This is helpful for package building</span></span>
-<span id="cb1-15"><a href="overview.html#cb1-15" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"index.Rmd"</span>)</span>
-<span id="cb1-16"><a href="overview.html#cb1-16" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="overview.html#cb1-17" tabindex="-1"></a><span class="do">## Somewhat equivalent to the above</span></span>
-<span id="cb1-18"><a href="overview.html#cb1-18" tabindex="-1"></a><span id="my_load">my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
-<span id="cb1-19"><a href="overview.html#cb1-19" tabindex="-1"></a>  litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowtrend/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb1-20"><a href="overview.html#cb1-20" tabindex="-1"></a>  devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"~/repos/flowtrend/flowtrend"</span>)</span>
-<span id="cb1-21"><a href="overview.html#cb1-21" tabindex="-1"></a>}</span>
-<span id="cb1-22"><a href="overview.html#cb1-22" tabindex="-1"></a><a href="overview.html#my_load">my_load</a>()</span></code></pre></div>
+<span id="cb1-5"><a href="overview.html#cb1-5" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowtrend-project/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb1-6"><a href="overview.html#cb1-6" tabindex="-1"></a>             <span class="at">output_dir =</span> <span class="st">"docs/create"</span>)</span>
+<span id="cb1-7"><a href="overview.html#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="overview.html#cb1-8" tabindex="-1"></a><span class="do">## Installing the package locally</span></span>
+<span id="cb1-9"><a href="overview.html#cb1-9" tabindex="-1"></a><span class="do">## litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))</span></span>
+<span id="cb1-10"><a href="overview.html#cb1-10" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"~/repos/flowtrend-project/flowtrend"</span>, <span class="at">repos =</span> <span class="cn">NULL</span>, <span class="at">type =</span> <span class="st">"source"</span>)</span>
+<span id="cb1-11"><a href="overview.html#cb1-11" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="overview.html#cb1-12" tabindex="-1"></a><span class="do">## Loading the packaging</span></span>
+<span id="cb1-13"><a href="overview.html#cb1-13" tabindex="-1"></a><span class="fu">library</span>(flowtrend)</span>
+<span id="cb1-14"><a href="overview.html#cb1-14" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="overview.html#cb1-15" tabindex="-1"></a><span class="do">## This is helpful for package building</span></span>
+<span id="cb1-16"><a href="overview.html#cb1-16" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"index.Rmd"</span>)</span>
+<span id="cb1-17"><a href="overview.html#cb1-17" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="overview.html#cb1-18" tabindex="-1"></a><span class="do">## Somewhat equivalent to the above</span></span>
+<span id="cb1-19"><a href="overview.html#cb1-19" tabindex="-1"></a><span id="my_load">my_load</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb1-20"><a href="overview.html#cb1-20" tabindex="-1"></a>  litr<span class="sc">::</span><span class="fu">render</span>(<span class="st">"~/repos/flowtrend/index.Rmd"</span>, <span class="at">output_format =</span> litr<span class="sc">::</span><span class="fu">litr_gitbook</span>(<span class="at">minimal_eval =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-21"><a href="overview.html#cb1-21" tabindex="-1"></a>  devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">"~/repos/flowtrend/flowtrend"</span>)</span>
+<span id="cb1-22"><a href="overview.html#cb1-22" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="overview.html#cb1-23" tabindex="-1"></a><a href="overview.html#my_load">my_load</a>()</span></code></pre></div>
 
 </div>
 </div>
