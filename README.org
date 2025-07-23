@@ -8,11 +8,11 @@ directly builds the R package.
 
 * For package users
 
-The official package website is [[https://sangwon-hyun/flowtrend-project/][here]]; go directly here to get started.
+The official package website is [[https://sangwon-hyun.org/flowtrend-project/][here]]; go directly here to get started.
 
 * For developers
 
-The resulting "knitted" bookdown that defines the package can be found [[https://sangwon-hyun/flowtrend-project/create/][here]].
+The resulting "knitted" bookdown that defines the package can be found [[https://sangwon-hyun.org/flowtrend-project/create/][here]].
 
 The resulting R package is in the subdirectory [[./flowtrend]], and can be
 installed as follows.
