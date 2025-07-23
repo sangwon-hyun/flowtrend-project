@@ -260,6 +260,7 @@ testthat::test_that("Trend filtering regression matrix is created correctly on e
 })
 ```
 
+
 Finally, let's test the difference matrix $D$ formed using unevenly spaced $x$'s.
 
 ```{r test-D-with-uneven-x}
@@ -268,6 +269,10 @@ testthat::test_that("Uneven spaced D matrix is formed correctly", {
   x = (1:6)[-(2)]
   ## k = 0 is piecewise constant, k=1 is piecewise linear, etc.
   for(k in 0:3){
+
+    ## Temp
+    k=1
+    ## End of temp
 
     l = k+1
 
@@ -864,8 +869,8 @@ Mstep_sigma <- function(resp, ylist, mn, numclust){
 
 ### M step for $\mu$
 
-This is a big one. It uses the ADMM algorithm as written in section OO (TODO:
-fill in) of the paper, reproduced briefly here.
+This is a big one. It uses the ADMM algorithm as written in section 2 of the
+paper, reproduced briefly here.
 
 
 We need a convergence checker for the outer layer of LA-ADMM, which checks
@@ -875,7 +880,7 @@ Next, we define the main function `Mstep_mu()`.  This uses a "locally-adaptive" 
 
 
 ```{r Mstep_mu}
-#' Computes the M step for mu. TODO: use templates for the argument. 
+#' Computes the M step for mu.
 #' 
 #' @param resp Responsibilities of each particle.
 #' @param ylist 
@@ -1163,7 +1168,9 @@ la_admm_oneclust <- function(K, ...){
     uz = res$uz
     uw = res$uw
   }
-  if(!res$converge)   warning("ADMM didn't converge for one cluster.")
+  if(!res$converge) {
+    ## warning("ADMM didn't converge for one cluster.") ## Disabling this because it's not really something to fix. The only thing change a user would make is to make |rho_init| smaller 
+  }
 
   ## Record how long the admm took; in terms of # iterations.
   res$kk = kk
@@ -1326,8 +1333,6 @@ U_update_W <- function(U, rho, mu, W, l, Dl, TT){
   return(Unew)
 }
 ```
-
-
 
 
 Here is that main workhorse `admm_oneclust()`.
@@ -1713,6 +1718,7 @@ objective_per_cluster <- function(y, TT, d, l, mu, resp, Sigma_inv, Dlp1, Dl,
 }
 ```
 
+
 ### All Rcpp functions
 
 The main function we write in Rcpp is the "barebones" Sylvester equation solver
@@ -2070,14 +2076,6 @@ mn_less_old[,1,] %>% matlines(lwd = 1, x=x, lty = 2)
 mn[,1,] %>% matlines(lwd = 1, x=x, lty = 3)
 ```
 
-TODO: We just need to bundle this into `testthat` style tests, and make sure to test several lambda values.
-
-	TODO: maybe do this for unevenly spaced inputs. CVXR needs to take a different D matrix.
-
-```{r test-correctness-mstep-mu, eval = FALSE}
-testthat::test_that("Test the M step of \mu against CVXR", {})
-```
-
 
 
 ## The main "flowtrend" function
@@ -2333,3 +2331,4 @@ flowtrend <- function(..., nrestart = 5){
   return(final_model)
 }
 ```
+

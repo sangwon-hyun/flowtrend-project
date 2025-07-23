@@ -4,7 +4,8 @@
 #' 
 #' @param oneresp A 2-column responsibility matrix
 #' 
-#' @return 
+#' @return
+#' @export
 soft_gate_one_responsibility_matrix <- function(oneresp){
 
   ## Setup
@@ -22,4 +23,3 @@ soft_gate_one_responsibility_matrix <- function(oneresp){
   stopifnot(all(dim(zero_one_mat) == dim(oneresp)))
   return(zero_one_mat)
 }
-

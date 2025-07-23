@@ -18,7 +18,6 @@ objective(
   lambda_prob = 0,
   alpha = NULL,
   beta = NULL,
-  denslist_by_clust = NULL,
   countslist = NULL,
   unpenalized = FALSE
 )

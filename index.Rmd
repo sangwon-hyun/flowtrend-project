@@ -6,29 +6,55 @@ site: bookdown::bookdown_site
 knit: litr::render
 output: litr::litr_gitbook
 params:
-  package_name: "flowtrend" # <-- change this to your package name
-  package_parent_dir: "." # <-- relative to this file's location
+  package_name: "flowtrend" 
+  package_parent_dir: "." 
 documentclass: book
 ---
 
 # Introduction
 
 This package implements `flowtrend`, a model used for smooth estimation of
-mixture models across time. The documentation and package are both created using
-one simple command:
+mixture models across time. 
+
+The paper preprint is [here](https://arxiv.org/abs/2504.12287):
+
+This bookdown uses [literate
+programming](https://jacobbien.github.io/litr-project/) to define the ``r
+params$package_name`` R package, which implements the procedures described in
+the paper.
+
+# Overview
+
+## Background
+
+The documentation and package are both created using
+simple commands:
 
 ```{r render, eval = FALSE}
-litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
-```
+## To render with MINIMUM evaluation -- not running code, and only defining functions.
+litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE), output_dir = "docs/create")
 
+## To render full evaluation -- running all code.
+litr::render("~/repos/flowtrend-project/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = FALSE),
+             output_dir = "docs/create")
 
-```{r, eval = FALSE, echo = FALSE}
-litr::load_all("index.Rmd")##, output_format = litr::litr_gitbook())
+## Installing the package locally
+## litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
+install.packages("~/repos/flowtrend-project/flowtrend", repos = NULL, type = "source")
+
+## Loading the packaging
+library(flowtrend)
+
+## This is helpful for package building
+litr::load_all("index.Rmd")
+
+## Somewhat equivalent to the above
 my_load <- function(){
   litr::render("~/repos/flowtrend/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
   devtools::load_all("~/repos/flowtrend/flowtrend")
 }
 my_load()
 ```
+
 
 

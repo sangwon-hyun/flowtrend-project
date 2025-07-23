@@ -2,13 +2,13 @@
 % Please edit documentation in _main.Rmd.
 \name{gen_tf_mat_equalspace}
 \alias{gen_tf_mat_equalspace}
-\title{Creates trendfiltering regression matrix using Lemma 2 of Ryan Tibshirani's
+\title{Creates trend filtering regression matrix using Lemma 2 of Ryan Tibshirani's
 trendfilter paper (2014); works on equally spaced data only.}
 \usage{
 gen_tf_mat_equalspace(n, k)
 }
 \arguments{
-\item{n}{Number of data points}
+\item{n}{Number of data points.}
 
 \item{k}{Order of trend filter. 0 is fused lasso, and so on.}
 }
@@ -17,7 +17,7 @@ n by n matrix.
 Connects kk to kk-1.
 }
 \description{
-Creates trendfiltering regression matrix using Lemma 2 of Ryan Tibshirani's
+Creates trend filtering regression matrix using Lemma 2 of Ryan Tibshirani's
 trendfilter paper (2014); works on equally spaced data only.
 }
 \examples{
@@ -29,4 +29,5 @@ H_tf[,3] * 100
 H_tf[,4] * 100
 H_tf[,99] * 100
 H_tf[,100] * 100
+
 }

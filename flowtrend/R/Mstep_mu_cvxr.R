@@ -1,6 +1,7 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Testing against \code{Mstep_mu()}, for ONE cluster.
+#' Used as a fallback or to test against \code{Mstep_mu()}.
+#' 
 #' @param ylist
 #' @param resp
 #' @param lambda
@@ -55,17 +56,6 @@ Mstep_mu_cvxr <- function(ylist,
   
   ## Forming the objective
   obj = 1/(2*N) *( Reduce("+", lapply(1:TT, FUN = function(tt) CVXR::quad_form(t(resp.sum.sqrt[[tt]]*mumat[tt,]), Sigma_inv))) -2 * Reduce("+", lapply(1:TT, FUN = function(tt) t(ytildes[tt,]) %*% Sigma_inv %*% t(mumat[tt,]))) + aux.y) + lambda * sum(CVXR::sum_entries(abs(Dlp1 %*% mumat), axis = 1))
-
-  ##Reduce("+", lapply(1:TT, FUN = function(tt) t(ytildes[tt,]) %*% Sigma_inv %*% (mumat[tt,]))) + aux.y
-  ## a = t(resp.sum.sqrt[[tt]]*mumat[tt,])
-  ## CVXR::quad_form(resp.sum.sqrt[[tt]]*mumat[tt,], Sigma_inv)
-    
-    
-  ## resp.sum.sqrt[[tt]]*mumat[tt,] %>% dim()
-  ## dim(Sigma_inv)
-  ## mumat %>% dim()
-  ## ( (resp.sum.sqrt[[tt]]) * mumat[tt,]) %>% dim()
-  
 
   ## Putting together the ball constraint
   rowmns <- matrix(rep(1, TT^2), nrow = TT)/TT

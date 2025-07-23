@@ -2,12 +2,13 @@
 % Please edit documentation in _main.Rmd.
 \name{plot_1d_add_model}
 \alias{plot_1d_add_model}
-\title{Add a model.}
+\title{Add a model to an existing plot from \code{plot_1d()}.
+This actually can take a model \code{obj}, and just plot the 1-dimensional projections of the model in the \code{idim} dimension.}
 \usage{
 plot_1d_add_model(gg0, obj, idim, plot_band = TRUE)
 }
 \arguments{
-\item{gg0}{result of plot_1d}
+\item{gg0}{ggplot object from running \code{plot_1d}.}
 
 \item{obj}{Model}
 
@@ -19,5 +20,6 @@ plot_1d_add_model(gg0, obj, idim, plot_band = TRUE)
 ggplot object
 }
 \description{
-Add a model.
+Add a model to an existing plot from \code{plot_1d()}.
+This actually can take a model \code{obj}, and just plot the 1-dimensional projections of the model in the \code{idim} dimension.
 }

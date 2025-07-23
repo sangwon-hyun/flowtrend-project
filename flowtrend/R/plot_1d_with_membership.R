@@ -34,7 +34,7 @@ plot_1d_with_membership <- function(ylist, memlist, countslist = NULL, x = NULL,
 
   gg =
     ymat %>% ggplot() +
-    geom_point(aes(x = time, y = Y, col = cluster),##, shape = cluster),
+    geom_point(aes(x = time, y = Y, group=cluster, col = cluster),##, shape = cluster),
                alpha = alpha) + ##facet_wrap(~cluster)  +
     theme_bw() + ylab("Data") + xlab("Time") 
   return(gg)

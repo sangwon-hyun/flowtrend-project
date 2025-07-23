@@ -127,7 +127,7 @@ make_contingency_table<-function(mem1, mem2){
 }
 
 
-#' RAND index.
+#' Calculate RAND index from a contingency table.
 #' 
 #' @param tab  A matrix containing  a 2 x 2 table in the first [1:2,1:2]
 #'   entries; e.g., from make_contingency_table().

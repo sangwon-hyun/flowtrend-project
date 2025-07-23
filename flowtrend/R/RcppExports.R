@@ -8,10 +8,10 @@
 #' @param C matrix
 #' @export
 matrix_function_solve_triangular_sylvester_barebonesC2 <- function(TA, TB, C) {
-    .Call('_flowtrend_matrix_function_solve_triangular_sylvester_barebonesC2', PACKAGE = 'flowtrend', TA, TB, C)
+    .Call(`_flowtrend_matrix_function_solve_triangular_sylvester_barebonesC2`, TA, TB, C)
 }
 
 dmvnorm_arma_fast <- function(x, mean, sigma, logd = FALSE) {
-    .Call('_flowtrend_dmvnorm_arma_fast', PACKAGE = 'flowtrend', x, mean, sigma, logd)
+    .Call(`_flowtrend_dmvnorm_arma_fast`, x, mean, sigma, logd)
 }
 

@@ -1,13 +1,11 @@
 # Testing the flowtrend method
 
-We're going to assume the `flowtrend()` function has been built, and test it
-now.
 
 ## 1d example {#1d-example}
 
-Generate data.
+First, we'll generate data.
 
-```{r 1d-example, eval = FALSE, echo = TRUE}
+```{r 1d-example, eval = TRUE, echo = TRUE}
 set.seed(100)
 dt       <- gendat_1d(100, rep(100, 100), offset = 4)
 dt_model <- gendat_1d(100, rep(100, 100), return_model = TRUE, offset=4)
@@ -17,9 +15,9 @@ plot_1d(ylist)
 dt_model %>% select(time, cluster, prob) %>% ggplot() + geom_line(aes(x=time, y=prob, group=cluster, col = cluster))
 ```
 
-Next, we fit the model.
+Next, we fit a model (with hand-picked lambda values).
 
-```{r 1d-example2, eval = FALSE, echo = TRUE}
+```{r 1d-example2, eval = TRUE, echo = TRUE}
 set.seed(18)
 obj <- flowtrend(ylist = ylist,
                  x = x,
@@ -40,19 +38,19 @@ dt_model$cluster = lookup[as.numeric(dt_model$cluster)] %>% as.factor()
 obj = reorder_clust(obj)
 ```
 
-The data and estimated model are shown here. The dashed lines are the true means.
+The data and estimated model are shown here, along with the true means in dashed black lines.
 
 
-```{r 1d-example-plot-mean, fig.width = 7, fig.height = 5, eval = FALSE}
+```{r 1d-example-plot-mean, fig.width = 7, fig.height = 5, eval = TRUE}
 plot_1d(ylist = ylist, obj = obj, x = x) +
   geom_line(aes(x = time, y = mean, group = cluster),
             data = dt_model,## %>% subset(time %ni% held_out),
             linetype = "dashed", size=2, alpha = .7)
 ```
 
-The estimated probabilities are shown here.
+Also, the estimated probabilities are shown here.
 
-```{r 1d-example-plot-prob, fig.width = 7, fig.height = 5, eval = FALSE}
+```{r 1d-example-plot-prob, fig.width = 7, fig.height = 5, eval = TRUE}
 plot_prob(obj=obj, x=x) +
   geom_line(aes(x = time, y = prob, group = cluster, color = cluster),
             data = dt_model, linetype = "dashed")  +
@@ -75,8 +73,6 @@ testthat::test_that("Objective value decreases over EM iterations.",{
   glist = list()
   for(iseed in 1:5){
 
-    print(iseed)
-    
     ## Generate synthetic data
     set.seed(iseed*100)
     dt       <- gendat_1d(100, rep(10, 100))
@@ -109,7 +105,7 @@ testthat::test_that("Objective value decreases over EM iterations.",{
   }
   title = cowplot::ggdraw() + cowplot::draw_label("Objective values over EM iterations", fontface='bold')
   main_plot = cowplot::plot_grid(plotlist = glist, ncol=5, nrow=1) 
-  cowplot::plot_grid(title, main_plot, ncol=1, rel_heights=c(0.1, 1))
+  cowplot::plot_grid(title, main_plot, ncol=1, rel_heights=c(0.1, 1)) %>% print()
 })
 ```
 
@@ -123,36 +119,31 @@ TT = 100
 dt <- gendat_2d(TT, rep(100, times = TT))
 x = 1:TT
 set.seed(10)
-obj <- flowtrend_once(ylist = dt$ylist,
-                      x = x,
-                      maxdev = 3,
-                      numclust = 3,
-                      l = 2,
-                      l_prob = 2,
-                      lambda = 0.01,
-                      lambda_prob = .01,
-                      rho_init = 0.01)
+obj <- flowtrend(ylist = dt$ylist,
+                 x = x,
+                 maxdev = 3,
+                 numclust = 3,
+                 l = 2,
+                 l_prob = 2,
+                 lambda = 0.01,
+                 lambda_prob = .01,
+                 rho_init = 0.01, nrestart = 1)
 ```
 
-The are some snapshots in time $t$.
+These are some snapshots at time $t=10$ and $t=20$.
 
-```{r plot-2d, fig.width = 10, fig.height = 10}
-plist = lapply(timelist, function(tt){
-timelist = c(10, 20, 30, 40, 60, 80)
-  plot_2d(dt$ylist, obj = obj, tt = tt, bin = FALSE) + coord_fixed() + ylim(-6, 3) + xlim(-6, 3)
-})
-do.call(ggpubr::ggarrange, c(plist, ncol=3, nrow=2))
+```{r plot-2d, fig.width = 4, fig.height = 4, eval = TRUE}
+plot_2d(dt$ylist, obj = obj, tt = 10, bin = FALSE) + coord_fixed() + ylim(-6, 3) + xlim(-6, 3)
+plot_2d(dt$ylist, obj = obj, tt = 20, bin = FALSE) + coord_fixed() + ylim(-6, 3) + xlim(-6, 3)
 ```
-
-
 
 ## Working with "binned" dataset
 
 Recall that "binning" means we will use binned frequency histogram estimates of
-the original particle-level dataset; this is useful when there are many
-particles. 
+the original particle-level dataset; this is useful when there are too many
+particles.
 
-```{r binned, fig.width = 7, fig.height=7}
+```{r binned, fig.width = 5, fig.height = 5}
 ## library(flowmix)
 set.seed(10232)
 TT = 100
@@ -172,17 +163,21 @@ obj = flowtrend(ylist = binres$ybin_list,
                 nrestart = 1)
 
 plot_2d(ylist = binres$ybin_list,
-        countslist = binres$counts_list,
-        obj = obj, tt = tt, bin = FALSE) + coord_fixed
+       countslist = binres$counts_list,
+       obj = obj, tt = 10, bin = TRUE) + coord_fixed()
+
+plot_2d(ylist = binres$ybin_list,
+       countslist = binres$counts_list,
+       obj = obj, tt = 100, bin = TRUE) + coord_fixed()
 ```
 
 Also plot the cluster probabilities:
 
-```{r binned-prob-plot, fig.width = 7, fig.height = 7}
-plot_prob(obj)
-
-## true_prob_long = dt$probs %>% as_tibble() %>% add_column(time=1:TT) %>% pivot_longer(-time)
-## plot_prob(obj) + geom_line(aes(x=time,y=value,group=name), data = true_prob_long)
+```{r binned-prob-plot, fig.width = 7, fig.height = 5}
+true_prob_long = dt$probs %>% as_tibble() %>% add_column(time = 1:TT) %>% pivot_longer(-time)
+plot_prob(obj) +
+  geom_line(aes(x = time, y = value, group = name), data = true_prob_long, linetype = "dashed") +
+  ylim(c(0,1)) + ylab("")
 ```
 
 
@@ -190,9 +185,9 @@ plot_prob(obj)
 
 Let's try the EM algorithm out with unevenly spaced inputs.
 
-```{r uneven-test, fig.width = 6, fig.height = 6, eval = FALSE}
+```{r uneven-test, fig.width = 9, fig.height = 6, eval = TRUE}
 set.seed(100)
-dt       <- gendat_1d(TT=100, rep(100, times=100))
+dt       <- gendat_1d(TT=100, rep(10, times=100))
 dt_model       <- gendat_1d(TT=100, rep(100, times=100), return_model = TRUE)
 ylist_orig = dt %>% dt2ylist()
 
@@ -206,7 +201,6 @@ for(ii in 1:2){
   ind_rm = ind_rm_list[[ii]]
   x = (1:100)[-ind_rm]
   ylist = ylist_orig[x]
-
   set.seed(100)
   obj <- flowtrend_once(ylist = ylist, 
                         x = x,
@@ -215,9 +209,10 @@ for(ii in 1:2){
                         l = 2,
                         l_prob = 2,
                         lambda = 0.1,
-                        lambda_prob = 0.1, ## 
+                        lambda_prob = 0.1, 
                         admm_local_adapt = TRUE,
-                        rho_init = 0.01)
+                        rho_init = 0.01,
+                        verbose = FALSE)
   objlist[[ii]] = obj
 }
 
@@ -225,12 +220,33 @@ for(ii in 1:2){
 ii = 1
 ind_rm = ind_rm_list[[ii]]
 x = (1:100)[-ind_rm]
-plot_1d(obj = objlist[[1]], ylist = ylist_orig[x], x = x)
-objlist[[1]]$objectives %>% plot(type='o', ylab = "EM objectives")
+gg1 = plot_1d(obj = objlist[[1]], ylist = ylist_orig[x], x = x) +
+  ggtitle('Randomly missing time points')
+all_objectives = objlist[[1]]$objectives 
+gg2 = data.frame(iter = 1:length(all_objectives), objectives = all_objectives) %>%
+  ggplot(aes(x = iter, y = objectives)) +
+  geom_point() + geom_line() + theme_minimal() +
+  ggtitle("EM objectives")
+
 
 ii=2
 ind_rm = ind_rm_list[[ii]]
 x = (1:100)[-ind_rm]
-plot_1d(obj = objlist[[2]], ylist = ylist_orig[x], x = x)
-objlist[[2]]$objectives %>% plot(type='o', ylab = "EM objectives")
+gg3 = plot_1d(obj = objlist[[2]], ylist = ylist_orig[x], x = x) +
+  ggtitle('Chunks of missing time points')
+all_objectives = objlist[[2]]$objectives 
+gg4 = data.frame(iter = 1:length(all_objectives), objectives = all_objectives) %>%
+  ggplot(aes(x = iter, y = objectives)) +
+  geom_point() + geom_line() + theme_minimal() +
+  ggtitle("EM objectives")
+
+cowplot::plot_grid(gg1, gg2, gg3, gg4)
+## %>%  ggsave(filename = file.path("inst",
+##                               "uneven-spaced-data-objectives.png"), width = 5, height = 3)
 ```
+
+<!-- ![Model and objective values across EM iterations, for unevenly spaced data.](inst/uneven-spaced-data-test.png) -->
+
+(The dashed black lines are the truth, and the solid colored lines are the estimated means.)
+
+

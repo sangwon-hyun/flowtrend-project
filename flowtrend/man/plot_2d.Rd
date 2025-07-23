@@ -11,7 +11,8 @@ plot_2d(
   tt,
   bin = TRUE,
   point_color = "blue",
-  raster_colours = c("white", "blue")
+  raster_colours = c("white", "blue"),
+  zero_one_list_censored = NULL
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ plot_2d(
 \item{countslist}{Count data.}
 
 \item{obj}{flowtrend (or flowmix) object.}
+
+\item{zero_one_list_censored}{A list of zeros and 1s marking the censored
+points.}
 
 \item{time}{Out of 1 through \code{lengthy(list)}, which time point to plot.}
 }

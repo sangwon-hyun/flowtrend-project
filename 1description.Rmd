@@ -9,25 +9,47 @@ usethis::create_package(
     Package = params$package_name,
     Version = "0.0.0.9000",
     Title = "flowtrend",
-    Description = "Time-smooth mixture modeling for flow cytometry data.",
-    `Authors@R` = person(
-      given = "Sangwon",
-      family = "Hyun",
-      email = "sangwonh@ucsc.edu",
-      role = c("aut", "cre")
-      )
+    Description = "Time-smooth mixture modeling for flow cytometry data (Hyun et al. 2025).",
+    `Authors@R` = c(
+        person(
+            given = "Sangwon",
+            family = "Hyun",
+            email = "sangwonh@ucsc.edu",
+            role = c("aut", "cre")),
+        person(
+            given = "Tim",
+            family = "Coleman",
+            email = "tscoleman226@gmail.com",
+            role = c("aut")
+        ),
+        person(
+            given = "Francois",
+            family = "Ribalet",
+            email = "ribalet@uw.edu",
+            role = c("aut")
+        ),
+        person(
+            given = "Jacob",
+            family = "Bien",
+            email = "jbien@usc.edu",
+            role = c("aut")
+        )
+    )
   )
 )
 usethis::use_mit_license(copyright_holder = "Sangwon Hyun")
 ```
 
-The following is what will show up when someone types `package?flowtrend` in
-the console.
+The following is what will show up when someone types `package?flowtrend` in the
+console.
 
 ```{package_doc}
 #' flowtrend
 #'
 #' This package implements the `flowtrend` method for automatic gating of flow cytometry data using trend filtering.
+#' It was proposed in <https://arxiv.org/abs/2504.12287>.  To learn
+#' more about this package, please visit its website
+#' <https://sangwon-hyun/flowtrend-project>.
 #' 
 #' @docType package
 ```

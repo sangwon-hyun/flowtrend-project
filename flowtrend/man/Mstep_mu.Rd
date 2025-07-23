@@ -2,9 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{Mstep_mu}
 \alias{Mstep_mu}
-\title{Computes the M step for mu. TODO: use templates for the argument. As shown
-here:
-https://stackoverflow.com/questions/15100129/using-roxygen2-template-tags}
+\title{Computes the M step for mu.}
 \usage{
 Mstep_mu(
   resp,
@@ -40,14 +38,12 @@ Mstep_mu(
 )
 }
 \arguments{
-\item{resp}{Responsbilities of each particle.}
+\item{resp}{Responsibilities of each particle.}
 
 \item{ylist}{}
 
-\item{local_adapt_niter}{}
+\item{iter}{}
 }
 \description{
-Computes the M step for mu. TODO: use templates for the argument. As shown
-here:
-https://stackoverflow.com/questions/15100129/using-roxygen2-template-tags
+Computes the M step for mu.
 }

@@ -6,16 +6,20 @@
 #' @param countslist Count data.
 #' @param obj flowtrend (or flowmix) object.
 #' @param time Out of 1 through \code{lengthy(list)}, which time point to plot.
+#' @param zero_one_list_censored A list of zeros and 1s marking the censored
+#'   points.
 #' 
 #' @export
 #' @return ggplot object.
 plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
-                    point_color = "blue", raster_colours = c("white", "blue")){
+                    point_color = "blue", raster_colours = c("white", "blue"),
+                    zero_one_list_censored = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   stopifnot(ncol(ylist[[1]]) == 2)
   if(!is.null(obj)) stopifnot(obj$dimdat == 2)
-##  if(!bin) stop("2d plotting for particle level data isn't supported.")
+  ##  if(!bin) stop("2d plotting for particle level data isn't supported.")
   
 
   ## Take data from one time point
@@ -33,7 +37,6 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
   }
 
   ## Get variable names
-  ## colnames(ylist[[1]]) = c("","","")
   varnames = y %>% colnames()
   varname1 = varnames[1]
   varname2 = varnames[2]
@@ -41,13 +44,29 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
   ## Get data from one timepoint
   y = y %>% add_column(counts = counts)
 
+  ## If a list of 0's and 1's (marking censored points) is provided, plot it
+  if(!is.null(zero_one_list_censored)){
+    zero_one = zero_one_list_censored[[tt]]
+    y = y %>% add_column(censored = factor(zero_one, levels = c(FALSE, TRUE)))##c(0,1)))
+  }
+
   if(!bin){
     p = y %>% ggplot() +
       geom_point(aes(x = !!sym(varname1), y=!!sym(varname2)), size = rel(counts),
-                 alpha = .2, col = "blue") +
+                 alpha = .2, col = point_color) +
       theme_minimal() +
       theme(legend.position = "none")  + 
-      scale_size()
+      ## scale_size()
+      scale_size_area()
+    if(!is.null(zero_one_list_censored)){
+      p =
+        y %>% ggplot() + geom_point(aes(x = !!sym(varname1), 
+                                        y = !!sym(varname2), col = zero_one), size = rel(counts), alpha = 0.2) +
+        theme_minimal() + theme(legend.position = "none") + 
+        ## scale_size() +
+        scale_size_area() +
+        scale_color_manual(values=c("blue", "greenyellow"))
+    }
 
   }
   if(bin){
@@ -90,6 +109,7 @@ plot_2d <- function(ylist, countslist = NULL, obj = NULL, tt, bin = TRUE,
   }
   return(p)
 }
+
 
 
 

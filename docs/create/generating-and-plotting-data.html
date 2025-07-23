@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>4 Generating and plotting data | Creating the flowtrend R package</title>
+<meta name="description" content="4 Generating and plotting data | Creating the flowtrend R package">
+<meta name="generator" content="bookdown 0.43 and GitBook 2.6.7">
+<meta property="og:title" content="4 Generating and plotting data | Creating the flowtrend R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4 Generating and plotting data | Creating the flowtrend R package">
+<meta name="author" content="Sangwon Hyun, Tim Coleman, Francois Ribalet, Jacob Bien">
+<meta name="date" content="2025-07-22">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="package-setup.html">
+<link rel="next" href="building-the-modelalgorithm.html">
+<script src="libs/header-attrs-2.29/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
+</head>
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation"><ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="overview.html">
+<a href="overview.html"><i class="fa fa-check"></i><b>2</b> Overview</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="overview.html"><a href="overview.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="3" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>3</b> Package setup</a></li>
+<li class="chapter" data-level="4" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html"><i class="fa fa-check"></i><b>4</b> Generating and plotting data</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data"><i class="fa fa-check"></i><b>4.1</b> 1d data</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-1d-data"><i class="fa fa-check"></i><b>4.1.1</b> Generating 1d data</a></li>
+<li class="chapter" data-level="4.1.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-1d-data"><i class="fa fa-check"></i><b>4.1.2</b> Plotting 1d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.2" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-1"><i class="fa fa-check"></i><b>4.2</b> 2d data</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-2d-data"><i class="fa fa-check"></i><b>4.2.1</b> Generating 2d data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-2d-data"><i class="fa fa-check"></i><b>4.2.2</b> Plotting 2d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.3" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-2"><i class="fa fa-check"></i><b>4.3</b> 3d data</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-3d-data"><i class="fa fa-check"></i><b>4.3.1</b> Plotting 3d data</a></li>
+<li class="chapter" data-level="4.3.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-3d-data"><i class="fa fa-check"></i><b>4.3.2</b> Generating 3d data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="chapter" data-level="5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html"><i class="fa fa-check"></i><b>5</b> Building the model/algorithm</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#trend-filtering"><i class="fa fa-check"></i><b>5.1</b> Trend filtering</a></li>
+<li class="chapter" data-level="5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#objective-data-log-likelihood"><i class="fa fa-check"></i><b>5.2</b> Objective (data log-likelihood)</a></li>
+<li class="chapter" data-level="5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#initial-parameters-for-em-algorithm"><i class="fa fa-check"></i><b>5.3</b> Initial parameters for EM algorithm</a></li>
+<li class="chapter" data-level="5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#e-step"><i class="fa fa-check"></i><b>5.4</b> E step</a></li>
+<li class="chapter" data-level="5.5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html#m-step"><i class="fa fa-check"></i><b>5.5</b> M step</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-pi"><i class="fa fa-check"></i><b>5.5.1</b> M step for <span class="math inline">\(\pi\)</span></a></li>
+<li class="chapter" data-level="5.5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-sigma"><i class="fa fa-check"></i><b>5.5.2</b> M step for <span class="math inline">\(\Sigma\)</span></a></li>
+<li class="chapter" data-level="5.5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-mu"><i class="fa fa-check"></i><b>5.5.3</b> M step for <span class="math inline">\(\mu\)</span></a></li>
+<li class="chapter" data-level="5.5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#helpers-for-m-step-mu"><i class="fa fa-check"></i><b>5.5.4</b> Helpers for M step (<span class="math inline">\(\mu\)</span>)</a></li>
+<li class="chapter" data-level="5.5.5" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#all-rcpp-functions"><i class="fa fa-check"></i><b>5.5.5</b> All Rcpp functions</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="5.6" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#the-main-flowtrend-function"><i class="fa fa-check"></i><b>5.6</b> The main “flowtrend” function</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="6" data-path="reordering-clusters.html"><a href="reordering-clusters.html"><i class="fa fa-check"></i><b>6</b> Reordering clusters</a></li>
+<li class="chapter" data-level="7" data-path="tuning-lambda.html">
+<a href="tuning-lambda.html"><i class="fa fa-check"></i><b>7</b> Tuning <span class="math inline">\(\lambda\)</span></a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="tuning-lambda.html"><a href="tuning-lambda.html#predicting-and-evaluating-on-new-time-points"><i class="fa fa-check"></i><b>7.1</b> Predicting and evaluating on new time points</a></li>
+<li class="chapter" data-level="7.2" data-path="tuning-lambda.html"><a href="tuning-lambda.html#maximum-lambda_mu-lambda_pi-values-to-test"><i class="fa fa-check"></i><b>7.2</b> Maximum <span class="math inline">\((\lambda_\mu, \lambda_\pi)\)</span> values to test</a></li>
+<li class="chapter" data-level="7.3" data-path="tuning-lambda.html"><a href="tuning-lambda.html#define-cv-data-folds"><i class="fa fa-check"></i><b>7.3</b> Define CV data folds</a></li>
+<li class="chapter" data-level="7.4" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-many-single-jobs"><i class="fa fa-check"></i><b>7.4</b> CV = many single jobs</a></li>
+<li class="chapter" data-level="7.5" data-path="tuning-lambda.html"><a href="tuning-lambda.html#running-cross-validation"><i class="fa fa-check"></i><b>7.5</b> Running cross-validation</a></li>
+<li class="chapter" data-level="7.6" data-path="tuning-lambda.html"><a href="tuning-lambda.html#summarizing-the-output"><i class="fa fa-check"></i><b>7.6</b> Summarizing the output</a></li>
+<li class="chapter" data-level="7.7" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-on-your-own-computer"><i class="fa fa-check"></i><b>7.7</b> CV on your own computer</a></li>
+<li class="chapter" data-level="7.8" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-produces-too-many-files-no-problem"><i class="fa fa-check"></i><b>7.8</b> CV produces too many files? No problem</a></li>
+<li class="chapter" data-level="7.9" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-for-unevenly-spaced-data"><i class="fa fa-check"></i><b>7.9</b> CV for unevenly spaced data</a></li>
+<li class="chapter" data-level="7.10" data-path="tuning-lambda.html"><a href="tuning-lambda.html#documenting-the-package-and-building"><i class="fa fa-check"></i><b>7.10</b> Documenting the package and building</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="8" data-path="testing-the-flowtrend-method.html">
+<a href="testing-the-flowtrend-method.html"><i class="fa fa-check"></i><b>8</b> Testing the flowtrend method</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_1d-example"><i class="fa fa-check"></i><b>8.1</b> 1d example</a></li>
+<li class="chapter" data-level="8.2" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#testing-monotonicity-of-objective-values"><i class="fa fa-check"></i><b>8.2</b> Testing monotonicity of objective values</a></li>
+<li class="chapter" data-level="8.3" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_2d-example"><i class="fa fa-check"></i><b>8.3</b> 2d example</a></li>
+<li class="chapter" data-level="8.4" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#working-with-binned-dataset"><i class="fa fa-check"></i><b>8.4</b> Working with “binned” dataset</a></li>
+<li class="chapter" data-level="8.5" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#unevenly-spaced-inputs-x"><i class="fa fa-check"></i><b>8.5</b> Unevenly spaced inputs (x)</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="9" data-path="helpers-for-simulations.html">
+<a href="helpers-for-simulations.html"><i class="fa fa-check"></i><b>9</b> Helpers for simulations</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#two-alternative-clusterings"><i class="fa fa-check"></i><b>9.1</b> Two alternative clusterings</a></li>
+<li class="chapter" data-level="9.2" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#evaluating-performance-soft-rand-index"><i class="fa fa-check"></i><b>9.2</b> Evaluating performance: soft RAND index</a></li>
+<li class="chapter" data-level="9.3" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#helpers-in-generating-pseudo-real-data"><i class="fa fa-check"></i><b>9.3</b> Helpers in generating pseudo-real data</a></li>
+<li class="chapter" data-level="9.4" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#miscellaneous-helpers"><i class="fa fa-check"></i><b>9.4</b> Miscellaneous helpers</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="10" data-path="documenting-the-package-and-building-1.html"><a href="documenting-the-package-and-building-1.html"><i class="fa fa-check"></i><b>10</b> Documenting the package and building</a></li>
+</ul></nav>
+</div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating the <code>flowtrend</code> R package</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-"><div id="generating-and-plotting-data" class="section level1 hasAnchor" number="4">
+<h1>
+<span class="header-section-number">4</span> Generating and plotting data<a href="generating-and-plotting-data.html#generating-and-plotting-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
+<div id="d-data" class="section level2 hasAnchor" number="4.1">
+<h2>
+<span class="header-section-number">4.1</span> 1d data<a href="generating-and-plotting-data.html#d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<div id="generating-1d-data" class="section level3 hasAnchor" number="4.1.1">
+<h3>
+<span class="header-section-number">4.1.1</span> Generating 1d data<a href="generating-and-plotting-data.html#generating-1d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<p>This function generates synthetic 1-dimensional data, and returns it in a “long”
+format matrix, with columns <code>time</code>, <code>y</code>, <code>mu</code>, and <code>cluster</code>. The latter two are
+the true underlying parameters.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="generating-and-plotting-data.html#cb5-1" tabindex="-1"></a><span class="co">#' Generates some synthetic 1-dimensional data with three clusters. Returns a</span></span>
+<span id="cb5-2"><a href="generating-and-plotting-data.html#cb5-2" tabindex="-1"></a><span class="co">#' data frame with (1) time, (2) Y (3) mu (4) cluster assignments.</span></span>
+<span id="cb5-3"><a href="generating-and-plotting-data.html#cb5-3" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb5-4"><a href="generating-and-plotting-data.html#cb5-4" tabindex="-1"></a><span class="co">#' @param TT Number of time points.</span></span>
+<span id="cb5-5"><a href="generating-and-plotting-data.html#cb5-5" tabindex="-1"></a><span class="co">#' @param nt Number of particles at each time.</span></span>
+<span id="cb5-6"><a href="generating-and-plotting-data.html#cb5-6" tabindex="-1"></a><span class="co">#' @param offset Defaults to 0. How much to push up cluster 1.</span></span>
+<span id="cb5-7"><a href="generating-and-plotting-data.html#cb5-7" tabindex="-1"></a><span class="co">#' @param return_model If true, return true cluster means and probabilities</span></span>
+<span id="cb5-8"><a href="generating-and-plotting-data.html#cb5-8" tabindex="-1"></a><span class="co">#'   instead of data.</span></span>
+<span id="cb5-9"><a href="generating-and-plotting-data.html#cb5-9" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb5-10"><a href="generating-and-plotting-data.html#cb5-10" tabindex="-1"></a><span class="co">#' @return long matrix with data or model.</span></span>
+<span id="cb5-11"><a href="generating-and-plotting-data.html#cb5-11" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb5-12"><a href="generating-and-plotting-data.html#cb5-12" tabindex="-1"></a><span id="gendat_1d">gendat_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(TT, ntlist, <span class="at">offset =</span> <span class="dv">0</span>, <span class="at">return_model =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-13"><a href="generating-and-plotting-data.html#cb5-13" tabindex="-1"></a>                      <span class="at">sd3=</span><span class="cn">NULL</span>){</span>
+<span id="cb5-14"><a href="generating-and-plotting-data.html#cb5-14" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="generating-and-plotting-data.html#cb5-15" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb5-16"><a href="generating-and-plotting-data.html#cb5-16" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(ntlist) <span class="sc">==</span> TT)</span>
+<span id="cb5-17"><a href="generating-and-plotting-data.html#cb5-17" tabindex="-1"></a>  prob_link1 <span class="ot">=</span> <span class="fu">rep</span>(<span class="cn">NA</span>, TT)</span>
+<span id="cb5-18"><a href="generating-and-plotting-data.html#cb5-18" tabindex="-1"></a>  prob_link1[<span class="dv">1</span>] <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb5-19"><a href="generating-and-plotting-data.html#cb5-19" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">floor</span>(TT<span class="sc">/</span><span class="dv">2</span>)){</span>
+<span id="cb5-20"><a href="generating-and-plotting-data.html#cb5-20" tabindex="-1"></a>    prob_link1[tt] <span class="ot">=</span> prob_link1[tt<span class="dv">-1</span>] <span class="sc">+</span> (<span class="dv">1</span><span class="sc">/</span>TT)</span>
+<span id="cb5-21"><a href="generating-and-plotting-data.html#cb5-21" tabindex="-1"></a>  }</span>
+<span id="cb5-22"><a href="generating-and-plotting-data.html#cb5-22" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> (<span class="fu">floor</span>(TT<span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>TT){</span>
+<span id="cb5-23"><a href="generating-and-plotting-data.html#cb5-23" tabindex="-1"></a>    prob_link1[tt] <span class="ot">=</span> prob_link1[tt<span class="dv">-1</span>] <span class="sc">-</span> .<span class="dv">5</span><span class="sc">*</span>(<span class="dv">1</span><span class="sc">/</span>TT)</span>
+<span id="cb5-24"><a href="generating-and-plotting-data.html#cb5-24" tabindex="-1"></a>  }</span>
+<span id="cb5-25"><a href="generating-and-plotting-data.html#cb5-25" tabindex="-1"></a>  prob_link2 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="dv">3</span> <span class="sc">-</span> <span class="fl">0.25</span><span class="sc">*</span>(tt<span class="sc">/</span>TT))</span>
+<span id="cb5-26"><a href="generating-and-plotting-data.html#cb5-26" tabindex="-1"></a>  prob_link3 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="fl">2.5</span>)</span>
+<span id="cb5-27"><a href="generating-and-plotting-data.html#cb5-27" tabindex="-1"></a>  linkmat <span class="ot">=</span> <span class="fu">cbind</span>(prob_link1, prob_link2, prob_link3) <span class="do">##%&gt;% matplot()</span></span>
+<span id="cb5-28"><a href="generating-and-plotting-data.html#cb5-28" tabindex="-1"></a>  mysum <span class="ot">=</span> <span class="fu">exp</span>(linkmat) <span class="sc">%&gt;%</span> <span class="fu">rowSums</span>()</span>
+<span id="cb5-29"><a href="generating-and-plotting-data.html#cb5-29" tabindex="-1"></a>  cluster_prob1 <span class="ot">=</span> <span class="fu">exp</span>(prob_link1) <span class="sc">/</span> mysum</span>
+<span id="cb5-30"><a href="generating-and-plotting-data.html#cb5-30" tabindex="-1"></a>  cluster_prob2 <span class="ot">=</span> <span class="fu">exp</span>(prob_link2) <span class="sc">/</span> mysum</span>
+<span id="cb5-31"><a href="generating-and-plotting-data.html#cb5-31" tabindex="-1"></a>  cluster_prob3 <span class="ot">=</span> <span class="fu">exp</span>(prob_link3) <span class="sc">/</span> mysum</span>
+<span id="cb5-32"><a href="generating-and-plotting-data.html#cb5-32" tabindex="-1"></a>  probs <span class="ot">=</span> <span class="fu">cbind</span>(cluster_prob1, cluster_prob2, cluster_prob3)</span>
+<span id="cb5-33"><a href="generating-and-plotting-data.html#cb5-33" tabindex="-1"></a>  <span class="fu">colnames</span>(probs) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb5-34"><a href="generating-and-plotting-data.html#cb5-34" tabindex="-1"></a>  sd1 <span class="ot">=</span> <span class="fl">0.4</span></span>
+<span id="cb5-35"><a href="generating-and-plotting-data.html#cb5-35" tabindex="-1"></a>  sd2 <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb5-36"><a href="generating-and-plotting-data.html#cb5-36" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(sd3)) sd3 <span class="ot">=</span> <span class="fl">0.35</span></span>
+<span id="cb5-37"><a href="generating-and-plotting-data.html#cb5-37" tabindex="-1"></a>  <span class="do">## if(!is.null(sd3)) sd3 = 1/1.5 ## The ratio of amplitude:data-standard-deviation is about</span></span>
+<span id="cb5-38"><a href="generating-and-plotting-data.html#cb5-38" tabindex="-1"></a>  <span class="do">##             ## $1.50695$.</span></span>
+<span id="cb5-39"><a href="generating-and-plotting-data.html#cb5-39" tabindex="-1"></a>  probs_long <span class="ot">=</span> <span class="fu">as_tibble</span>(probs) <span class="sc">%&gt;%</span></span>
+<span id="cb5-40"><a href="generating-and-plotting-data.html#cb5-40" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb5-41"><a href="generating-and-plotting-data.html#cb5-41" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>)</span>
+<span id="cb5-42"><a href="generating-and-plotting-data.html#cb5-42" tabindex="-1"></a>  probs_long <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>time,<span class="at">y=</span>prob, <span class="at">group=</span>cluster, <span class="at">col=</span>cluster)) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb5-43"><a href="generating-and-plotting-data.html#cb5-43" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="generating-and-plotting-data.html#cb5-44" tabindex="-1"></a>  <span class="do">## Make cluster means, by time</span></span>
+<span id="cb5-45"><a href="generating-and-plotting-data.html#cb5-45" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, TT, <span class="dv">3</span>)</span>
+<span id="cb5-46"><a href="generating-and-plotting-data.html#cb5-46" tabindex="-1"></a>  <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb5-47"><a href="generating-and-plotting-data.html#cb5-47" tabindex="-1"></a>    <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb5-48"><a href="generating-and-plotting-data.html#cb5-48" tabindex="-1"></a>      means[tt, <span class="dv">1</span>] <span class="ot">&lt;-</span> offset <span class="sc">+</span> tt<span class="sc">/</span>TT <span class="sc">-</span> <span class="fl">1.5</span></span>
+<span id="cb5-49"><a href="generating-and-plotting-data.html#cb5-49" tabindex="-1"></a>      means[tt, <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">sin</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="at">length.out =</span> TT)[tt] <span class="sc">*</span> <span class="fl">3.1415</span>)</span>
+<span id="cb5-50"><a href="generating-and-plotting-data.html#cb5-50" tabindex="-1"></a>      means[tt, <span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">3</span><span class="sc">+</span><span class="fu">sin</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="at">length.out =</span> TT)[tt] <span class="sc">*</span> <span class="fl">6.282</span>)</span>
+<span id="cb5-51"><a href="generating-and-plotting-data.html#cb5-51" tabindex="-1"></a>    }</span>
+<span id="cb5-52"><a href="generating-and-plotting-data.html#cb5-52" tabindex="-1"></a>  }</span>
+<span id="cb5-53"><a href="generating-and-plotting-data.html#cb5-53" tabindex="-1"></a>  <span class="fu">colnames</span>(means) <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb5-54"><a href="generating-and-plotting-data.html#cb5-54" tabindex="-1"></a>  means_long <span class="ot">=</span> <span class="fu">as_tibble</span>(means) <span class="sc">%&gt;%</span></span>
+<span id="cb5-55"><a href="generating-and-plotting-data.html#cb5-55" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb5-56"><a href="generating-and-plotting-data.html#cb5-56" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"mean"</span>)</span>
+<span id="cb5-57"><a href="generating-and-plotting-data.html#cb5-57" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">full_join</span>(means_long, probs_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"time"</span>, <span class="st">"cluster"</span>))</span>
+<span id="cb5-58"><a href="generating-and-plotting-data.html#cb5-58" tabindex="-1"></a>  model <span class="ot">=</span> model <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(<span class="fu">tibble</span>(<span class="at">cluster =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>),</span>
+<span id="cb5-59"><a href="generating-and-plotting-data.html#cb5-59" tabindex="-1"></a>                                     <span class="at">sd =</span> <span class="fu">c</span>(sd1, sd2, sd3)),</span>
+<span id="cb5-60"><a href="generating-and-plotting-data.html#cb5-60" tabindex="-1"></a>                              <span class="at">by =</span> <span class="st">"cluster"</span>) <span class="do">## Does this work?</span></span>
+<span id="cb5-61"><a href="generating-and-plotting-data.html#cb5-61" tabindex="-1"></a>  <span class="cf">if</span>(return_model) <span class="fu">return</span>(model)</span>
+<span id="cb5-62"><a href="generating-and-plotting-data.html#cb5-62" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="generating-and-plotting-data.html#cb5-63" tabindex="-1"></a>  ys <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="at">FUN =</span> <span class="cf">function</span>(tt){</span>
+<span id="cb5-64"><a href="generating-and-plotting-data.html#cb5-64" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="generating-and-plotting-data.html#cb5-65" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> <span class="dv">2</span>)</span>
+<span id="cb5-66"><a href="generating-and-plotting-data.html#cb5-66" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> <span class="dv">2</span>)</span>
+<span id="cb5-67"><a href="generating-and-plotting-data.html#cb5-67" tabindex="-1"></a>    clusters_count <span class="ot">&lt;-</span> <span class="fu">rmultinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> ntlist[tt], <span class="at">prob =</span> probs[tt,])</span>
+<span id="cb5-68"><a href="generating-and-plotting-data.html#cb5-68" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="generating-and-plotting-data.html#cb5-69" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb5-70"><a href="generating-and-plotting-data.html#cb5-70" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb5-71"><a href="generating-and-plotting-data.html#cb5-71" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb5-72"><a href="generating-and-plotting-data.html#cb5-72" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd =</span> sd1))</span>
+<span id="cb5-73"><a href="generating-and-plotting-data.html#cb5-73" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">rep</span>(mn, clusters_count[ii,<span class="dv">1</span>])</span>
+<span id="cb5-74"><a href="generating-and-plotting-data.html#cb5-74" tabindex="-1"></a>      }</span>
+<span id="cb5-75"><a href="generating-and-plotting-data.html#cb5-75" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb5-76"><a href="generating-and-plotting-data.html#cb5-76" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb5-77"><a href="generating-and-plotting-data.html#cb5-77" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd =</span> sd2))</span>
+<span id="cb5-78"><a href="generating-and-plotting-data.html#cb5-78" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">rep</span>(mn, clusters_count[ii,<span class="dv">1</span>])</span>
+<span id="cb5-79"><a href="generating-and-plotting-data.html#cb5-79" tabindex="-1"></a>      }</span>
+<span id="cb5-80"><a href="generating-and-plotting-data.html#cb5-80" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">3</span>){</span>
+<span id="cb5-81"><a href="generating-and-plotting-data.html#cb5-81" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb5-82"><a href="generating-and-plotting-data.html#cb5-82" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd =</span> sd3))</span>
+<span id="cb5-83"><a href="generating-and-plotting-data.html#cb5-83" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">rep</span>(mn, clusters_count[ii,<span class="dv">1</span>])</span>
+<span id="cb5-84"><a href="generating-and-plotting-data.html#cb5-84" tabindex="-1"></a>      }</span>
+<span id="cb5-85"><a href="generating-and-plotting-data.html#cb5-85" tabindex="-1"></a>    }</span>
+<span id="cb5-86"><a href="generating-and-plotting-data.html#cb5-86" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">unlist</span>(Y)</span>
+<span id="cb5-87"><a href="generating-and-plotting-data.html#cb5-87" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> <span class="fu">unlist</span>(mu)</span>
+<span id="cb5-88"><a href="generating-and-plotting-data.html#cb5-88" tabindex="-1"></a>    cluster <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">times =</span> clusters_count)</span>
+<span id="cb5-89"><a href="generating-and-plotting-data.html#cb5-89" tabindex="-1"></a>    one_df <span class="ot">=</span> <span class="fu">tibble</span>(<span class="at">time =</span> tt, <span class="at">Y =</span> Y, <span class="at">mu =</span> mu, <span class="at">cluster =</span> cluster)</span>
+<span id="cb5-90"><a href="generating-and-plotting-data.html#cb5-90" tabindex="-1"></a>    <span class="fu">return</span>(one_df)</span>
+<span id="cb5-91"><a href="generating-and-plotting-data.html#cb5-91" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb5-92"><a href="generating-and-plotting-data.html#cb5-92" tabindex="-1"></a>  <span class="fu">return</span>(ys)</span>
+<span id="cb5-93"><a href="generating-and-plotting-data.html#cb5-93" tabindex="-1"></a>}</span></code></pre></div>
+<p><code><a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>()</code> is a helper that takes the output generated from <code><a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>()</code>, and
+splits it by the <code>time</code> column to create a <code>ylist</code> object, which is a <span class="math inline">\(T\)</span>-length
+list of <span class="math inline">\(n_t \times d\)</span> matrices.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="generating-and-plotting-data.html#cb6-1" tabindex="-1"></a><span class="co">#' Converting to a list of matrices, \code{ylist}, to input to \code{<a href="building-the-modelalgorithm.html#flowtrend">flowtrend</a>()}.</span></span>
+<span id="cb6-2"><a href="generating-and-plotting-data.html#cb6-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-3"><a href="generating-and-plotting-data.html#cb6-3" tabindex="-1"></a><span class="co">#' @param dt Output from \code{<a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>()}.</span></span>
+<span id="cb6-4"><a href="generating-and-plotting-data.html#cb6-4" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb6-5"><a href="generating-and-plotting-data.html#cb6-5" tabindex="-1"></a><span class="co">#' @return List of matrices</span></span>
+<span id="cb6-6"><a href="generating-and-plotting-data.html#cb6-6" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb6-7"><a href="generating-and-plotting-data.html#cb6-7" tabindex="-1"></a><span id="dt2ylist">dt2ylist</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(dt){</span>
+<span id="cb6-8"><a href="generating-and-plotting-data.html#cb6-8" tabindex="-1"></a>  dt<span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(time, Y) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(time) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="generating-and-plotting-data.html#cb6-9" tabindex="-1"></a>    <span class="fu">group_by</span>(time) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="generating-and-plotting-data.html#cb6-10" tabindex="-1"></a>    <span class="fu">group_split</span>(<span class="at">.keep =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="generating-and-plotting-data.html#cb6-11" tabindex="-1"></a>    <span class="fu">lapply</span>(as.matrix)</span>
+<span id="cb6-12"><a href="generating-and-plotting-data.html#cb6-12" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s generate some data using these functions.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="generating-and-plotting-data.html#cb7-1" tabindex="-1"></a>dt <span class="ot">=</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="at">TT =</span> <span class="dv">100</span>, <span class="at">ntlist =</span><span class="fu">rep</span>(<span class="dv">100</span>,<span class="dv">100</span>))</span>
+<span id="cb7-2"><a href="generating-and-plotting-data.html#cb7-2" tabindex="-1"></a><span class="fu">print</span>(dt)</span></code></pre></div>
+<pre><code>## # A tibble: 10,000 × 4
+##     time      Y    mu cluster
+##    &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;
+##  1     1 -2.30  -1.49       1
+##  2     1 -2.40  -1.49       1
+##  3     1 -1.84  -1.49       1
+##  4     1 -1.43  -1.49       1
+##  5     1 -1.22  -1.49       1
+##  6     1 -1.84  -1.49       1
+##  7     1 -0.879 -1.49       1
+##  8     1 -1.04  -1.49       1
+##  9     1 -1.99  -1.49       1
+## 10     1 -1.67  -1.49       1
+## # ℹ 9,990 more rows</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="generating-and-plotting-data.html#cb9-1" tabindex="-1"></a>ylist <span class="ot">=</span> <a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>(dt)</span>
+<span id="cb9-2"><a href="generating-and-plotting-data.html#cb9-2" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(<span class="fu">str</span>(ylist[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])))</span></code></pre></div>
+<pre><code>## List of 5
+##  $ : num [1:100, 1] -2.3 -2.4 -1.84 -1.43 -1.22 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr "Y"
+##  $ : num [1:100, 1] -1.527 -1.445 -0.779 -1.16 -1.763 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr "Y"
+##  $ : num [1:100, 1] -1.76 -1.108 -0.809 -1.717 -1.142 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr "Y"
+##  $ : num [1:100, 1] -0.972 -1.862 -1.863 -1.578 -1.609 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr "Y"
+##  $ : num [1:100, 1] -0.996 -1.818 -1.118 -0.727 -1.724 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : NULL
+##   .. ..$ : chr "Y"
+## NULL</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="generating-and-plotting-data.html#cb11-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(ylist[[<span class="dv">1</span>]]))</span></code></pre></div>
+<pre><code>##              Y
+## [1,] -2.300754
+## [2,] -2.404809
+## [3,] -1.837404
+## [4,] -1.431040
+## [5,] -1.216831
+## [6,] -1.835445</code></pre>
+<p>Next, we’ll make some plotting functions 1d model and data.</p>
+</div>
+<div id="plotting-1d-data" class="section level3 hasAnchor" number="4.1.2">
+<h3>
+<span class="header-section-number">4.1.2</span> Plotting 1d data<a href="generating-and-plotting-data.html#plotting-1d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<p>Given 1d data <code>ylist</code> and an estimated model <code>flowtrend</code> object <code>obj</code>, we want to visualize these
+in a single plot. <code><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>()</code> lets you do this.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="generating-and-plotting-data.html#cb13-1" tabindex="-1"></a><span class="co">#' Makes 1d plot of data and model</span></span>
+<span id="cb13-2"><a href="generating-and-plotting-data.html#cb13-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb13-3"><a href="generating-and-plotting-data.html#cb13-3" tabindex="-1"></a><span class="co">#' @param ylist Data. A list of (|nt| by |dimdat|) matrices</span></span>
+<span id="cb13-4"><a href="generating-and-plotting-data.html#cb13-4" tabindex="-1"></a><span class="co">#' @param obj A flowtrend (or flowmix) object. Defaults to NULL.</span></span>
+<span id="cb13-5"><a href="generating-and-plotting-data.html#cb13-5" tabindex="-1"></a><span class="co">#' @param x Time points. Defaults to NULL.</span></span>
+<span id="cb13-6"><a href="generating-and-plotting-data.html#cb13-6" tabindex="-1"></a><span class="co">#' @param alpha Between 0 and 1, how transparent to plot the data</span></span>
+<span id="cb13-7"><a href="generating-and-plotting-data.html#cb13-7" tabindex="-1"></a><span class="co">#'   points. Defaults to 0.1.</span></span>
+<span id="cb13-8"><a href="generating-and-plotting-data.html#cb13-8" tabindex="-1"></a><span class="co">#' @param bin If TRUE, the data is binned.</span></span>
+<span id="cb13-9"><a href="generating-and-plotting-data.html#cb13-9" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb13-10"><a href="generating-and-plotting-data.html#cb13-10" tabindex="-1"></a><span class="co">#' @return ggplot object with data, and optionally, a flowtrend model overlaid.</span></span>
+<span id="cb13-11"><a href="generating-and-plotting-data.html#cb13-11" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb13-12"><a href="generating-and-plotting-data.html#cb13-12" tabindex="-1"></a><span id="plot_1d">plot_1d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, <span class="at">countslist=</span><span class="cn">NULL</span>, <span class="at">obj=</span><span class="cn">NULL</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> .<span class="dv">1</span>, <span class="at">bin =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-13"><a href="generating-and-plotting-data.html#cb13-13" tabindex="-1"></a>                    <span class="at">plot_band =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb13-14"><a href="generating-and-plotting-data.html#cb13-14" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="generating-and-plotting-data.html#cb13-15" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb13-16"><a href="generating-and-plotting-data.html#cb13-16" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj))<span class="fu">stopifnot</span>(<span class="fu">class</span>(obj) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"flowmix"</span>, <span class="st">"flowtrend"</span>))</span>
+<span id="cb13-17"><a href="generating-and-plotting-data.html#cb13-17" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(x)){</span>
+<span id="cb13-18"><a href="generating-and-plotting-data.html#cb13-18" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="fu">length</span>(ylist))</span>
+<span id="cb13-19"><a href="generating-and-plotting-data.html#cb13-19" tabindex="-1"></a>    times <span class="ot">=</span> x</span>
+<span id="cb13-20"><a href="generating-and-plotting-data.html#cb13-20" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb13-21"><a href="generating-and-plotting-data.html#cb13-21" tabindex="-1"></a>    times <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(ylist)</span>
+<span id="cb13-22"><a href="generating-and-plotting-data.html#cb13-22" tabindex="-1"></a>  }</span>
+<span id="cb13-23"><a href="generating-and-plotting-data.html#cb13-23" tabindex="-1"></a>  dimdat <span class="ot">=</span> <span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]])</span>
+<span id="cb13-24"><a href="generating-and-plotting-data.html#cb13-24" tabindex="-1"></a>  assertthat<span class="sc">::</span><span class="fu">assert_that</span>(dimdat <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb13-25"><a href="generating-and-plotting-data.html#cb13-25" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="generating-and-plotting-data.html#cb13-26" tabindex="-1"></a>  <span class="do">## If countslist is not provided, make a dummy</span></span>
+<span id="cb13-27"><a href="generating-and-plotting-data.html#cb13-27" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(countslist)) countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y) <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)))</span>
+<span id="cb13-28"><a href="generating-and-plotting-data.html#cb13-28" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="generating-and-plotting-data.html#cb13-29" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="generating-and-plotting-data.html#cb13-30" tabindex="-1"></a>  <span class="do">## Make data into long matrix</span></span>
+<span id="cb13-31"><a href="generating-and-plotting-data.html#cb13-31" tabindex="-1"></a>  ymat <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(ylist), <span class="at">FUN =</span> <span class="cf">function</span>(tt){</span>
+<span id="cb13-32"><a href="generating-and-plotting-data.html#cb13-32" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">time =</span> times[tt], <span class="at">Y =</span> ylist[[tt]], <span class="at">counts =</span> countslist[[tt]])</span>
+<span id="cb13-33"><a href="generating-and-plotting-data.html#cb13-33" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb13-34"><a href="generating-and-plotting-data.html#cb13-34" tabindex="-1"></a>  <span class="fu">colnames</span>(ymat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"time"</span>, <span class="st">"Y"</span>, <span class="st">"counts"</span>) <span class="do">## when ylist[[tt]] already has a column name, this is needed.</span></span>
+<span id="cb13-35"><a href="generating-and-plotting-data.html#cb13-35" tabindex="-1"></a>  </span>
+<span id="cb13-36"><a href="generating-and-plotting-data.html#cb13-36" tabindex="-1"></a>  <span class="cf">if</span>(bin){</span>
+<span id="cb13-37"><a href="generating-and-plotting-data.html#cb13-37" tabindex="-1"></a>    gg <span class="ot">=</span> ymat <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb13-38"><a href="generating-and-plotting-data.html#cb13-38" tabindex="-1"></a>      <span class="fu">geom_raster</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> Y, <span class="at">fill =</span> counts)) <span class="sc">+</span></span>
+<span id="cb13-39"><a href="generating-and-plotting-data.html#cb13-39" tabindex="-1"></a>      <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Data"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Time"</span>)  <span class="sc">+</span></span>
+<span id="cb13-40"><a href="generating-and-plotting-data.html#cb13-40" tabindex="-1"></a>      <span class="fu">scale_fill_gradientn</span>(<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"black"</span>))</span>
+<span id="cb13-41"><a href="generating-and-plotting-data.html#cb13-41" tabindex="-1"></a>  }</span>
+<span id="cb13-42"><a href="generating-and-plotting-data.html#cb13-42" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>bin){</span>
+<span id="cb13-43"><a href="generating-and-plotting-data.html#cb13-43" tabindex="-1"></a>    gg <span class="ot">=</span> ymat <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb13-44"><a href="generating-and-plotting-data.html#cb13-44" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> Y), <span class="at">alpha =</span> alpha) <span class="sc">+</span></span>
+<span id="cb13-45"><a href="generating-and-plotting-data.html#cb13-45" tabindex="-1"></a>      <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Data"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Time"</span>) </span>
+<span id="cb13-46"><a href="generating-and-plotting-data.html#cb13-46" tabindex="-1"></a>  }</span>
+<span id="cb13-47"><a href="generating-and-plotting-data.html#cb13-47" tabindex="-1"></a></span>
+<span id="cb13-48"><a href="generating-and-plotting-data.html#cb13-48" tabindex="-1"></a>  <span class="do">## If there is a flowtrend object to plot, do it.</span></span>
+<span id="cb13-49"><a href="generating-and-plotting-data.html#cb13-49" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(obj)){</span>
+<span id="cb13-50"><a href="generating-and-plotting-data.html#cb13-50" tabindex="-1"></a>    <span class="fu">return</span>(gg)</span>
+<span id="cb13-51"><a href="generating-and-plotting-data.html#cb13-51" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb13-52"><a href="generating-and-plotting-data.html#cb13-52" tabindex="-1"></a>  </span>
+<span id="cb13-53"><a href="generating-and-plotting-data.html#cb13-53" tabindex="-1"></a>    <span class="do">## Add the model</span></span>
+<span id="cb13-54"><a href="generating-and-plotting-data.html#cb13-54" tabindex="-1"></a>    numclust <span class="ot">=</span> obj<span class="sc">$</span>numclust</span>
+<span id="cb13-55"><a href="generating-and-plotting-data.html#cb13-55" tabindex="-1"></a>    mnmat <span class="ot">=</span> obj<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="dv">1</span><span class="sc">:</span>numclust) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-56"><a href="generating-and-plotting-data.html#cb13-56" tabindex="-1"></a>      <span class="fu">add_column</span>(<span class="at">time =</span> times)</span>
+<span id="cb13-57"><a href="generating-and-plotting-data.html#cb13-57" tabindex="-1"></a>    probmat <span class="ot">=</span> obj<span class="sc">$</span>prob <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="dv">1</span><span class="sc">:</span>numclust) <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">time =</span> times)</span>
+<span id="cb13-58"><a href="generating-and-plotting-data.html#cb13-58" tabindex="-1"></a>    mn_long <span class="ot">=</span> mnmat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"mean"</span>)</span>
+<span id="cb13-59"><a href="generating-and-plotting-data.html#cb13-59" tabindex="-1"></a>    prob_long <span class="ot">=</span> probmat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>)</span>
+<span id="cb13-60"><a href="generating-and-plotting-data.html#cb13-60" tabindex="-1"></a>    est_long <span class="ot">=</span> <span class="fu">full_join</span>(mn_long, prob_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"time"</span>,<span class="st">"cluster"</span>))</span>
+<span id="cb13-61"><a href="generating-and-plotting-data.html#cb13-61" tabindex="-1"></a>    gg <span class="ot">=</span> gg <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">linewidth =</span> prob, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb13-62"><a href="generating-and-plotting-data.html#cb13-62" tabindex="-1"></a>                        <span class="at">data =</span> est_long,</span>
+<span id="cb13-63"><a href="generating-and-plotting-data.html#cb13-63" tabindex="-1"></a>                        <span class="at">lineend =</span> <span class="st">"round"</span>, <span class="at">linejoin=</span><span class="st">"mitre"</span>) <span class="sc">+</span></span>
+<span id="cb13-64"><a href="generating-and-plotting-data.html#cb13-64" tabindex="-1"></a>      <span class="fu">scale_linewidth</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="dv">5</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb13-65"><a href="generating-and-plotting-data.html#cb13-65" tabindex="-1"></a></span>
+<span id="cb13-66"><a href="generating-and-plotting-data.html#cb13-66" tabindex="-1"></a>    <span class="cf">if</span>(plot_band){</span>
+<span id="cb13-67"><a href="generating-and-plotting-data.html#cb13-67" tabindex="-1"></a>      <span class="do">## Add the estimated 95% probability regions for data.</span></span>
+<span id="cb13-68"><a href="generating-and-plotting-data.html#cb13-68" tabindex="-1"></a>      stdev <span class="ot">=</span> obj<span class="sc">$</span>sigma <span class="sc">%&gt;%</span> .[,,<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
+<span id="cb13-69"><a href="generating-and-plotting-data.html#cb13-69" tabindex="-1"></a>      mn_long_by_clust <span class="ot">=</span> mn_long <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb13-70"><a href="generating-and-plotting-data.html#cb13-70" tabindex="-1"></a>      band_long_by_clust <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(iclust){</span>
+<span id="cb13-71"><a href="generating-and-plotting-data.html#cb13-71" tabindex="-1"></a>        mn_long_by_clust[[iclust]] <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> stdev[iclust]) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> stdev[iclust])</span>
+<span id="cb13-72"><a href="generating-and-plotting-data.html#cb13-72" tabindex="-1"></a>      })</span>
+<span id="cb13-73"><a href="generating-and-plotting-data.html#cb13-73" tabindex="-1"></a>      band_long <span class="ot">=</span> band_long_by_clust <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb13-74"><a href="generating-and-plotting-data.html#cb13-74" tabindex="-1"></a>      gg <span class="ot">=</span> gg <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> upper, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb13-75"><a href="generating-and-plotting-data.html#cb13-75" tabindex="-1"></a>                     <span class="at">data =</span> band_long, <span class="at">size =</span> <span class="fu">rel</span>(.<span class="dv">7</span>), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb13-76"><a href="generating-and-plotting-data.html#cb13-76" tabindex="-1"></a>        <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> lower, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb13-77"><a href="generating-and-plotting-data.html#cb13-77" tabindex="-1"></a>                  <span class="at">data =</span> band_long, <span class="at">size =</span> <span class="fu">rel</span>(.<span class="dv">7</span>), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb13-78"><a href="generating-and-plotting-data.html#cb13-78" tabindex="-1"></a>      <span class="fu">guides</span>(<span class="at">size =</span> <span class="st">"none"</span>) <span class="co"># To turn off line size from legend</span></span>
+<span id="cb13-79"><a href="generating-and-plotting-data.html#cb13-79" tabindex="-1"></a>    }</span>
+<span id="cb13-80"><a href="generating-and-plotting-data.html#cb13-80" tabindex="-1"></a>    <span class="fu">return</span>(gg)</span>
+<span id="cb13-81"><a href="generating-and-plotting-data.html#cb13-81" tabindex="-1"></a>  }</span>
+<span id="cb13-82"><a href="generating-and-plotting-data.html#cb13-82" tabindex="-1"></a>}</span></code></pre></div>
+<p>The plotting function <code><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>()</code> will be even more useful when we have a model,
+but can also simply plot the data <code>ylist</code>. Let’s try this out.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="generating-and-plotting-data.html#cb14-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb14-2"><a href="generating-and-plotting-data.html#cb14-2" tabindex="-1"></a>dt       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">100</span>))</span>
+<span id="cb14-3"><a href="generating-and-plotting-data.html#cb14-3" tabindex="-1"></a>dt_model <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">100</span>), <span class="at">return_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-4"><a href="generating-and-plotting-data.html#cb14-4" tabindex="-1"></a>ylist <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>()</span>
+<span id="cb14-5"><a href="generating-and-plotting-data.html#cb14-5" tabindex="-1"></a>x <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <span class="fu">pull</span>(time) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<span id="cb14-6"><a href="generating-and-plotting-data.html#cb14-6" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="generating-and-plotting-data.html#cb14-7" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(<span class="at">ylist =</span> ylist, <span class="at">x =</span> x) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="generating-and-plotting-data.html#cb14-8" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">group =</span> cluster),</span>
+<span id="cb14-9"><a href="generating-and-plotting-data.html#cb14-9" tabindex="-1"></a>            <span class="at">data =</span> dt_model,</span>
+<span id="cb14-10"><a href="generating-and-plotting-data.html#cb14-10" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size=</span><span class="dv">2</span>, <span class="at">alpha =</span> .<span class="dv">7</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/test-gendat-1.png" width="672">
+Voilà!</p>
+<p>Adding a model is easy, you can use:</p>
+<p><code><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(ylist, countslist) %&gt;% <a href="generating-and-plotting-data.html#plot_1d_add_model">plot_1d_add_model</a>(obj = obj, idim = 1)</code></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="generating-and-plotting-data.html#cb15-1" tabindex="-1"></a><span class="co">#' Add a model to an existing plot from \code{<a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>()}.</span></span>
+<span id="cb15-2"><a href="generating-and-plotting-data.html#cb15-2" tabindex="-1"></a><span class="co">#' This actually can take a model \code{obj}, and just plot the 1-dimensional projections of the model in the \code{idim} dimension.</span></span>
+<span id="cb15-3"><a href="generating-and-plotting-data.html#cb15-3" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb15-4"><a href="generating-and-plotting-data.html#cb15-4" tabindex="-1"></a><span class="co">#' @param gg0 ggplot object from running \code{plot_1d}.</span></span>
+<span id="cb15-5"><a href="generating-and-plotting-data.html#cb15-5" tabindex="-1"></a><span class="co">#' @param obj Model</span></span>
+<span id="cb15-6"><a href="generating-and-plotting-data.html#cb15-6" tabindex="-1"></a><span class="co">#' @param idim dimension</span></span>
+<span id="cb15-7"><a href="generating-and-plotting-data.html#cb15-7" tabindex="-1"></a><span class="co">#' @param plot_band If TRUE, plot a +1.96 standard deviation band.</span></span>
+<span id="cb15-8"><a href="generating-and-plotting-data.html#cb15-8" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb15-9"><a href="generating-and-plotting-data.html#cb15-9" tabindex="-1"></a><span class="co">#' @return ggplot object</span></span>
+<span id="cb15-10"><a href="generating-and-plotting-data.html#cb15-10" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb15-11"><a href="generating-and-plotting-data.html#cb15-11" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb15-12"><a href="generating-and-plotting-data.html#cb15-12" tabindex="-1"></a><span id="plot_1d_add_model">plot_1d_add_model</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(gg0, obj, idim, <span class="at">plot_band =</span> <span class="cn">TRUE</span>){</span>
+<span id="cb15-13"><a href="generating-and-plotting-data.html#cb15-13" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="generating-and-plotting-data.html#cb15-14" tabindex="-1"></a>  times <span class="ot">=</span> obj<span class="sc">$</span>x</span>
+<span id="cb15-15"><a href="generating-and-plotting-data.html#cb15-15" tabindex="-1"></a>  numclust <span class="ot">=</span> obj<span class="sc">$</span>numclust</span>
+<span id="cb15-16"><a href="generating-and-plotting-data.html#cb15-16" tabindex="-1"></a>  mnmat <span class="ot">=</span> obj<span class="sc">$</span>mn <span class="sc">%&gt;%</span> .[,idim,] <span class="sc">%&gt;%</span>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="dv">1</span><span class="sc">:</span>numclust) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb15-17"><a href="generating-and-plotting-data.html#cb15-17" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> times)</span>
+<span id="cb15-18"><a href="generating-and-plotting-data.html#cb15-18" tabindex="-1"></a>  probmat <span class="ot">=</span> obj<span class="sc">$</span>prob <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="dv">1</span><span class="sc">:</span>numclust) <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">time =</span> times)</span>
+<span id="cb15-19"><a href="generating-and-plotting-data.html#cb15-19" tabindex="-1"></a>  mn_long <span class="ot">=</span> mnmat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"mean"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb15-20"><a href="generating-and-plotting-data.html#cb15-20" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(cluster, <span class="at">levels=</span><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, toString)))</span>
+<span id="cb15-21"><a href="generating-and-plotting-data.html#cb15-21" tabindex="-1"></a>  prob_long <span class="ot">=</span> probmat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-22"><a href="generating-and-plotting-data.html#cb15-22" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">factor</span>(cluster, <span class="at">levels=</span><span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, toString)))</span>
+<span id="cb15-23"><a href="generating-and-plotting-data.html#cb15-23" tabindex="-1"></a>  est_long <span class="ot">=</span> <span class="fu">full_join</span>(mn_long, prob_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"time"</span>,<span class="st">"cluster"</span>))</span>
+<span id="cb15-24"><a href="generating-and-plotting-data.html#cb15-24" tabindex="-1"></a>  gg <span class="ot">=</span> gg0 <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">linewidth =</span> prob, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb15-25"><a href="generating-and-plotting-data.html#cb15-25" tabindex="-1"></a>                       <span class="at">data =</span> est_long, <span class="at">lineend =</span> <span class="st">"round"</span>, <span class="at">linejoin=</span><span class="st">"mitre"</span>) <span class="sc">+</span></span>
+<span id="cb15-26"><a href="generating-and-plotting-data.html#cb15-26" tabindex="-1"></a>    <span class="fu">scale_linewidth</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="dv">5</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb15-27"><a href="generating-and-plotting-data.html#cb15-27" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="generating-and-plotting-data.html#cb15-28" tabindex="-1"></a>  <span class="do">## Add the estimated 95% probability regions for data.</span></span>
+<span id="cb15-29"><a href="generating-and-plotting-data.html#cb15-29" tabindex="-1"></a>  <span class="cf">if</span>(plot_band){</span>
+<span id="cb15-30"><a href="generating-and-plotting-data.html#cb15-30" tabindex="-1"></a>    stdev <span class="ot">=</span> obj<span class="sc">$</span>sigma <span class="sc">%&gt;%</span> .[,idim,idim] <span class="sc">%&gt;%</span> <span class="fu">sqrt</span>()</span>
+<span id="cb15-31"><a href="generating-and-plotting-data.html#cb15-31" tabindex="-1"></a>    <span class="fu">names</span>(stdev) <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, toString)</span>
+<span id="cb15-32"><a href="generating-and-plotting-data.html#cb15-32" tabindex="-1"></a>    mn_long_by_clust <span class="ot">=</span> mn_long <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">group_split</span>()</span>
+<span id="cb15-33"><a href="generating-and-plotting-data.html#cb15-33" tabindex="-1"></a>    band_long_by_clust <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>numclust, <span class="cf">function</span>(iclust){</span>
+<span id="cb15-34"><a href="generating-and-plotting-data.html#cb15-34" tabindex="-1"></a>      mn_long_by_clust[[iclust]] <span class="sc">%&gt;%</span></span>
+<span id="cb15-35"><a href="generating-and-plotting-data.html#cb15-35" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">upper =</span> mean <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> stdev[iclust]) <span class="sc">%&gt;%</span></span>
+<span id="cb15-36"><a href="generating-and-plotting-data.html#cb15-36" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">lower =</span> mean <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> stdev[iclust])</span>
+<span id="cb15-37"><a href="generating-and-plotting-data.html#cb15-37" tabindex="-1"></a>    })</span>
+<span id="cb15-38"><a href="generating-and-plotting-data.html#cb15-38" tabindex="-1"></a>    band_long <span class="ot">=</span> band_long_by_clust <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>()</span>
+<span id="cb15-39"><a href="generating-and-plotting-data.html#cb15-39" tabindex="-1"></a>    gg <span class="ot">=</span> gg <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> upper, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb15-40"><a href="generating-and-plotting-data.html#cb15-40" tabindex="-1"></a>                        <span class="at">data =</span> band_long, <span class="at">size =</span> <span class="fu">rel</span>(.<span class="dv">7</span>), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb15-41"><a href="generating-and-plotting-data.html#cb15-41" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> lower, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb15-42"><a href="generating-and-plotting-data.html#cb15-42" tabindex="-1"></a>                <span class="at">data =</span> band_long, <span class="at">size =</span> <span class="fu">rel</span>(.<span class="dv">7</span>), <span class="at">alpha =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb15-43"><a href="generating-and-plotting-data.html#cb15-43" tabindex="-1"></a>      <span class="fu">guides</span>(<span class="at">size =</span> <span class="st">"none"</span>) </span>
+<span id="cb15-44"><a href="generating-and-plotting-data.html#cb15-44" tabindex="-1"></a>  }</span>
+<span id="cb15-45"><a href="generating-and-plotting-data.html#cb15-45" tabindex="-1"></a>  <span class="fu">return</span>(gg)</span>
+<span id="cb15-46"><a href="generating-and-plotting-data.html#cb15-46" tabindex="-1"></a>}</span></code></pre></div>
+<p>Also, we will want to plot the estimated cluster probabilities of a model <code>obj</code> of class <code>flowtrend</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="generating-and-plotting-data.html#cb16-1" tabindex="-1"></a><span class="co">#' Makes cluster probability plot (lines over time).</span></span>
+<span id="cb16-2"><a href="generating-and-plotting-data.html#cb16-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb16-3"><a href="generating-and-plotting-data.html#cb16-3" tabindex="-1"></a><span class="co">#' @param obj Estimated model (from e.g. \code{<a href="building-the-modelalgorithm.html#flowtrend">flowtrend</a>()})</span></span>
+<span id="cb16-4"><a href="generating-and-plotting-data.html#cb16-4" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb16-5"><a href="generating-and-plotting-data.html#cb16-5" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb16-6"><a href="generating-and-plotting-data.html#cb16-6" tabindex="-1"></a><span id="plot_prob">plot_prob</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(obj, <span class="at">x =</span> <span class="cn">NULL</span>){</span>
+<span id="cb16-7"><a href="generating-and-plotting-data.html#cb16-7" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="generating-and-plotting-data.html#cb16-8" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb16-9"><a href="generating-and-plotting-data.html#cb16-9" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj)) <span class="fu">stopifnot</span>(<span class="fu">class</span>(obj) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"flowmix"</span>, <span class="st">"flowtrend"</span>))</span>
+<span id="cb16-10"><a href="generating-and-plotting-data.html#cb16-10" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(x)){</span>
+<span id="cb16-11"><a href="generating-and-plotting-data.html#cb16-11" tabindex="-1"></a>    times <span class="ot">=</span> x</span>
+<span id="cb16-12"><a href="generating-and-plotting-data.html#cb16-12" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb16-13"><a href="generating-and-plotting-data.html#cb16-13" tabindex="-1"></a>    <span class="do">##stop("must provide x")</span></span>
+<span id="cb16-14"><a href="generating-and-plotting-data.html#cb16-14" tabindex="-1"></a>    times <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>(obj<span class="sc">$</span>TT)</span>
+<span id="cb16-15"><a href="generating-and-plotting-data.html#cb16-15" tabindex="-1"></a>  }</span>
+<span id="cb16-16"><a href="generating-and-plotting-data.html#cb16-16" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="generating-and-plotting-data.html#cb16-17" tabindex="-1"></a>  numclust <span class="ot">=</span> obj<span class="sc">$</span>numclust</span>
+<span id="cb16-18"><a href="generating-and-plotting-data.html#cb16-18" tabindex="-1"></a>  probmat <span class="ot">=</span> obj<span class="sc">$</span>prob <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">setNames</span>(<span class="dv">1</span><span class="sc">:</span>numclust) <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">time =</span> times)</span>
+<span id="cb16-19"><a href="generating-and-plotting-data.html#cb16-19" tabindex="-1"></a>  prob_long <span class="ot">=</span> probmat <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>)</span>
+<span id="cb16-20"><a href="generating-and-plotting-data.html#cb16-20" tabindex="-1"></a>  prob_long <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-21"><a href="generating-and-plotting-data.html#cb16-21" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y =</span> prob, <span class="at">group =</span> cluster, <span class="at">col =</span> cluster), <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb16-22"><a href="generating-and-plotting-data.html#cb16-22" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">"Estimated cluster probability"</span>)</span>
+<span id="cb16-23"><a href="generating-and-plotting-data.html#cb16-23" tabindex="-1"></a>}</span></code></pre></div>
+<p>We can’t test it out now, but we’ll use it later in <a href="testing-the-flowtrend-method.html#id_1d-example">1d-example</a>.</p>
+<p>Here is a 1d plotting function if you have cluster memberships <code>memlist</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="generating-and-plotting-data.html#cb17-1" tabindex="-1"></a><span class="co">#' Makes 1d plot of data when</span></span>
+<span id="cb17-2"><a href="generating-and-plotting-data.html#cb17-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb17-3"><a href="generating-and-plotting-data.html#cb17-3" tabindex="-1"></a><span class="co">#' @param ylist Particlel-level data. A list of (|nt| by |dimdat|) matrices.</span></span>
+<span id="cb17-4"><a href="generating-and-plotting-data.html#cb17-4" tabindex="-1"></a><span class="co">#' @param memlist List of memberships for the particles.</span></span>
+<span id="cb17-5"><a href="generating-and-plotting-data.html#cb17-5" tabindex="-1"></a><span class="co">#' @param x Time points. Defaults to NULL.</span></span>
+<span id="cb17-6"><a href="generating-and-plotting-data.html#cb17-6" tabindex="-1"></a><span class="co">#' @param alpha Between 0 and 1, how transparent to plot the data</span></span>
+<span id="cb17-7"><a href="generating-and-plotting-data.html#cb17-7" tabindex="-1"></a><span class="co">#'   points. Defaults to 0.1.</span></span>
+<span id="cb17-8"><a href="generating-and-plotting-data.html#cb17-8" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb17-9"><a href="generating-and-plotting-data.html#cb17-9" tabindex="-1"></a><span class="co">#' @return ggplot object with data, and optionally, a flowtrend model overlaid.</span></span>
+<span id="cb17-10"><a href="generating-and-plotting-data.html#cb17-10" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb17-11"><a href="generating-and-plotting-data.html#cb17-11" tabindex="-1"></a><span id="plot_1d_with_membership">plot_1d_with_membership</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, memlist, <span class="at">countslist =</span> <span class="cn">NULL</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">alpha =</span> .<span class="dv">01</span>){</span>
+<span id="cb17-12"><a href="generating-and-plotting-data.html#cb17-12" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="generating-and-plotting-data.html#cb17-13" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb17-14"><a href="generating-and-plotting-data.html#cb17-14" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(x)){</span>
+<span id="cb17-15"><a href="generating-and-plotting-data.html#cb17-15" tabindex="-1"></a>    <span class="fu">stopifnot</span>(<span class="fu">length</span>(x) <span class="sc">==</span> <span class="fu">length</span>(ylist))</span>
+<span id="cb17-16"><a href="generating-and-plotting-data.html#cb17-16" tabindex="-1"></a>    times <span class="ot">=</span> x</span>
+<span id="cb17-17"><a href="generating-and-plotting-data.html#cb17-17" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb17-18"><a href="generating-and-plotting-data.html#cb17-18" tabindex="-1"></a>    times <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(ylist)</span>
+<span id="cb17-19"><a href="generating-and-plotting-data.html#cb17-19" tabindex="-1"></a>  }</span>
+<span id="cb17-20"><a href="generating-and-plotting-data.html#cb17-20" tabindex="-1"></a>  dimdat <span class="ot">=</span> <span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]])</span>
+<span id="cb17-21"><a href="generating-and-plotting-data.html#cb17-21" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="generating-and-plotting-data.html#cb17-22" tabindex="-1"></a>  <span class="do">## If countslist is not provided, make a dummy</span></span>
+<span id="cb17-23"><a href="generating-and-plotting-data.html#cb17-23" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(countslist)) countslist <span class="ot">=</span> <span class="fu">lapply</span>(ylist, <span class="cf">function</span>(y) <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(y)))</span>
+<span id="cb17-24"><a href="generating-and-plotting-data.html#cb17-24" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="generating-and-plotting-data.html#cb17-25" tabindex="-1"></a>  <span class="do">## Make data into long matrix</span></span>
+<span id="cb17-26"><a href="generating-and-plotting-data.html#cb17-26" tabindex="-1"></a>  ymat <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(ylist), <span class="at">FUN =</span> <span class="cf">function</span>(tt){</span>
+<span id="cb17-27"><a href="generating-and-plotting-data.html#cb17-27" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">time =</span> times[tt], <span class="at">Y =</span> ylist[[tt]],</span>
+<span id="cb17-28"><a href="generating-and-plotting-data.html#cb17-28" tabindex="-1"></a>               <span class="at">counts =</span> countslist[[tt]], <span class="at">cluster =</span> memlist[[tt]])</span>
+<span id="cb17-29"><a href="generating-and-plotting-data.html#cb17-29" tabindex="-1"></a>  }) <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb17-30"><a href="generating-and-plotting-data.html#cb17-30" tabindex="-1"></a>  ymat <span class="ot">=</span> ymat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">cluster =</span> <span class="fu">as.factor</span>(cluster))</span>
+<span id="cb17-31"><a href="generating-and-plotting-data.html#cb17-31" tabindex="-1"></a>  <span class="fu">colnames</span>(ymat) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"time"</span>, <span class="st">"Y"</span>, <span class="st">"counts"</span>, <span class="st">"cluster"</span>) <span class="do">## when ylist[[tt]] already has a column name, this is needed.</span></span>
+<span id="cb17-32"><a href="generating-and-plotting-data.html#cb17-32" tabindex="-1"></a></span>
+<span id="cb17-33"><a href="generating-and-plotting-data.html#cb17-33" tabindex="-1"></a>  gg <span class="ot">=</span></span>
+<span id="cb17-34"><a href="generating-and-plotting-data.html#cb17-34" tabindex="-1"></a>    ymat <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb17-35"><a href="generating-and-plotting-data.html#cb17-35" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> Y, <span class="at">group=</span>cluster, <span class="at">col =</span> cluster),<span class="do">##, shape = cluster),</span></span>
+<span id="cb17-36"><a href="generating-and-plotting-data.html#cb17-36" tabindex="-1"></a>               <span class="at">alpha =</span> alpha) <span class="sc">+</span> <span class="do">##facet_wrap(~cluster)  +</span></span>
+<span id="cb17-37"><a href="generating-and-plotting-data.html#cb17-37" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Data"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Time"</span>) </span>
+<span id="cb17-38"><a href="generating-and-plotting-data.html#cb17-38" tabindex="-1"></a>  <span class="fu">return</span>(gg)</span>
+<span id="cb17-39"><a href="generating-and-plotting-data.html#cb17-39" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+</div>
+<div id="d-data-1" class="section level2 hasAnchor" number="4.2">
+<h2>
+<span class="header-section-number">4.2</span> 2d data<a href="generating-and-plotting-data.html#d-data-1" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<div id="generating-2d-data" class="section level3 hasAnchor" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> Generating 2d data<a href="generating-and-plotting-data.html#generating-2d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="generating-and-plotting-data.html#cb18-1" tabindex="-1"></a><span class="co">#' Generates some synthetic 2-dimensional data with three clusters. </span></span>
+<span id="cb18-2"><a href="generating-and-plotting-data.html#cb18-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb18-3"><a href="generating-and-plotting-data.html#cb18-3" tabindex="-1"></a><span class="co">#' @param TT Number of time points.</span></span>
+<span id="cb18-4"><a href="generating-and-plotting-data.html#cb18-4" tabindex="-1"></a><span class="co">#' @param nt Number of particles at each time.</span></span>
+<span id="cb18-5"><a href="generating-and-plotting-data.html#cb18-5" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb18-6"><a href="generating-and-plotting-data.html#cb18-6" tabindex="-1"></a><span class="co">#' @return List containing (1) ylist, (2) mnlist, (3) clusterlist.</span></span>
+<span id="cb18-7"><a href="generating-and-plotting-data.html#cb18-7" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb18-8"><a href="generating-and-plotting-data.html#cb18-8" tabindex="-1"></a><span id="gendat_2d">gendat_2d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(TT, ntlist){</span>
+<span id="cb18-9"><a href="generating-and-plotting-data.html#cb18-9" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="generating-and-plotting-data.html#cb18-10" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="generating-and-plotting-data.html#cb18-11" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb18-12"><a href="generating-and-plotting-data.html#cb18-12" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(ntlist) <span class="sc">==</span> TT)</span>
+<span id="cb18-13"><a href="generating-and-plotting-data.html#cb18-13" tabindex="-1"></a></span>
+<span id="cb18-14"><a href="generating-and-plotting-data.html#cb18-14" tabindex="-1"></a>  <span class="do">## Make cluster probabilities, by time</span></span>
+<span id="cb18-15"><a href="generating-and-plotting-data.html#cb18-15" tabindex="-1"></a>  cluster_prob1 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="fu">sin</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="sc">/</span><span class="dv">3</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">+</span> (tt<span class="sc">/</span>TT)<span class="sc">*</span><span class="dv">5</span>)</span>
+<span id="cb18-16"><a href="generating-and-plotting-data.html#cb18-16" tabindex="-1"></a>  cluster_prob2 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="fu">cos</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="sc">/</span><span class="dv">3</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">-</span> (tt<span class="sc">/</span>TT)<span class="sc">*</span><span class="dv">5</span>)</span>
+<span id="cb18-17"><a href="generating-and-plotting-data.html#cb18-17" tabindex="-1"></a>  cluster_prob3 <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">3</span>, TT)</span>
+<span id="cb18-18"><a href="generating-and-plotting-data.html#cb18-18" tabindex="-1"></a>  probs <span class="ot">=</span> <span class="fu">cbind</span>(cluster_prob1, cluster_prob2, cluster_prob3)</span>
+<span id="cb18-19"><a href="generating-and-plotting-data.html#cb18-19" tabindex="-1"></a>  probs <span class="ot">=</span> probs<span class="sc">/</span><span class="fu">rowSums</span>(probs)</span>
+<span id="cb18-20"><a href="generating-and-plotting-data.html#cb18-20" tabindex="-1"></a>  <span class="fu">colnames</span>(probs) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb18-21"><a href="generating-and-plotting-data.html#cb18-21" tabindex="-1"></a>  probs_long <span class="ot">=</span> <span class="fu">as_tibble</span>(probs) <span class="sc">%&gt;%</span></span>
+<span id="cb18-22"><a href="generating-and-plotting-data.html#cb18-22" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb18-23"><a href="generating-and-plotting-data.html#cb18-23" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>)</span>
+<span id="cb18-24"><a href="generating-and-plotting-data.html#cb18-24" tabindex="-1"></a>  probs_long <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>time,<span class="at">y=</span>prob, <span class="at">group=</span>cluster, <span class="at">col=</span>cluster)) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb18-25"><a href="generating-and-plotting-data.html#cb18-25" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="generating-and-plotting-data.html#cb18-26" tabindex="-1"></a>  <span class="do">## Make cluster means, by time</span></span>
+<span id="cb18-27"><a href="generating-and-plotting-data.html#cb18-27" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(TT, <span class="dv">3</span>, <span class="dv">2</span>))</span>
+<span id="cb18-28"><a href="generating-and-plotting-data.html#cb18-28" tabindex="-1"></a>  <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb18-29"><a href="generating-and-plotting-data.html#cb18-29" tabindex="-1"></a>    <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb18-30"><a href="generating-and-plotting-data.html#cb18-30" tabindex="-1"></a>      means[tt, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">=</span> means[tt, <span class="dv">1</span>, <span class="dv">2</span>] <span class="ot">=</span> tt<span class="sc">/</span>TT <span class="sc">+</span> <span class="fl">0.5</span></span>
+<span id="cb18-31"><a href="generating-and-plotting-data.html#cb18-31" tabindex="-1"></a>      means[tt, <span class="dv">2</span>, <span class="dv">1</span>]  <span class="ot">=</span> <span class="fu">sin</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="do">##seq(-1, 1, length.out = TT)[tt]*3.1415)</span></span>
+<span id="cb18-32"><a href="generating-and-plotting-data.html#cb18-32" tabindex="-1"></a>      means[tt, <span class="dv">2</span>, <span class="dv">2</span>] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb18-33"><a href="generating-and-plotting-data.html#cb18-33" tabindex="-1"></a>      means[tt, <span class="dv">3</span>, <span class="dv">1</span>] <span class="ot">=</span> means[tt, <span class="dv">3</span>, <span class="dv">2</span>] <span class="ot">=</span> <span class="sc">-</span><span class="dv">3</span><span class="sc">+</span><span class="fu">cos</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="do">##seq(-1, 1, length.out = TT)[tt]*6.282)</span></span>
+<span id="cb18-34"><a href="generating-and-plotting-data.html#cb18-34" tabindex="-1"></a>    }</span>
+<span id="cb18-35"><a href="generating-and-plotting-data.html#cb18-35" tabindex="-1"></a>  }</span>
+<span id="cb18-36"><a href="generating-and-plotting-data.html#cb18-36" tabindex="-1"></a>  <span class="fu">dimnames</span>(means)[[<span class="dv">2</span>]]  <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb18-37"><a href="generating-and-plotting-data.html#cb18-37" tabindex="-1"></a>  means_long <span class="ot">=</span> <span class="fu">as_tibble</span>(means) <span class="sc">%&gt;%</span></span>
+<span id="cb18-38"><a href="generating-and-plotting-data.html#cb18-38" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb18-39"><a href="generating-and-plotting-data.html#cb18-39" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"mean"</span>)</span>
+<span id="cb18-40"><a href="generating-and-plotting-data.html#cb18-40" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">full_join</span>(means_long, probs_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"time"</span>, <span class="st">"cluster"</span>))</span>
+<span id="cb18-41"><a href="generating-and-plotting-data.html#cb18-41" tabindex="-1"></a></span>
+<span id="cb18-42"><a href="generating-and-plotting-data.html#cb18-42" tabindex="-1"></a>  ylist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb18-43"><a href="generating-and-plotting-data.html#cb18-43" tabindex="-1"></a>  mulist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb18-44"><a href="generating-and-plotting-data.html#cb18-44" tabindex="-1"></a>  clusterlist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb18-45"><a href="generating-and-plotting-data.html#cb18-45" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb18-46"><a href="generating-and-plotting-data.html#cb18-46" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> <span class="dv">2</span>)</span>
+<span id="cb18-47"><a href="generating-and-plotting-data.html#cb18-47" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> <span class="dv">2</span>)</span>
+<span id="cb18-48"><a href="generating-and-plotting-data.html#cb18-48" tabindex="-1"></a>    clusters_count <span class="ot">&lt;-</span> <span class="fu">rmultinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> ntlist[tt], <span class="at">prob =</span> probs[tt,])</span>
+<span id="cb18-49"><a href="generating-and-plotting-data.html#cb18-49" tabindex="-1"></a></span>
+<span id="cb18-50"><a href="generating-and-plotting-data.html#cb18-50" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb18-51"><a href="generating-and-plotting-data.html#cb18-51" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb18-52"><a href="generating-and-plotting-data.html#cb18-52" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,,drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb18-53"><a href="generating-and-plotting-data.html#cb18-53" tabindex="-1"></a>        Sigma1 <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb18-54"><a href="generating-and-plotting-data.html#cb18-54" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma=</span> Sigma1)) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-55"><a href="generating-and-plotting-data.html#cb18-55" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-56"><a href="generating-and-plotting-data.html#cb18-56" tabindex="-1"></a>      }</span>
+<span id="cb18-57"><a href="generating-and-plotting-data.html#cb18-57" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb18-58"><a href="generating-and-plotting-data.html#cb18-58" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb18-59"><a href="generating-and-plotting-data.html#cb18-59" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.1</span>)))) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-60"><a href="generating-and-plotting-data.html#cb18-60" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-61"><a href="generating-and-plotting-data.html#cb18-61" tabindex="-1"></a>      }</span>
+<span id="cb18-62"><a href="generating-and-plotting-data.html#cb18-62" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">3</span>){</span>
+<span id="cb18-63"><a href="generating-and-plotting-data.html#cb18-63" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb18-64"><a href="generating-and-plotting-data.html#cb18-64" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.35</span>)))) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-65"><a href="generating-and-plotting-data.html#cb18-65" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb18-66"><a href="generating-and-plotting-data.html#cb18-66" tabindex="-1"></a>      }</span>
+<span id="cb18-67"><a href="generating-and-plotting-data.html#cb18-67" tabindex="-1"></a>    }</span>
+<span id="cb18-68"><a href="generating-and-plotting-data.html#cb18-68" tabindex="-1"></a></span>
+<span id="cb18-69"><a href="generating-and-plotting-data.html#cb18-69" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> Y <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">compact</span>() <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
+<span id="cb18-70"><a href="generating-and-plotting-data.html#cb18-70" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> mu <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">compact</span>() <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
+<span id="cb18-71"><a href="generating-and-plotting-data.html#cb18-71" tabindex="-1"></a>    cluster <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">times =</span> clusters_count)</span>
+<span id="cb18-72"><a href="generating-and-plotting-data.html#cb18-72" tabindex="-1"></a>    ylist[[tt]] <span class="ot">=</span> Y</span>
+<span id="cb18-73"><a href="generating-and-plotting-data.html#cb18-73" tabindex="-1"></a>    mulist[[tt]] <span class="ot">=</span> mu</span>
+<span id="cb18-74"><a href="generating-and-plotting-data.html#cb18-74" tabindex="-1"></a>    clusterlist[[tt]] <span class="ot">=</span> cluster</span>
+<span id="cb18-75"><a href="generating-and-plotting-data.html#cb18-75" tabindex="-1"></a>  }</span>
+<span id="cb18-76"><a href="generating-and-plotting-data.html#cb18-76" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">ylist =</span> ylist, <span class="at">mulist =</span> mulist,</span>
+<span id="cb18-77"><a href="generating-and-plotting-data.html#cb18-77" tabindex="-1"></a>              <span class="at">clusterlist =</span> clusterlist,</span>
+<span id="cb18-78"><a href="generating-and-plotting-data.html#cb18-78" tabindex="-1"></a>              <span class="at">probs =</span> probs, <span class="at">means =</span> means))</span>
+<span id="cb18-79"><a href="generating-and-plotting-data.html#cb18-79" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="plotting-2d-data" class="section level3 hasAnchor" number="4.2.2">
+<h3>
+<span class="header-section-number">4.2.2</span> Plotting 2d data<a href="generating-and-plotting-data.html#plotting-2d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<p>Here’s a simpler plotting function for 2d data at the particle level.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="generating-and-plotting-data.html#cb19-1" tabindex="-1"></a><span class="co">#' Simple plotter for 2d particle data.</span></span>
+<span id="cb19-2"><a href="generating-and-plotting-data.html#cb19-2" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb19-3"><a href="generating-and-plotting-data.html#cb19-3" tabindex="-1"></a><span class="co">#' @param ylist Data. A list of (|nt| by |dimdat|) matrices</span></span>
+<span id="cb19-4"><a href="generating-and-plotting-data.html#cb19-4" tabindex="-1"></a><span class="co">#' @param countslist Count data.</span></span>
+<span id="cb19-5"><a href="generating-and-plotting-data.html#cb19-5" tabindex="-1"></a><span class="co">#' @param obj flowtrend (or flowmix) object.</span></span>
+<span id="cb19-6"><a href="generating-and-plotting-data.html#cb19-6" tabindex="-1"></a><span class="co">#' @param time Out of 1 through \code{lengthy(list)}, which time point to plot.</span></span>
+<span id="cb19-7"><a href="generating-and-plotting-data.html#cb19-7" tabindex="-1"></a><span class="co">#' @param zero_one_list_censored A list of zeros and 1s marking the censored</span></span>
+<span id="cb19-8"><a href="generating-and-plotting-data.html#cb19-8" tabindex="-1"></a><span class="co">#'   points.</span></span>
+<span id="cb19-9"><a href="generating-and-plotting-data.html#cb19-9" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb19-10"><a href="generating-and-plotting-data.html#cb19-10" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb19-11"><a href="generating-and-plotting-data.html#cb19-11" tabindex="-1"></a><span class="co">#' @return ggplot object.</span></span>
+<span id="cb19-12"><a href="generating-and-plotting-data.html#cb19-12" tabindex="-1"></a><span id="plot_2d">plot_2d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, <span class="at">countslist =</span> <span class="cn">NULL</span>, <span class="at">obj =</span> <span class="cn">NULL</span>, tt, <span class="at">bin =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb19-13"><a href="generating-and-plotting-data.html#cb19-13" tabindex="-1"></a>                    <span class="at">point_color =</span> <span class="st">"blue"</span>, <span class="at">raster_colours =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"blue"</span>),</span>
+<span id="cb19-14"><a href="generating-and-plotting-data.html#cb19-14" tabindex="-1"></a>                    <span class="at">zero_one_list_censored =</span> <span class="cn">NULL</span>){</span>
+<span id="cb19-15"><a href="generating-and-plotting-data.html#cb19-15" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="generating-and-plotting-data.html#cb19-16" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb19-17"><a href="generating-and-plotting-data.html#cb19-17" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj)) <span class="fu">stopifnot</span>(<span class="fu">class</span>(obj) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"flowmix"</span>, <span class="st">"flowtrend"</span>))</span>
+<span id="cb19-18"><a href="generating-and-plotting-data.html#cb19-18" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb19-19"><a href="generating-and-plotting-data.html#cb19-19" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj)) <span class="fu">stopifnot</span>(obj<span class="sc">$</span>dimdat <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb19-20"><a href="generating-and-plotting-data.html#cb19-20" tabindex="-1"></a>  <span class="do">##  if(!bin) stop("2d plotting for particle level data isn't supported.")</span></span>
+<span id="cb19-21"><a href="generating-and-plotting-data.html#cb19-21" tabindex="-1"></a>  </span>
+<span id="cb19-22"><a href="generating-and-plotting-data.html#cb19-22" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="generating-and-plotting-data.html#cb19-23" tabindex="-1"></a>  <span class="do">## Take data from one time point</span></span>
+<span id="cb19-24"><a href="generating-and-plotting-data.html#cb19-24" tabindex="-1"></a>  y <span class="ot">=</span> ylist <span class="sc">%&gt;%</span> .[[tt]]</span>
+<span id="cb19-25"><a href="generating-and-plotting-data.html#cb19-25" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(<span class="fu">colnames</span>(y))){ <span class="fu">colnames</span>(y) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dim"</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) }</span>
+<span id="cb19-26"><a href="generating-and-plotting-data.html#cb19-26" tabindex="-1"></a>  y <span class="ot">=</span> y <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb19-27"><a href="generating-and-plotting-data.html#cb19-27" tabindex="-1"></a></span>
+<span id="cb19-28"><a href="generating-and-plotting-data.html#cb19-28" tabindex="-1"></a></span>
+<span id="cb19-29"><a href="generating-and-plotting-data.html#cb19-29" tabindex="-1"></a>  <span class="do">## Handle counts</span></span>
+<span id="cb19-30"><a href="generating-and-plotting-data.html#cb19-30" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(countslist)){</span>
+<span id="cb19-31"><a href="generating-and-plotting-data.html#cb19-31" tabindex="-1"></a>    counts <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(ylist[[<span class="dv">1</span>]]))</span>
+<span id="cb19-32"><a href="generating-and-plotting-data.html#cb19-32" tabindex="-1"></a>  }</span>
+<span id="cb19-33"><a href="generating-and-plotting-data.html#cb19-33" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(countslist)){</span>
+<span id="cb19-34"><a href="generating-and-plotting-data.html#cb19-34" tabindex="-1"></a>    counts <span class="ot">=</span> countslist[[tt]]</span>
+<span id="cb19-35"><a href="generating-and-plotting-data.html#cb19-35" tabindex="-1"></a>  }</span>
+<span id="cb19-36"><a href="generating-and-plotting-data.html#cb19-36" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="generating-and-plotting-data.html#cb19-37" tabindex="-1"></a>  <span class="do">## Get variable names</span></span>
+<span id="cb19-38"><a href="generating-and-plotting-data.html#cb19-38" tabindex="-1"></a>  varnames <span class="ot">=</span> y <span class="sc">%&gt;%</span> <span class="fu">colnames</span>()</span>
+<span id="cb19-39"><a href="generating-and-plotting-data.html#cb19-39" tabindex="-1"></a>  varname1 <span class="ot">=</span> varnames[<span class="dv">1</span>]</span>
+<span id="cb19-40"><a href="generating-and-plotting-data.html#cb19-40" tabindex="-1"></a>  varname2 <span class="ot">=</span> varnames[<span class="dv">2</span>]</span>
+<span id="cb19-41"><a href="generating-and-plotting-data.html#cb19-41" tabindex="-1"></a></span>
+<span id="cb19-42"><a href="generating-and-plotting-data.html#cb19-42" tabindex="-1"></a>  <span class="do">## Get data from one timepoint</span></span>
+<span id="cb19-43"><a href="generating-and-plotting-data.html#cb19-43" tabindex="-1"></a>  y <span class="ot">=</span> y <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">counts =</span> counts)</span>
+<span id="cb19-44"><a href="generating-and-plotting-data.html#cb19-44" tabindex="-1"></a></span>
+<span id="cb19-45"><a href="generating-and-plotting-data.html#cb19-45" tabindex="-1"></a>  <span class="do">## If a list of 0's and 1's (marking censored points) is provided, plot it</span></span>
+<span id="cb19-46"><a href="generating-and-plotting-data.html#cb19-46" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(zero_one_list_censored)){</span>
+<span id="cb19-47"><a href="generating-and-plotting-data.html#cb19-47" tabindex="-1"></a>    zero_one <span class="ot">=</span> zero_one_list_censored[[tt]]</span>
+<span id="cb19-48"><a href="generating-and-plotting-data.html#cb19-48" tabindex="-1"></a>    y <span class="ot">=</span> y <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">censored =</span> <span class="fu">factor</span>(zero_one, <span class="at">levels =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>)))<span class="do">##c(0,1)))</span></span>
+<span id="cb19-49"><a href="generating-and-plotting-data.html#cb19-49" tabindex="-1"></a>  }</span>
+<span id="cb19-50"><a href="generating-and-plotting-data.html#cb19-50" tabindex="-1"></a></span>
+<span id="cb19-51"><a href="generating-and-plotting-data.html#cb19-51" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>bin){</span>
+<span id="cb19-52"><a href="generating-and-plotting-data.html#cb19-52" tabindex="-1"></a>    p <span class="ot">=</span> y <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb19-53"><a href="generating-and-plotting-data.html#cb19-53" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(varname1), <span class="at">y=</span><span class="sc">!!</span><span class="fu">sym</span>(varname2)), <span class="at">size =</span> <span class="fu">rel</span>(counts),</span>
+<span id="cb19-54"><a href="generating-and-plotting-data.html#cb19-54" tabindex="-1"></a>                 <span class="at">alpha =</span> .<span class="dv">2</span>, <span class="at">col =</span> point_color) <span class="sc">+</span></span>
+<span id="cb19-55"><a href="generating-and-plotting-data.html#cb19-55" tabindex="-1"></a>      <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb19-56"><a href="generating-and-plotting-data.html#cb19-56" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)  <span class="sc">+</span> </span>
+<span id="cb19-57"><a href="generating-and-plotting-data.html#cb19-57" tabindex="-1"></a>      <span class="do">## scale_size()</span></span>
+<span id="cb19-58"><a href="generating-and-plotting-data.html#cb19-58" tabindex="-1"></a>      <span class="fu">scale_size_area</span>()</span>
+<span id="cb19-59"><a href="generating-and-plotting-data.html#cb19-59" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(zero_one_list_censored)){</span>
+<span id="cb19-60"><a href="generating-and-plotting-data.html#cb19-60" tabindex="-1"></a>      p <span class="ot">=</span></span>
+<span id="cb19-61"><a href="generating-and-plotting-data.html#cb19-61" tabindex="-1"></a>        y <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(varname1), </span>
+<span id="cb19-62"><a href="generating-and-plotting-data.html#cb19-62" tabindex="-1"></a>                                        <span class="at">y =</span> <span class="sc">!!</span><span class="fu">sym</span>(varname2), <span class="at">col =</span> zero_one), <span class="at">size =</span> <span class="fu">rel</span>(counts), <span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb19-63"><a href="generating-and-plotting-data.html#cb19-63" tabindex="-1"></a>        <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span> </span>
+<span id="cb19-64"><a href="generating-and-plotting-data.html#cb19-64" tabindex="-1"></a>        <span class="do">## scale_size() +</span></span>
+<span id="cb19-65"><a href="generating-and-plotting-data.html#cb19-65" tabindex="-1"></a>        <span class="fu">scale_size_area</span>() <span class="sc">+</span></span>
+<span id="cb19-66"><a href="generating-and-plotting-data.html#cb19-66" tabindex="-1"></a>        <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"greenyellow"</span>))</span>
+<span id="cb19-67"><a href="generating-and-plotting-data.html#cb19-67" tabindex="-1"></a>    }</span>
+<span id="cb19-68"><a href="generating-and-plotting-data.html#cb19-68" tabindex="-1"></a></span>
+<span id="cb19-69"><a href="generating-and-plotting-data.html#cb19-69" tabindex="-1"></a>  }</span>
+<span id="cb19-70"><a href="generating-and-plotting-data.html#cb19-70" tabindex="-1"></a>  <span class="cf">if</span>(bin){</span>
+<span id="cb19-71"><a href="generating-and-plotting-data.html#cb19-71" tabindex="-1"></a>    p <span class="ot">=</span></span>
+<span id="cb19-72"><a href="generating-and-plotting-data.html#cb19-72" tabindex="-1"></a>      y <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb19-73"><a href="generating-and-plotting-data.html#cb19-73" tabindex="-1"></a>      <span class="fu">geom_raster</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(varname1), <span class="at">y=</span><span class="sc">!!</span><span class="fu">sym</span>(varname2), <span class="at">fill =</span> counts))  <span class="sc">+</span></span>
+<span id="cb19-74"><a href="generating-and-plotting-data.html#cb19-74" tabindex="-1"></a>      <span class="fu">scale_fill_gradientn</span>(<span class="at">guide=</span><span class="st">"none"</span>, <span class="at">colours =</span> raster_colours) </span>
+<span id="cb19-75"><a href="generating-and-plotting-data.html#cb19-75" tabindex="-1"></a>  }</span>
+<span id="cb19-76"><a href="generating-and-plotting-data.html#cb19-76" tabindex="-1"></a></span>
+<span id="cb19-77"><a href="generating-and-plotting-data.html#cb19-77" tabindex="-1"></a>  p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Time="</span>, tt))</span>
+<span id="cb19-78"><a href="generating-and-plotting-data.html#cb19-78" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="generating-and-plotting-data.html#cb19-79" tabindex="-1"></a>  <span class="do">## Adding visualizations of the model |obj|</span></span>
+<span id="cb19-80"><a href="generating-and-plotting-data.html#cb19-80" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(obj)){</span>
+<span id="cb19-81"><a href="generating-and-plotting-data.html#cb19-81" tabindex="-1"></a>    <span class="fu">return</span>(p)</span>
+<span id="cb19-82"><a href="generating-and-plotting-data.html#cb19-82" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb19-83"><a href="generating-and-plotting-data.html#cb19-83" tabindex="-1"></a>    mnlist <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>obj<span class="sc">$</span>numclust, <span class="cf">function</span>(iclust){</span>
+<span id="cb19-84"><a href="generating-and-plotting-data.html#cb19-84" tabindex="-1"></a>      one_mnmat <span class="ot">=</span> obj<span class="sc">$</span>mn[,,iclust]</span>
+<span id="cb19-85"><a href="generating-and-plotting-data.html#cb19-85" tabindex="-1"></a>      <span class="fu">colnames</span>(one_mnmat) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dim"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb19-86"><a href="generating-and-plotting-data.html#cb19-86" tabindex="-1"></a>      one_mnmat <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">cluster =</span> iclust)</span>
+<span id="cb19-87"><a href="generating-and-plotting-data.html#cb19-87" tabindex="-1"></a>    })</span>
+<span id="cb19-88"><a href="generating-and-plotting-data.html#cb19-88" tabindex="-1"></a>    mnmat <span class="ot">=</span> <span class="fu">do.call</span>(rbind, mnlist)</span>
+<span id="cb19-89"><a href="generating-and-plotting-data.html#cb19-89" tabindex="-1"></a></span>
+<span id="cb19-90"><a href="generating-and-plotting-data.html#cb19-90" tabindex="-1"></a>    mn_colours <span class="ot">=</span> <span class="fu">rep</span>(<span class="st">"red"</span>, obj<span class="sc">$</span>numclust)</span>
+<span id="cb19-91"><a href="generating-and-plotting-data.html#cb19-91" tabindex="-1"></a>    <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>obj<span class="sc">$</span>numclust){</span>
+<span id="cb19-92"><a href="generating-and-plotting-data.html#cb19-92" tabindex="-1"></a></span>
+<span id="cb19-93"><a href="generating-and-plotting-data.html#cb19-93" tabindex="-1"></a>      <span class="do">## Add ellipse</span></span>
+<span id="cb19-94"><a href="generating-and-plotting-data.html#cb19-94" tabindex="-1"></a>      el <span class="ot">=</span> ellipse<span class="sc">::</span><span class="fu">ellipse</span>(<span class="at">x =</span> obj<span class="sc">$</span>sigma[iclust,,],</span>
+<span id="cb19-95"><a href="generating-and-plotting-data.html#cb19-95" tabindex="-1"></a>                            <span class="at">centre =</span> obj<span class="sc">$</span>mn[tt,,iclust]) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb19-96"><a href="generating-and-plotting-data.html#cb19-96" tabindex="-1"></a>      p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">data =</span> el,</span>
+<span id="cb19-97"><a href="generating-and-plotting-data.html#cb19-97" tabindex="-1"></a>                        <span class="at">colour =</span> mn_colours[iclust], <span class="at">lty =</span> <span class="dv">2</span>,</span>
+<span id="cb19-98"><a href="generating-and-plotting-data.html#cb19-98" tabindex="-1"></a>                        <span class="at">linewidth =</span> <span class="fu">pmin</span>(obj<span class="sc">$</span>prob[tt,iclust] <span class="sc">*</span> <span class="dv">8</span>, <span class="fl">0.8</span>))</span>
+<span id="cb19-99"><a href="generating-and-plotting-data.html#cb19-99" tabindex="-1"></a></span>
+<span id="cb19-100"><a href="generating-and-plotting-data.html#cb19-100" tabindex="-1"></a>      <span class="do">## Add mean</span></span>
+<span id="cb19-101"><a href="generating-and-plotting-data.html#cb19-101" tabindex="-1"></a>      p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim1, <span class="at">y =</span> dim2),</span>
+<span id="cb19-102"><a href="generating-and-plotting-data.html#cb19-102" tabindex="-1"></a>                         <span class="at">data =</span> mnmat <span class="sc">%&gt;%</span> <span class="fu">subset</span>(cluster <span class="sc">==</span> iclust) <span class="sc">%&gt;%</span> .[tt,],</span>
+<span id="cb19-103"><a href="generating-and-plotting-data.html#cb19-103" tabindex="-1"></a>                         <span class="at">colour =</span> mn_colours[iclust],</span>
+<span id="cb19-104"><a href="generating-and-plotting-data.html#cb19-104" tabindex="-1"></a>                         <span class="do">## size = rel(3))</span></span>
+<span id="cb19-105"><a href="generating-and-plotting-data.html#cb19-105" tabindex="-1"></a>                         <span class="at">size =</span> obj<span class="sc">$</span>prob[tt,iclust] <span class="sc">*</span> <span class="dv">10</span>)</span>
+<span id="cb19-106"><a href="generating-and-plotting-data.html#cb19-106" tabindex="-1"></a>    }</span>
+<span id="cb19-107"><a href="generating-and-plotting-data.html#cb19-107" tabindex="-1"></a>  }</span>
+<span id="cb19-108"><a href="generating-and-plotting-data.html#cb19-108" tabindex="-1"></a>  <span class="fu">return</span>(p)</span>
+<span id="cb19-109"><a href="generating-and-plotting-data.html#cb19-109" tabindex="-1"></a>}</span>
+<span id="cb19-110"><a href="generating-and-plotting-data.html#cb19-110" tabindex="-1"></a></span>
+<span id="cb19-111"><a href="generating-and-plotting-data.html#cb19-111" tabindex="-1"></a></span>
+<span id="cb19-112"><a href="generating-and-plotting-data.html#cb19-112" tabindex="-1"></a></span>
+<span id="cb19-113"><a href="generating-and-plotting-data.html#cb19-113" tabindex="-1"></a></span>
+<span id="cb19-114"><a href="generating-and-plotting-data.html#cb19-114" tabindex="-1"></a><span class="do">## This is from the many-cruises 02-helpers.R file; come back to this.</span></span>
+<span id="cb19-115"><a href="generating-and-plotting-data.html#cb19-115" tabindex="-1"></a><span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb19-116"><a href="generating-and-plotting-data.html#cb19-116" tabindex="-1"></a>  p <span class="ot">=</span> datobj_2d <span class="sc">%&gt;%</span></span>
+<span id="cb19-117"><a href="generating-and-plotting-data.html#cb19-117" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb19-118"><a href="generating-and-plotting-data.html#cb19-118" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb19-119"><a href="generating-and-plotting-data.html#cb19-119" tabindex="-1"></a>    <span class="fu">geom_raster</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(varname1), <span class="at">y=</span><span class="sc">!!</span><span class="fu">sym</span>(varname2), <span class="at">fill =</span> counts)) <span class="sc">+</span></span>
+<span id="cb19-120"><a href="generating-and-plotting-data.html#cb19-120" tabindex="-1"></a>    <span class="fu">scale_fill_gradientn</span>(<span class="at">colours =</span> colours, <span class="at">guide=</span><span class="st">"colorbar"</span>)<span class="sc">+</span></span>
+<span id="cb19-121"><a href="generating-and-plotting-data.html#cb19-121" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">8</span>)) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb19-122"><a href="generating-and-plotting-data.html#cb19-122" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-123"><a href="generating-and-plotting-data.html#cb19-123" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s try it out.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="generating-and-plotting-data.html#cb20-1" tabindex="-1"></a>datobj <span class="ot">=</span> <a href="generating-and-plotting-data.html#gendat_2d">gendat_2d</a>(<span class="dv">2</span>, <span class="fu">c</span>(<span class="dv">1000</span>,<span class="dv">1000</span>))</span>
+<span id="cb20-2"><a href="generating-and-plotting-data.html#cb20-2" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(datobj<span class="sc">$</span>ylist, <span class="at">tt=</span><span class="dv">1</span>, <span class="at">bin =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/plot-2d-example-1.png" width="480"></p>
+</div>
+</div>
+<div id="d-data-2" class="section level2 hasAnchor" number="4.3">
+<h2>
+<span class="header-section-number">4.3</span> 3d data<a href="generating-and-plotting-data.html#d-data-2" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>Given 3d data <code>ylist</code> and an estimated flowtrend model object <code>obj</code>, we want to
+plot both in three two-dimensional plot. <code><a href="generating-and-plotting-data.html#plot_3d">plot_3d</a>()</code> lets you do this.</p>
+<div id="plotting-3d-data" class="section level3 hasAnchor" number="4.3.1">
+<h3>
+<span class="header-section-number">4.3.1</span> Plotting 3d data<a href="generating-and-plotting-data.html#plotting-3d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<p>First, here’s a plotting helper.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="generating-and-plotting-data.html#cb21-1" tabindex="-1"></a><span class="co">#' Combine list of ggplots</span></span>
+<span id="cb21-2"><a href="generating-and-plotting-data.html#cb21-2" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb21-3"><a href="generating-and-plotting-data.html#cb21-3" tabindex="-1"></a><span id="my_mfrow">my_mfrow</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(glist, <span class="at">ncol =</span> <span class="cn">NULL</span>, <span class="at">nrow =</span> <span class="cn">NULL</span>){</span>
+<span id="cb21-4"><a href="generating-and-plotting-data.html#cb21-4" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(ncol)) ncol <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb21-5"><a href="generating-and-plotting-data.html#cb21-5" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(nrow)) ncol <span class="ot">=</span> <span class="dv">3</span></span>
+<span id="cb21-6"><a href="generating-and-plotting-data.html#cb21-6" tabindex="-1"></a>  <span class="fu">do.call</span>(ggpubr<span class="sc">::</span>ggarrange, <span class="fu">c</span>(glist, <span class="at">ncol=</span>ncol, <span class="at">nrow=</span>nrow))</span>
+<span id="cb21-7"><a href="generating-and-plotting-data.html#cb21-7" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="generating-and-plotting-data.html#cb22-1" tabindex="-1"></a><span class="co">#' Makes three 2-dimensional plots of the 3d data</span></span>
+<span id="cb22-2"><a href="generating-and-plotting-data.html#cb22-2" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb22-3"><a href="generating-and-plotting-data.html#cb22-3" tabindex="-1"></a><span class="co">#' @param ylist Data. A list of (|nt| by |dimdat|) matrices</span></span>
+<span id="cb22-4"><a href="generating-and-plotting-data.html#cb22-4" tabindex="-1"></a><span class="co">#' @param countslist Count data.</span></span>
+<span id="cb22-5"><a href="generating-and-plotting-data.html#cb22-5" tabindex="-1"></a><span class="co">#' @param obj flowmix or flowtrend object</span></span>
+<span id="cb22-6"><a href="generating-and-plotting-data.html#cb22-6" tabindex="-1"></a><span class="co">#' @param tt Time point</span></span>
+<span id="cb22-7"><a href="generating-and-plotting-data.html#cb22-7" tabindex="-1"></a><span class="co">#' @param return_list_of_plots If TRUE, return the list of three plots instead</span></span>
+<span id="cb22-8"><a href="generating-and-plotting-data.html#cb22-8" tabindex="-1"></a><span class="co">#'   of the combined plot</span></span>
+<span id="cb22-9"><a href="generating-and-plotting-data.html#cb22-9" tabindex="-1"></a><span class="co">#' @param zero_one_list_censored A list of zeros and 1s marking the censored</span></span>
+<span id="cb22-10"><a href="generating-and-plotting-data.html#cb22-10" tabindex="-1"></a><span class="co">#'   points.</span></span>
+<span id="cb22-11"><a href="generating-and-plotting-data.html#cb22-11" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb22-12"><a href="generating-and-plotting-data.html#cb22-12" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb22-13"><a href="generating-and-plotting-data.html#cb22-13" tabindex="-1"></a><span class="co">#' @return</span></span>
+<span id="cb22-14"><a href="generating-and-plotting-data.html#cb22-14" tabindex="-1"></a><span class="co">#'   </span></span>
+<span id="cb22-15"><a href="generating-and-plotting-data.html#cb22-15" tabindex="-1"></a><span id="plot_3d">plot_3d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(ylist, <span class="at">obj =</span> <span class="cn">NULL</span>, tt, <span class="at">countslist =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-16"><a href="generating-and-plotting-data.html#cb22-16" tabindex="-1"></a>                    <span class="at">mn_colours =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-17"><a href="generating-and-plotting-data.html#cb22-17" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-18"><a href="generating-and-plotting-data.html#cb22-18" tabindex="-1"></a>                    <span class="at">bin =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb22-19"><a href="generating-and-plotting-data.html#cb22-19" tabindex="-1"></a>                    <span class="at">plot_title =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-20"><a href="generating-and-plotting-data.html#cb22-20" tabindex="-1"></a>                    <span class="at">return_list_of_plots =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb22-21"><a href="generating-and-plotting-data.html#cb22-21" tabindex="-1"></a>                    <span class="at">zero_one_list_censored =</span> <span class="cn">NULL</span>){</span>
+<span id="cb22-22"><a href="generating-and-plotting-data.html#cb22-22" tabindex="-1"></a></span>
+<span id="cb22-23"><a href="generating-and-plotting-data.html#cb22-23" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb22-24"><a href="generating-and-plotting-data.html#cb22-24" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj)) <span class="fu">stopifnot</span>(<span class="fu">class</span>(obj) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"flowmix"</span>, <span class="st">"flowtrend"</span>))</span>
+<span id="cb22-25"><a href="generating-and-plotting-data.html#cb22-25" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">ncol</span>(ylist[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">3</span>)</span>
+<span id="cb22-26"><a href="generating-and-plotting-data.html#cb22-26" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(labels)) assertthat<span class="sc">::</span><span class="fu">assert_that</span>(<span class="fu">length</span>(labels) <span class="sc">==</span> obj<span class="sc">$</span>numclust)</span>
+<span id="cb22-27"><a href="generating-and-plotting-data.html#cb22-27" tabindex="-1"></a><span class="do">##  if(!bin) stop("This function is only for binned 3d data!")</span></span>
+<span id="cb22-28"><a href="generating-and-plotting-data.html#cb22-28" tabindex="-1"></a></span>
+<span id="cb22-29"><a href="generating-and-plotting-data.html#cb22-29" tabindex="-1"></a>  <span class="do">## Extract data</span></span>
+<span id="cb22-30"><a href="generating-and-plotting-data.html#cb22-30" tabindex="-1"></a>  <span class="do">## y = ylist[[tt]][,dims]</span></span>
+<span id="cb22-31"><a href="generating-and-plotting-data.html#cb22-31" tabindex="-1"></a>  labs <span class="ot">=</span> <span class="fu">colnames</span>(ylist[[<span class="dv">1</span>]])</span>
+<span id="cb22-32"><a href="generating-and-plotting-data.html#cb22-32" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(labs))  labs <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dim"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb22-33"><a href="generating-and-plotting-data.html#cb22-33" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.null</span>(countslist)){</span>
+<span id="cb22-34"><a href="generating-and-plotting-data.html#cb22-34" tabindex="-1"></a>    counts <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(ylist[[tt]]))</span>
+<span id="cb22-35"><a href="generating-and-plotting-data.html#cb22-35" tabindex="-1"></a>  }</span>
+<span id="cb22-36"><a href="generating-and-plotting-data.html#cb22-36" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(countslist)){</span>
+<span id="cb22-37"><a href="generating-and-plotting-data.html#cb22-37" tabindex="-1"></a>    counts <span class="ot">=</span> countslist[[tt]]</span>
+<span id="cb22-38"><a href="generating-and-plotting-data.html#cb22-38" tabindex="-1"></a>  }</span>
+<span id="cb22-39"><a href="generating-and-plotting-data.html#cb22-39" tabindex="-1"></a></span>
+<span id="cb22-40"><a href="generating-and-plotting-data.html#cb22-40" tabindex="-1"></a></span>
+<span id="cb22-41"><a href="generating-and-plotting-data.html#cb22-41" tabindex="-1"></a>  <span class="do">## Aggregate counts into the two dimensions</span></span>
+<span id="cb22-42"><a href="generating-and-plotting-data.html#cb22-42" tabindex="-1"></a>  y2d_list <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb22-43"><a href="generating-and-plotting-data.html#cb22-43" tabindex="-1"></a>  counts2d_list <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb22-44"><a href="generating-and-plotting-data.html#cb22-44" tabindex="-1"></a>  <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb22-45"><a href="generating-and-plotting-data.html#cb22-45" tabindex="-1"></a>    dims <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>))[[ii]]</span>
+<span id="cb22-46"><a href="generating-and-plotting-data.html#cb22-46" tabindex="-1"></a>    <span class="cf">if</span>(bin){</span>
+<span id="cb22-47"><a href="generating-and-plotting-data.html#cb22-47" tabindex="-1"></a>      yy <span class="ot">=</span> flowmix<span class="sc">::</span><span class="fu">collapse_3d_to_2d</span>(ylist[[tt]], counts, dims)</span>
+<span id="cb22-48"><a href="generating-and-plotting-data.html#cb22-48" tabindex="-1"></a>      y2d <span class="ot">=</span> yy[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb22-49"><a href="generating-and-plotting-data.html#cb22-49" tabindex="-1"></a>      <span class="fu">colnames</span>(y2d) <span class="ot">=</span> labs[dims]</span>
+<span id="cb22-50"><a href="generating-and-plotting-data.html#cb22-50" tabindex="-1"></a>      one_counts <span class="ot">=</span> yy[,<span class="dv">3</span>]</span>
+<span id="cb22-51"><a href="generating-and-plotting-data.html#cb22-51" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb22-52"><a href="generating-and-plotting-data.html#cb22-52" tabindex="-1"></a>      y2d <span class="ot">=</span> ylist[[tt]][,dims]</span>
+<span id="cb22-53"><a href="generating-and-plotting-data.html#cb22-53" tabindex="-1"></a>      <span class="fu">colnames</span>(y2d) <span class="ot">=</span> labs[dims]</span>
+<span id="cb22-54"><a href="generating-and-plotting-data.html#cb22-54" tabindex="-1"></a>      one_counts <span class="ot">=</span> counts</span>
+<span id="cb22-55"><a href="generating-and-plotting-data.html#cb22-55" tabindex="-1"></a>    }</span>
+<span id="cb22-56"><a href="generating-and-plotting-data.html#cb22-56" tabindex="-1"></a>    y2d_list[[ii]] <span class="ot">=</span> y2d</span>
+<span id="cb22-57"><a href="generating-and-plotting-data.html#cb22-57" tabindex="-1"></a>    counts2d_list[[ii]] <span class="ot">=</span> one_counts</span>
+<span id="cb22-58"><a href="generating-and-plotting-data.html#cb22-58" tabindex="-1"></a>  }</span>
+<span id="cb22-59"><a href="generating-and-plotting-data.html#cb22-59" tabindex="-1"></a>  total_range <span class="ot">=</span> <span class="fu">sapply</span>(counts2d_list, range) <span class="sc">%&gt;%</span> <span class="fu">range</span>()</span>
+<span id="cb22-60"><a href="generating-and-plotting-data.html#cb22-60" tabindex="-1"></a></span>
+<span id="cb22-61"><a href="generating-and-plotting-data.html#cb22-61" tabindex="-1"></a></span>
+<span id="cb22-62"><a href="generating-and-plotting-data.html#cb22-62" tabindex="-1"></a>  <span class="cf">if</span>(bin) zero_one <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb22-63"><a href="generating-and-plotting-data.html#cb22-63" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>bin <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.null</span>(zero_one_list_censored)) zero_one <span class="ot">=</span> <span class="fu">list</span>(zero_one_list_censored[[tt]])</span>
+<span id="cb22-64"><a href="generating-and-plotting-data.html#cb22-64" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>bin <span class="sc">&amp;</span> <span class="fu">is.null</span>(zero_one_list_censored)) zero_one <span class="ot">=</span> <span class="cn">NULL</span> </span>
+<span id="cb22-65"><a href="generating-and-plotting-data.html#cb22-65" tabindex="-1"></a></span>
+<span id="cb22-66"><a href="generating-and-plotting-data.html#cb22-66" tabindex="-1"></a>  <span class="do">## Create three 2d plots</span></span>
+<span id="cb22-67"><a href="generating-and-plotting-data.html#cb22-67" tabindex="-1"></a>  plotlist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb22-68"><a href="generating-and-plotting-data.html#cb22-68" tabindex="-1"></a>  <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb22-69"><a href="generating-and-plotting-data.html#cb22-69" tabindex="-1"></a>    dims <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), <span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>))[[ii]]</span>
+<span id="cb22-70"><a href="generating-and-plotting-data.html#cb22-70" tabindex="-1"></a></span>
+<span id="cb22-71"><a href="generating-and-plotting-data.html#cb22-71" tabindex="-1"></a>    <span class="do">## Make data plot </span></span>
+<span id="cb22-72"><a href="generating-and-plotting-data.html#cb22-72" tabindex="-1"></a>    <span class="do">##one_countslist = (if(!is.null(countslist)) list(counts2d_list[[ii]]) else NULL)</span></span>
+<span id="cb22-73"><a href="generating-and-plotting-data.html#cb22-73" tabindex="-1"></a>    p <span class="ot">=</span> <a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(<span class="fu">list</span>(y2d_list[[ii]]),</span>
+<span id="cb22-74"><a href="generating-and-plotting-data.html#cb22-74" tabindex="-1"></a>                           <span class="fu">list</span>(counts2d_list[[ii]]), <span class="at">obj =</span> <span class="cn">NULL</span>, <span class="at">tt =</span> <span class="dv">1</span>, <span class="at">bin =</span> bin,</span>
+<span id="cb22-75"><a href="generating-and-plotting-data.html#cb22-75" tabindex="-1"></a>                           <span class="at">zero_one_list_censored =</span> zero_one)</span>
+<span id="cb22-76"><a href="generating-and-plotting-data.html#cb22-76" tabindex="-1"></a>    <span class="cf">if</span>(bin){</span>
+<span id="cb22-77"><a href="generating-and-plotting-data.html#cb22-77" tabindex="-1"></a>      p<span class="sc">$</span>scales<span class="sc">$</span>scales <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb22-78"><a href="generating-and-plotting-data.html#cb22-78" tabindex="-1"></a>      p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">scale_fill_gradientn</span>(</span>
+<span id="cb22-79"><a href="generating-and-plotting-data.html#cb22-79" tabindex="-1"></a>                  <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"blue"</span>, <span class="st">"yellow"</span>), <span class="at">limits =</span> total_range,</span>
+<span id="cb22-80"><a href="generating-and-plotting-data.html#cb22-80" tabindex="-1"></a>                  <span class="at">guide =</span> <span class="st">"none"</span>)</span>
+<span id="cb22-81"><a href="generating-and-plotting-data.html#cb22-81" tabindex="-1"></a>    }</span>
+<span id="cb22-82"><a href="generating-and-plotting-data.html#cb22-82" tabindex="-1"></a></span>
+<span id="cb22-83"><a href="generating-and-plotting-data.html#cb22-83" tabindex="-1"></a>    <span class="do">## Adding visualizations of the model |obj| at time tt</span></span>
+<span id="cb22-84"><a href="generating-and-plotting-data.html#cb22-84" tabindex="-1"></a>    <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(obj)){</span>
+<span id="cb22-85"><a href="generating-and-plotting-data.html#cb22-85" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">is.null</span>(mn_colours)){</span>
+<span id="cb22-86"><a href="generating-and-plotting-data.html#cb22-86" tabindex="-1"></a>        mn_colours <span class="ot">=</span> <span class="fu">rep</span>(<span class="st">"red"</span>, obj<span class="sc">$</span>numclust)</span>
+<span id="cb22-87"><a href="generating-and-plotting-data.html#cb22-87" tabindex="-1"></a>      }</span>
+<span id="cb22-88"><a href="generating-and-plotting-data.html#cb22-88" tabindex="-1"></a>      </span>
+<span id="cb22-89"><a href="generating-and-plotting-data.html#cb22-89" tabindex="-1"></a>      <span class="do">## Make data matrix</span></span>
+<span id="cb22-90"><a href="generating-and-plotting-data.html#cb22-90" tabindex="-1"></a>      mnlist <span class="ot">=</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>obj<span class="sc">$</span>numclust, <span class="cf">function</span>(iclust){</span>
+<span id="cb22-91"><a href="generating-and-plotting-data.html#cb22-91" tabindex="-1"></a>        one_mnmat <span class="ot">=</span> obj<span class="sc">$</span>mn[tt,dims,iclust] <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb22-92"><a href="generating-and-plotting-data.html#cb22-92" tabindex="-1"></a>        <span class="fu">colnames</span>(one_mnmat) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dim"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb22-93"><a href="generating-and-plotting-data.html#cb22-93" tabindex="-1"></a>        one_mnmat <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">cluster =</span> iclust)</span>
+<span id="cb22-94"><a href="generating-and-plotting-data.html#cb22-94" tabindex="-1"></a>      })</span>
+<span id="cb22-95"><a href="generating-and-plotting-data.html#cb22-95" tabindex="-1"></a>      mnmat <span class="ot">=</span> <span class="fu">do.call</span>(rbind, mnlist)</span>
+<span id="cb22-96"><a href="generating-and-plotting-data.html#cb22-96" tabindex="-1"></a></span>
+<span id="cb22-97"><a href="generating-and-plotting-data.html#cb22-97" tabindex="-1"></a>      <span class="cf">for</span>(iclust <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>obj<span class="sc">$</span>numclust){</span>
+<span id="cb22-98"><a href="generating-and-plotting-data.html#cb22-98" tabindex="-1"></a>        </span>
+<span id="cb22-99"><a href="generating-and-plotting-data.html#cb22-99" tabindex="-1"></a>        <span class="do">## Add ellipse</span></span>
+<span id="cb22-100"><a href="generating-and-plotting-data.html#cb22-100" tabindex="-1"></a>        el <span class="ot">=</span> ellipse<span class="sc">::</span><span class="fu">ellipse</span>(<span class="at">x =</span> obj<span class="sc">$</span>sigma[iclust,dims,dims],</span>
+<span id="cb22-101"><a href="generating-and-plotting-data.html#cb22-101" tabindex="-1"></a>                              <span class="at">centre =</span> obj<span class="sc">$</span>mn[tt,dims,iclust]) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb22-102"><a href="generating-and-plotting-data.html#cb22-102" tabindex="-1"></a>        p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">data =</span> el,</span>
+<span id="cb22-103"><a href="generating-and-plotting-data.html#cb22-103" tabindex="-1"></a>                          <span class="at">colour =</span> mn_colours[iclust], <span class="at">lty =</span> <span class="dv">2</span>,</span>
+<span id="cb22-104"><a href="generating-and-plotting-data.html#cb22-104" tabindex="-1"></a>                          <span class="at">linewidth =</span> <span class="fu">pmin</span>(obj<span class="sc">$</span>prob[tt,iclust] <span class="sc">*</span> <span class="dv">8</span>, <span class="fl">0.8</span>))</span>
+<span id="cb22-105"><a href="generating-and-plotting-data.html#cb22-105" tabindex="-1"></a>        </span>
+<span id="cb22-106"><a href="generating-and-plotting-data.html#cb22-106" tabindex="-1"></a>        <span class="do">## Add mean</span></span>
+<span id="cb22-107"><a href="generating-and-plotting-data.html#cb22-107" tabindex="-1"></a>        p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim1, <span class="at">y =</span> dim2),</span>
+<span id="cb22-108"><a href="generating-and-plotting-data.html#cb22-108" tabindex="-1"></a>                           <span class="at">data =</span> mnmat <span class="sc">%&gt;%</span> <span class="fu">subset</span>(cluster <span class="sc">==</span> iclust),</span>
+<span id="cb22-109"><a href="generating-and-plotting-data.html#cb22-109" tabindex="-1"></a>                           <span class="at">colour =</span> mn_colours[iclust],</span>
+<span id="cb22-110"><a href="generating-and-plotting-data.html#cb22-110" tabindex="-1"></a>                           <span class="at">size =</span> obj<span class="sc">$</span>prob[tt,iclust] <span class="sc">*</span> <span class="dv">10</span>)</span>
+<span id="cb22-111"><a href="generating-and-plotting-data.html#cb22-111" tabindex="-1"></a></span>
+<span id="cb22-112"><a href="generating-and-plotting-data.html#cb22-112" tabindex="-1"></a>        <span class="do">## Add cluster number as a label</span></span>
+<span id="cb22-113"><a href="generating-and-plotting-data.html#cb22-113" tabindex="-1"></a>        cex <span class="ot">=</span> <span class="fu">rel</span>(<span class="dv">3</span>)</span>
+<span id="cb22-114"><a href="generating-and-plotting-data.html#cb22-114" tabindex="-1"></a>        fac <span class="ot">=</span> <span class="dv">10</span></span>
+<span id="cb22-115"><a href="generating-and-plotting-data.html#cb22-115" tabindex="-1"></a>        <span class="cf">if</span>(<span class="fu">is.null</span>(labels)){</span>
+<span id="cb22-116"><a href="generating-and-plotting-data.html#cb22-116" tabindex="-1"></a>          labels <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>(obj<span class="sc">$</span>numclust)</span>
+<span id="cb22-117"><a href="generating-and-plotting-data.html#cb22-117" tabindex="-1"></a>        }</span>
+<span id="cb22-118"><a href="generating-and-plotting-data.html#cb22-118" tabindex="-1"></a>        dt <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">dim1 =</span> mnmat[,<span class="dv">1</span>], <span class="at">dim2 =</span> mnmat[,<span class="dv">2</span>], <span class="at">prob =</span> obj<span class="sc">$</span>prob[tt,] <span class="sc">*</span> fac)</span>
+<span id="cb22-119"><a href="generating-and-plotting-data.html#cb22-119" tabindex="-1"></a>        p <span class="ot">=</span> p <span class="sc">+</span> ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">x =</span> dim1, <span class="at">y =</span> dim2, <span class="at">label =</span> labels,</span>
+<span id="cb22-120"><a href="generating-and-plotting-data.html#cb22-120" tabindex="-1"></a>                                             <span class="at">point.size =</span> <span class="fu">sqrt</span>(prob)),</span>
+<span id="cb22-121"><a href="generating-and-plotting-data.html#cb22-121" tabindex="-1"></a>                                         <span class="at">col =</span> mn_colours,</span>
+<span id="cb22-122"><a href="generating-and-plotting-data.html#cb22-122" tabindex="-1"></a>                                         <span class="at">cex =</span> cex,</span>
+<span id="cb22-123"><a href="generating-and-plotting-data.html#cb22-123" tabindex="-1"></a>                                         <span class="at">bg.color =</span> <span class="st">"white"</span>,</span>
+<span id="cb22-124"><a href="generating-and-plotting-data.html#cb22-124" tabindex="-1"></a>                                         <span class="at">bg.r =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-125"><a href="generating-and-plotting-data.html#cb22-125" tabindex="-1"></a>                                         <span class="at">fontface =</span> <span class="st">"bold"</span>,</span>
+<span id="cb22-126"><a href="generating-and-plotting-data.html#cb22-126" tabindex="-1"></a>                                         <span class="at">force_pull   =</span> <span class="dv">5</span>, <span class="co"># do not pull toward data points</span></span>
+<span id="cb22-127"><a href="generating-and-plotting-data.html#cb22-127" tabindex="-1"></a>                                         <span class="do">## data = mnmat,</span></span>
+<span id="cb22-128"><a href="generating-and-plotting-data.html#cb22-128" tabindex="-1"></a>                                         <span class="at">data =</span> dt,</span>
+<span id="cb22-129"><a href="generating-and-plotting-data.html#cb22-129" tabindex="-1"></a>                                         <span class="at">seed =</span> <span class="dv">1</span>)</span>
+<span id="cb22-130"><a href="generating-and-plotting-data.html#cb22-130" tabindex="-1"></a></span>
+<span id="cb22-131"><a href="generating-and-plotting-data.html#cb22-131" tabindex="-1"></a>      }</span>
+<span id="cb22-132"><a href="generating-and-plotting-data.html#cb22-132" tabindex="-1"></a>    }</span>
+<span id="cb22-133"><a href="generating-and-plotting-data.html#cb22-133" tabindex="-1"></a></span>
+<span id="cb22-134"><a href="generating-and-plotting-data.html#cb22-134" tabindex="-1"></a>    <span class="do">## Format a bit more and save</span></span>
+<span id="cb22-135"><a href="generating-and-plotting-data.html#cb22-135" tabindex="-1"></a>    <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb22-136"><a href="generating-and-plotting-data.html#cb22-136" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">is.null</span>(plot_title)) plot_title <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"Time="</span>, tt)</span>
+<span id="cb22-137"><a href="generating-and-plotting-data.html#cb22-137" tabindex="-1"></a>      p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">ggtitle</span>(plot_title)</span>
+<span id="cb22-138"><a href="generating-and-plotting-data.html#cb22-138" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb22-139"><a href="generating-and-plotting-data.html#cb22-139" tabindex="-1"></a>      p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">""</span>)</span>
+<span id="cb22-140"><a href="generating-and-plotting-data.html#cb22-140" tabindex="-1"></a>    }</span>
+<span id="cb22-141"><a href="generating-and-plotting-data.html#cb22-141" tabindex="-1"></a>    p <span class="ot">=</span> p <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) </span>
+<span id="cb22-142"><a href="generating-and-plotting-data.html#cb22-142" tabindex="-1"></a>    plotlist[[ii]] <span class="ot">=</span> p</span>
+<span id="cb22-143"><a href="generating-and-plotting-data.html#cb22-143" tabindex="-1"></a>  }</span>
+<span id="cb22-144"><a href="generating-and-plotting-data.html#cb22-144" tabindex="-1"></a></span>
+<span id="cb22-145"><a href="generating-and-plotting-data.html#cb22-145" tabindex="-1"></a>  p_combined <span class="ot">=</span> <a href="generating-and-plotting-data.html#my_mfrow">my_mfrow</a>(plotlist)</span>
+<span id="cb22-146"><a href="generating-and-plotting-data.html#cb22-146" tabindex="-1"></a></span>
+<span id="cb22-147"><a href="generating-and-plotting-data.html#cb22-147" tabindex="-1"></a>  <span class="do">## Return the plots</span></span>
+<span id="cb22-148"><a href="generating-and-plotting-data.html#cb22-148" tabindex="-1"></a>  <span class="cf">if</span>(return_list_of_plots) <span class="fu">return</span>(plotlist)</span>
+<span id="cb22-149"><a href="generating-and-plotting-data.html#cb22-149" tabindex="-1"></a>  <span class="fu">return</span>(p_combined)</span>
+<span id="cb22-150"><a href="generating-and-plotting-data.html#cb22-150" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="generating-3d-data" class="section level3 hasAnchor" number="4.3.2">
+<h3>
+<span class="header-section-number">4.3.2</span> Generating 3d data<a href="generating-and-plotting-data.html#generating-3d-data" class="anchor-section" aria-label="Anchor link to header"></a>
+</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="generating-and-plotting-data.html#cb23-1" tabindex="-1"></a><span class="co">#' Generates some synthetic 3-dimensional data with three clusters. </span></span>
+<span id="cb23-2"><a href="generating-and-plotting-data.html#cb23-2" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb23-3"><a href="generating-and-plotting-data.html#cb23-3" tabindex="-1"></a><span class="co">#' @param TT Number of time points.</span></span>
+<span id="cb23-4"><a href="generating-and-plotting-data.html#cb23-4" tabindex="-1"></a><span class="co">#' @param nt Number of particles at each time.</span></span>
+<span id="cb23-5"><a href="generating-and-plotting-data.html#cb23-5" tabindex="-1"></a><span class="co">#'</span></span>
+<span id="cb23-6"><a href="generating-and-plotting-data.html#cb23-6" tabindex="-1"></a><span class="co">#' @return List containing (1) ylist, (2) mnlist, (3) clusterlist.</span></span>
+<span id="cb23-7"><a href="generating-and-plotting-data.html#cb23-7" tabindex="-1"></a><span class="co">#' @export</span></span>
+<span id="cb23-8"><a href="generating-and-plotting-data.html#cb23-8" tabindex="-1"></a><span id="gendat_3d">gendat_3d</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(TT, ntlist){</span>
+<span id="cb23-9"><a href="generating-and-plotting-data.html#cb23-9" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="generating-and-plotting-data.html#cb23-10" tabindex="-1"></a>  <span class="do">## Basic checks</span></span>
+<span id="cb23-11"><a href="generating-and-plotting-data.html#cb23-11" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(ntlist) <span class="sc">==</span> TT)</span>
+<span id="cb23-12"><a href="generating-and-plotting-data.html#cb23-12" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="generating-and-plotting-data.html#cb23-13" tabindex="-1"></a>  <span class="do">## Make cluster probabilities, by time</span></span>
+<span id="cb23-14"><a href="generating-and-plotting-data.html#cb23-14" tabindex="-1"></a>  cluster_prob1 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="fu">sin</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="sc">/</span><span class="dv">3</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">+</span> (tt<span class="sc">/</span>TT)<span class="sc">*</span><span class="dv">5</span>)</span>
+<span id="cb23-15"><a href="generating-and-plotting-data.html#cb23-15" tabindex="-1"></a>  cluster_prob2 <span class="ot">=</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>TT, <span class="cf">function</span>(tt) <span class="fu">cos</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="sc">/</span><span class="dv">3</span> <span class="sc">+</span> <span class="dv">8</span> <span class="sc">-</span> (tt<span class="sc">/</span>TT)<span class="sc">*</span><span class="dv">5</span>)</span>
+<span id="cb23-16"><a href="generating-and-plotting-data.html#cb23-16" tabindex="-1"></a>  cluster_prob3 <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">3</span>, TT)</span>
+<span id="cb23-17"><a href="generating-and-plotting-data.html#cb23-17" tabindex="-1"></a>  probs <span class="ot">=</span> <span class="fu">cbind</span>(cluster_prob1, cluster_prob2, cluster_prob3)</span>
+<span id="cb23-18"><a href="generating-and-plotting-data.html#cb23-18" tabindex="-1"></a>  probs <span class="ot">=</span> probs<span class="sc">/</span><span class="fu">rowSums</span>(probs)</span>
+<span id="cb23-19"><a href="generating-and-plotting-data.html#cb23-19" tabindex="-1"></a>  <span class="fu">colnames</span>(probs) <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb23-20"><a href="generating-and-plotting-data.html#cb23-20" tabindex="-1"></a>  probs_long <span class="ot">=</span> <span class="fu">as_tibble</span>(probs) <span class="sc">%&gt;%</span></span>
+<span id="cb23-21"><a href="generating-and-plotting-data.html#cb23-21" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb23-22"><a href="generating-and-plotting-data.html#cb23-22" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"prob"</span>)</span>
+<span id="cb23-23"><a href="generating-and-plotting-data.html#cb23-23" tabindex="-1"></a>  probs_long <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>time,<span class="at">y=</span>prob, <span class="at">group=</span>cluster, <span class="at">col=</span>cluster)) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb23-24"><a href="generating-and-plotting-data.html#cb23-24" tabindex="-1"></a></span>
+<span id="cb23-25"><a href="generating-and-plotting-data.html#cb23-25" tabindex="-1"></a>  <span class="do">## Make cluster means, by time</span></span>
+<span id="cb23-26"><a href="generating-and-plotting-data.html#cb23-26" tabindex="-1"></a>  numclust <span class="ot">=</span> <span class="dv">3</span></span>
+<span id="cb23-27"><a href="generating-and-plotting-data.html#cb23-27" tabindex="-1"></a>  dimdat <span class="ot">=</span> <span class="dv">3</span></span>
+<span id="cb23-28"><a href="generating-and-plotting-data.html#cb23-28" tabindex="-1"></a>  <span class="do">## means &lt;- array(NA, dim = c(TT, 3, 2))</span></span>
+<span id="cb23-29"><a href="generating-and-plotting-data.html#cb23-29" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="at">dim =</span> <span class="fu">c</span>(TT, numclust, dimdat))</span>
+<span id="cb23-30"><a href="generating-and-plotting-data.html#cb23-30" tabindex="-1"></a>  <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb23-31"><a href="generating-and-plotting-data.html#cb23-31" tabindex="-1"></a>    <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb23-32"><a href="generating-and-plotting-data.html#cb23-32" tabindex="-1"></a></span>
+<span id="cb23-33"><a href="generating-and-plotting-data.html#cb23-33" tabindex="-1"></a>      <span class="do">## First cluster </span></span>
+<span id="cb23-34"><a href="generating-and-plotting-data.html#cb23-34" tabindex="-1"></a>      means[tt, <span class="dv">1</span>, <span class="dv">1</span>] <span class="ot">=</span> means[tt, <span class="dv">1</span>, <span class="dv">2</span>] <span class="ot">=</span> means[tt, <span class="dv">1</span>, <span class="dv">3</span>] <span class="ot">=</span> tt<span class="sc">/</span>TT <span class="sc">+</span> <span class="fl">0.5</span></span>
+<span id="cb23-35"><a href="generating-and-plotting-data.html#cb23-35" tabindex="-1"></a></span>
+<span id="cb23-36"><a href="generating-and-plotting-data.html#cb23-36" tabindex="-1"></a>      <span class="do">## Second cluster </span></span>
+<span id="cb23-37"><a href="generating-and-plotting-data.html#cb23-37" tabindex="-1"></a>      means[tt, <span class="dv">2</span>, <span class="dv">1</span>]  <span class="ot">=</span> <span class="fu">sin</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="do">##seq(-1, 1, length.out = TT)[tt]*3.1415)</span></span>
+<span id="cb23-38"><a href="generating-and-plotting-data.html#cb23-38" tabindex="-1"></a>      means[tt, <span class="dv">2</span>, <span class="dv">2</span>] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb23-39"><a href="generating-and-plotting-data.html#cb23-39" tabindex="-1"></a>      means[tt, <span class="dv">2</span>, <span class="dv">3</span>] <span class="ot">=</span> <span class="dv">0</span></span>
+<span id="cb23-40"><a href="generating-and-plotting-data.html#cb23-40" tabindex="-1"></a></span>
+<span id="cb23-41"><a href="generating-and-plotting-data.html#cb23-41" tabindex="-1"></a>      <span class="do">## Third cluster</span></span>
+<span id="cb23-42"><a href="generating-and-plotting-data.html#cb23-42" tabindex="-1"></a>      means[tt, <span class="dv">3</span>, <span class="dv">1</span>] <span class="ot">=</span> means[tt, <span class="dv">3</span>, <span class="dv">2</span>] <span class="ot">=</span> means[tt, <span class="dv">3</span>, <span class="dv">3</span>] <span class="ot">=</span></span>
+<span id="cb23-43"><a href="generating-and-plotting-data.html#cb23-43" tabindex="-1"></a>        <span class="sc">-</span><span class="dv">3</span><span class="sc">+</span><span class="fu">cos</span>(tt<span class="sc">/</span><span class="dv">24</span> <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> pi)<span class="do">##seq(-1, 1, length.out = TT)[tt]*6.282)</span></span>
+<span id="cb23-44"><a href="generating-and-plotting-data.html#cb23-44" tabindex="-1"></a>    }</span>
+<span id="cb23-45"><a href="generating-and-plotting-data.html#cb23-45" tabindex="-1"></a>  }</span>
+<span id="cb23-46"><a href="generating-and-plotting-data.html#cb23-46" tabindex="-1"></a>  <span class="fu">dimnames</span>(means)[[<span class="dv">2</span>]]  <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb23-47"><a href="generating-and-plotting-data.html#cb23-47" tabindex="-1"></a>  means_long <span class="ot">=</span> <span class="fu">as_tibble</span>(means) <span class="sc">%&gt;%</span></span>
+<span id="cb23-48"><a href="generating-and-plotting-data.html#cb23-48" tabindex="-1"></a>    <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span></span>
+<span id="cb23-49"><a href="generating-and-plotting-data.html#cb23-49" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="sc">-</span><span class="st">"time"</span>, <span class="at">names_to =</span> <span class="st">"cluster"</span>, <span class="at">values_to =</span> <span class="st">"mean"</span>)</span>
+<span id="cb23-50"><a href="generating-and-plotting-data.html#cb23-50" tabindex="-1"></a>  model <span class="ot">=</span> <span class="fu">full_join</span>(means_long, probs_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"time"</span>, <span class="st">"cluster"</span>))</span>
+<span id="cb23-51"><a href="generating-and-plotting-data.html#cb23-51" tabindex="-1"></a></span>
+<span id="cb23-52"><a href="generating-and-plotting-data.html#cb23-52" tabindex="-1"></a>  ylist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb23-53"><a href="generating-and-plotting-data.html#cb23-53" tabindex="-1"></a>  mulist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb23-54"><a href="generating-and-plotting-data.html#cb23-54" tabindex="-1"></a>  clusterlist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb23-55"><a href="generating-and-plotting-data.html#cb23-55" tabindex="-1"></a>  <span class="cf">for</span>(tt <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>TT){</span>
+<span id="cb23-56"><a href="generating-and-plotting-data.html#cb23-56" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> numclust)</span>
+<span id="cb23-57"><a href="generating-and-plotting-data.html#cb23-57" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> numclust)</span>
+<span id="cb23-58"><a href="generating-and-plotting-data.html#cb23-58" tabindex="-1"></a>    clusters_count <span class="ot">&lt;-</span> <span class="fu">rmultinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> ntlist[tt], <span class="at">prob =</span> probs[tt,])</span>
+<span id="cb23-59"><a href="generating-and-plotting-data.html#cb23-59" tabindex="-1"></a></span>
+<span id="cb23-60"><a href="generating-and-plotting-data.html#cb23-60" tabindex="-1"></a>    <span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>){</span>
+<span id="cb23-61"><a href="generating-and-plotting-data.html#cb23-61" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb23-62"><a href="generating-and-plotting-data.html#cb23-62" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,,drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb23-63"><a href="generating-and-plotting-data.html#cb23-63" tabindex="-1"></a>        Sigma1 <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="fl">0.3</span>, <span class="dv">9</span>), <span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb23-64"><a href="generating-and-plotting-data.html#cb23-64" tabindex="-1"></a>        <span class="fu">diag</span>(Sigma1) <span class="ot">=</span> <span class="fl">0.4</span></span>
+<span id="cb23-65"><a href="generating-and-plotting-data.html#cb23-65" tabindex="-1"></a>        <span class="do">## Sigma1 = matrix(c(0.4, 0.3, 0.3, 0.4), ncol = 2)</span></span>
+<span id="cb23-66"><a href="generating-and-plotting-data.html#cb23-66" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma=</span> Sigma1)) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-67"><a href="generating-and-plotting-data.html#cb23-67" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-68"><a href="generating-and-plotting-data.html#cb23-68" tabindex="-1"></a>      }</span>
+<span id="cb23-69"><a href="generating-and-plotting-data.html#cb23-69" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">2</span>){</span>
+<span id="cb23-70"><a href="generating-and-plotting-data.html#cb23-70" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb23-71"><a href="generating-and-plotting-data.html#cb23-71" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>)))) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-72"><a href="generating-and-plotting-data.html#cb23-72" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-73"><a href="generating-and-plotting-data.html#cb23-73" tabindex="-1"></a>      }</span>
+<span id="cb23-74"><a href="generating-and-plotting-data.html#cb23-74" tabindex="-1"></a>      <span class="cf">if</span>(ii <span class="sc">==</span> <span class="dv">3</span>){</span>
+<span id="cb23-75"><a href="generating-and-plotting-data.html#cb23-75" tabindex="-1"></a>        mn <span class="ot">=</span> means[tt,ii,, drop<span class="ot">=</span><span class="cn">TRUE</span>]</span>
+<span id="cb23-76"><a href="generating-and-plotting-data.html#cb23-76" tabindex="-1"></a>        Y[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn <span class="sc">+</span> MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">1</span>, <span class="at">mu=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> <span class="fu">diag</span>(<span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.35</span>, <span class="fl">0.35</span>)))) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-77"><a href="generating-and-plotting-data.html#cb23-77" tabindex="-1"></a>        mu[[ii]] <span class="ot">&lt;-</span> <span class="fu">replicate</span>(clusters_count[ii,<span class="dv">1</span>], mn) <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span>
+<span id="cb23-78"><a href="generating-and-plotting-data.html#cb23-78" tabindex="-1"></a>      }</span>
+<span id="cb23-79"><a href="generating-and-plotting-data.html#cb23-79" tabindex="-1"></a>    }</span>
+<span id="cb23-80"><a href="generating-and-plotting-data.html#cb23-80" tabindex="-1"></a></span>
+<span id="cb23-81"><a href="generating-and-plotting-data.html#cb23-81" tabindex="-1"></a>    Y <span class="ot">&lt;-</span> Y <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">compact</span>() <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
+<span id="cb23-82"><a href="generating-and-plotting-data.html#cb23-82" tabindex="-1"></a>    mu <span class="ot">&lt;-</span> mu <span class="sc">%&gt;%</span> purrr<span class="sc">::</span><span class="fu">compact</span>() <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
+<span id="cb23-83"><a href="generating-and-plotting-data.html#cb23-83" tabindex="-1"></a>    cluster <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">times =</span> clusters_count)</span>
+<span id="cb23-84"><a href="generating-and-plotting-data.html#cb23-84" tabindex="-1"></a>    <span class="fu">colnames</span>(Y) <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"dim"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb23-85"><a href="generating-and-plotting-data.html#cb23-85" tabindex="-1"></a>    ylist[[tt]] <span class="ot">=</span> Y</span>
+<span id="cb23-86"><a href="generating-and-plotting-data.html#cb23-86" tabindex="-1"></a>    mulist[[tt]] <span class="ot">=</span> mu</span>
+<span id="cb23-87"><a href="generating-and-plotting-data.html#cb23-87" tabindex="-1"></a>    clusterlist[[tt]] <span class="ot">=</span> cluster</span>
+<span id="cb23-88"><a href="generating-and-plotting-data.html#cb23-88" tabindex="-1"></a>  }</span>
+<span id="cb23-89"><a href="generating-and-plotting-data.html#cb23-89" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">ylist =</span> ylist, <span class="at">mulist =</span> mulist,</span>
+<span id="cb23-90"><a href="generating-and-plotting-data.html#cb23-90" tabindex="-1"></a>              <span class="at">clusterlist =</span> clusterlist,</span>
+<span id="cb23-91"><a href="generating-and-plotting-data.html#cb23-91" tabindex="-1"></a>              <span class="at">probs =</span> probs, <span class="at">means =</span> means))</span>
+<span id="cb23-92"><a href="generating-and-plotting-data.html#cb23-92" tabindex="-1"></a>}</span></code></pre></div>
+<p>Now, let’s try using <code>plot_3d</code> on some synthetic data.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="generating-and-plotting-data.html#cb24-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2321</span>)</span>
+<span id="cb24-2"><a href="generating-and-plotting-data.html#cb24-2" tabindex="-1"></a>datobj <span class="ot">=</span> <a href="generating-and-plotting-data.html#gendat_3d">gendat_3d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">30</span>,<span class="dv">100</span>))</span>
+<span id="cb24-3"><a href="generating-and-plotting-data.html#cb24-3" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_3d">plot_3d</a>(<span class="at">ylist =</span> datobj<span class="sc">$</span>ylist, <span class="at">tt =</span> <span class="dv">1</span>, <span class="at">bin =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/plot-3d-test-1.png" width="1440"></p>
+
+</div>
+</div>
+</div>
+            </section>
+</div>
+        </div>
+      </div>
+<a href="package-setup.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="building-the-modelalgorithm.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

@@ -1,12 +1,11 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Locally adaptive ADMM.
+#' Locally adaptive ADMM; wrapper to \code{admm_oneclust()}.
 #'
 #' @param K
 #' @param ...
 #'
 #' @return
-#' @export
 #'
 #' @examples
 la_admm_oneclust <- function(K, ...){
@@ -41,10 +40,6 @@ la_admm_oneclust <- function(K, ...){
   ## Run ADMM repeatedly with (1) double rho, and (2) previous b
   for(kk in 1:K){
     if(kk > 1){
-      ## Z = matrix(0, nrow = TT, ncol = dimdat)
-      ## W = matrix(0, nrow = TT - l , ncol = dimdat)
-      ## uz = matrix(0, nrow = TT, ncol = dimdat)
-      ## uw = matrix(0, nrow = TT - l , ncol = dimdat)
 
       ## These ensure warm starts are true
       args[['mu']] <- mu
@@ -82,16 +77,15 @@ la_admm_oneclust <- function(K, ...){
 
     ## Update some parameters; double the rho value, and update the B matrix
     rho = 2 * args$rho
-    ## tQ = 2 * args$schurB$tQ ## This seems wrong. Delete now.
     mu = res$mu
     Z = res$Z
     W = res$W
     uz = res$uz
     uw = res$uw
-    ## print("args$rho")
-    ## print(args$rho)
   }
-  if(!res$converge)   warning("ADMM didn't converge for one cluster.")
+  if(!res$converge) {
+    ## warning("ADMM didn't converge for one cluster.") ## Disabling this because it's not really something to fix. The only thing change a user would make is to make |rho_init| smaller 
+  }
 
   ## Record how long the admm took; in terms of # iterations.
   res$kk = kk

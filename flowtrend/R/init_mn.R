@@ -52,26 +52,6 @@ init_mn <- function(ylist, numclust, TT, dimdat, countslist = NULL, seed=NULL){
   ## Repeat TT times == flat/constant initial means across time.
   mulist = lapply(1:TT, function(tt){ new_means })
 
-  ## } else {
-
-  ##   TT = length(ylist)
-  ##   ylist_downsampled <- lapply(1:TT, function(tt){
-  ##     y = ylist[[tt]]
-  ##     counts = countslist[[tt]]
-  ##     nsize = pmin(nrow(y) / TT * 30, nrow(y))
-  ##     y[sample(1:nrow(y), size = nsize),, drop=FALSE]
-  ##   })
-
-  ##   ## Combine all the particles
-  ##   yy = do.call(rbind, ylist_downsampled)
-
-  ##   ## Get K new means from these
-  ##   inds = sample(1:nrow(yy), numclust)
-  ##   new_means = yy[inds,, drop=FALSE]
-  ##   mulist = lapply(1:TT, function(tt){ new_means })
-
-  ## }
-
   ## New (T x dimdat x numclust) array is created.
   muarray = array(NA, dim=c(TT, dimdat, numclust))
   for(tt in 1:TT){

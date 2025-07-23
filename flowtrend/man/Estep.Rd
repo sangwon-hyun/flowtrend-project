@@ -19,7 +19,9 @@ Estep(
 \arguments{
 \item{sigma}{covariance}
 
-\item{countslist}{}
+\item{padding}{A small amount of padding to add to the weighted
+densities. Note, a very small value (like 1E-20) should be used, otherwise
+the probabilitistic (soft) gating can be affected quite noticably.}
 }
 \description{
 E step, which updates the "responsibilities", which are posterior membership probabilities of each particle.

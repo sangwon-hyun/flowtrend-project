@@ -8,6 +8,9 @@
 #' @param tt Time point
 #' @param return_list_of_plots If TRUE, return the list of three plots instead
 #'   of the combined plot
+#' @param zero_one_list_censored A list of zeros and 1s marking the censored
+#'   points.
+#' 
 #' @export
 #' @return
 #'   
@@ -16,9 +19,11 @@ plot_3d <- function(ylist, obj = NULL, tt, countslist = NULL,
                     labels = NULL,
                     bin = TRUE,
                     plot_title = NULL,
-                    return_list_of_plots = FALSE){
+                    return_list_of_plots = FALSE,
+                    zero_one_list_censored = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   stopifnot(ncol(ylist[[1]]) == 3)
   if(!is.null(labels)) assertthat::assert_that(length(labels) == obj$numclust)
 ##  if(!bin) stop("This function is only for binned 3d data!")
@@ -55,15 +60,21 @@ plot_3d <- function(ylist, obj = NULL, tt, countslist = NULL,
   }
   total_range = sapply(counts2d_list, range) %>% range()
 
+
+  if(bin) zero_one = NULL
+  if(!bin & !is.null(zero_one_list_censored)) zero_one = list(zero_one_list_censored[[tt]])
+  if(!bin & is.null(zero_one_list_censored)) zero_one = NULL 
+
   ## Create three 2d plots
   plotlist = list()
   for(ii in 1:3){
     dims = list(c(1:2), c(2:3), c(3,1))[[ii]]
 
-    ## Make data plot
+    ## Make data plot 
     ##one_countslist = (if(!is.null(countslist)) list(counts2d_list[[ii]]) else NULL)
-    p = flowtrend::plot_2d(list(y2d_list[[ii]]),
-                           list(counts2d_list[[ii]]), obj = NULL, tt = 1, bin = bin) 
+    p = plot_2d(list(y2d_list[[ii]]),
+                           list(counts2d_list[[ii]]), obj = NULL, tt = 1, bin = bin,
+                           zero_one_list_censored = zero_one)
     if(bin){
       p$scales$scales <- list()
       p = p + scale_fill_gradientn(

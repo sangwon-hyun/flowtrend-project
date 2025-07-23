@@ -9,7 +9,7 @@
 #' @export
 cv_makebest <- function(destin){  
 
-  ## ## Read the meta data (for |nfold|, |cv_gridsize|, |nrestart|, |lambda_means|, |lambda_probs|)
+  ## Read the meta data (for |nfold|, |cv_gridsize|, |nrestart|, |lambda_means|, |lambda_probs|)
   load(file = file.path(destin, 'meta.Rdata'), verbose = FALSE)
   
   ## This loads all the necessary things; just double-checking.

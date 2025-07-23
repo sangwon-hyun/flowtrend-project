@@ -3,8 +3,8 @@
 \name{reorder_kl}
 \alias{reorder_kl}
 \title{Reorder the cluster numbers for a new flowtrend object \code{newres}; the best
-permutation (reordering) is to match the original flowmix object
-\code{origres}.}
+permutation (reordering) is to match the original flowtrend object
+\code{origres}. Also works for flowmix objects.}
 \usage{
 reorder_kl(newres, origres, ylist_particle, fac = 100, verbose = FALSE)
 }
@@ -20,10 +20,10 @@ reorder_kl(newres, origres, ylist_particle, fac = 100, verbose = FALSE)
 \item{verbose}{Loud or not?}
 }
 \value{
-Reordered res
+Reordered flowtrend object.
 }
 \description{
 Reorder the cluster numbers for a new flowtrend object \code{newres}; the best
-permutation (reordering) is to match the original flowmix object
-\code{origres}.
+permutation (reordering) is to match the original flowtrend object
+\code{origres}. Also works for flowmix objects.
 }

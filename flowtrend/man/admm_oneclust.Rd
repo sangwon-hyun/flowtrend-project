@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{admm_oneclust}
 \alias{admm_oneclust}
-\title{One cluster's admm for a fixed step size (rho).}
+\title{One cluster's ADMM for a fixed step size (\code{rho}).}
 \usage{
 admm_oneclust(
   iclust = 1,
@@ -42,6 +42,83 @@ admm_oneclust(
   sigma_eig_by_clust
 )
 }
+\arguments{
+\item{iclust}{}
+
+\item{niter}{}
+
+\item{y}{}
+
+\item{Dl}{}
+
+\item{tDl}{}
+
+\item{Dlp1}{}
+
+\item{l}{Default: NULL}
+
+\item{TT}{}
+
+\item{N}{}
+
+\item{dimdat}{}
+
+\item{maxdev}{}
+
+\item{rho}{}
+
+\item{rhoinit}{Default: rho}
+
+\item{Xinv}{}
+
+\item{schurA}{}
+
+\item{schurB}{}
+
+\item{sigmainv}{}
+
+\item{lambda}{}
+
+\item{resp}{}
+
+\item{resp_sum}{}
+
+\item{ylist}{}
+
+\item{err_rel}{Default: 1e-3}
+
+\item{err_abs}{Default: 0}
+
+\item{zerothresh}{}
+
+\item{mu}{}
+
+\item{z}{}
+
+\item{w}{}
+
+\item{uw}{}
+
+\item{uz}{}
+
+\item{first_iter}{}
+
+\item{em_iter}{}
+
+\item{outer_iter}{}
+
+\item{local_adapt}{}
+
+\item{sigma}{}
+
+\item{sigma_eig_by_clust}{}
+}
+\value{
+A list containing the updated parameters for the cluster.
+}
 \description{
-One cluster's admm for a fixed step size (rho).
+One cluster's ADMM for a fixed step size (\code{rho}).
+}
+\seealso{
+\code{\link{la_admm_oneclust}} which is a wrapper over this function.
 }

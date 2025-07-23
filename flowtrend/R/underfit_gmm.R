@@ -8,16 +8,6 @@
 #' 
 #' @export
 underfit_gmm <- function(ylist, numclust){
-
-  ## ## Tempoerary
-  ## isignal = 0
-  ## isim = 1
-  ## destin = file.path("~/repos/flowtrend/inst/output/1dsim-even/data")
-  ## datobj = readRDS(file = file.path(destin, paste0("isignal-", isignal,"-isim-", isim, "-", "datobj.RDS")) )
-  ## datobj_new = readRDS(file = file.path(destin, paste0("isignal-", isignal,"-isim-", isim, "-", "datobj-new.RDS")) )
-  ## ylist = datobj$ylist_unsorted
-  ## numclust = 2
-  ## ## end of temporary
   
   ## Pool all data
   TT <- length(ylist)
@@ -43,20 +33,8 @@ underfit_gmm <- function(ylist, numclust){
                 time = rep(1:TT, times = nt)) 
   tab_long = tab %>%  pivot_longer(-c("time", "y"), values_to = "cluster",
                                    names_to = "type")
-  ## ## Optional plotting code
-  ## ggplot(tab_long) +
-  ##   geom_point(aes(x=time, y=y, col = cluster), alpha = .5) +
-  ##   facet_grid(cluster~type)
-
-  ## ## We need this to return the same mu, prob, and sigma as before
-  ## mu = obj_flowtrend$mn
-  ## prob = obj_flowtrend$prob
-  ## sigma = obj_flowtrend$sigma
 
   ## That's it! Return the results
-  ## param_mat = matrix(NA, nrow = TT, ncol = 6)
-  ## colnames(param_mat) = c("time", "mn1", "mn2", "prob1", "prob2", "sd1", "sd2")
-  ## param_mat$time = 1:TT
   param_mat = tibble(time=1:TT,
                      mn1 = gmm_pooled$parameters$mean[1],
          mn2 = gmm_pooled$parameters$mean[2],

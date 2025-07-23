@@ -67,7 +67,7 @@ Z_update  <- function(m, Uz, C, rho){
   return(Z)
 }
 
-#' Project /rows/ of matrix |mat| into a ball of size C.
+#' Project rows of matrix \code{mat} into a ball of size \code{C}.
 #' 
 #' @param mat Matrix whose rows will be projected into a C-sized ball.
 #' @param C radius

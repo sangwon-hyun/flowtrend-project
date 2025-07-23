@@ -1,6 +1,47 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' One cluster's admm for a fixed step size (rho).
+#' One cluster's ADMM for a fixed step size (\code{rho}).
+#' 
+#' 
+#' @export
+#' @param iclust 
+#' @param niter 
+#' @param y 
+#' @param Dl 
+#' @param tDl 
+#' @param Dlp1 
+#' @param l Default: NULL
+#' @param TT 
+#' @param N 
+#' @param dimdat 
+#' @param maxdev 
+#' @param rho 
+#' @param rhoinit Default: rho
+#' @param Xinv 
+#' @param schurA 
+#' @param schurB 
+#' @param sigmainv 
+#' @param lambda 
+#' @param resp 
+#' @param resp_sum 
+#' @param ylist 
+#' @param err_rel Default: 1e-3
+#' @param err_abs Default: 0
+#' @param zerothresh 
+#' @param mu 
+#' @param z 
+#' @param w 
+#' @param uw 
+#' @param uz 
+#' @param first_iter 
+#' @param em_iter 
+#' @param outer_iter 
+#' @param local_adapt 
+#' @param sigma 
+#' @param sigma_eig_by_clust 
+#'
+#' @return A list containing the updated parameters for the cluster.
+#' @seealso \code{\link{la_admm_oneclust}} which is a wrapper over this function.
 admm_oneclust <- function(iclust = 1, niter, y,
                           Dl, tDl, Dlp1, l = NULL,
                           TT, N, dimdat, maxdev,
@@ -20,8 +61,6 @@ admm_oneclust <- function(iclust = 1, niter, y,
                           w,
                           uw,
                           uz,
-                          ## warmstart = FALSE,
-                          ## mu.warm = if(!warmstart) NULL,
                           first_iter,## Not used 
                           em_iter,
                           outer_iter,
@@ -38,7 +77,7 @@ admm_oneclust <- function(iclust = 1, niter, y,
 
   ## This doesn't change over iterations
   schurB = myschur(schurB$orig * rhofac) ## In flowmix, this is done on A. Here, it's done on B (in AX + XB + C = 0).
-  TA = schurA$T ##* rhofac
+  TA = schurA$T 
   TB = schurB$T
   UA = schurA$Q
   UB = schurB$Q
@@ -62,13 +101,7 @@ admm_oneclust <- function(iclust = 1, niter, y,
     stopifnot(nrow(mu) == TT)
     stopifnot(ncol(mu) == dimdat)
 
-    ## if(warmstart & iter == 1){
-    ##   print("warmed up mu!")
-    ##   mu = mu.warm
-    ## }
-
     centered_mu = sweep(mu, 2, colMeans(mu)) 
-    ## stopifnot(all(abs(colMeans(centered_mu))<1E-8))
     z <- Z_update(centered_mu, Uz = uz, C = maxdev, rho = rho)
 
     if(any(abs(mu)>1E2)){

@@ -2,14 +2,23 @@
 % Please edit documentation in _main.Rmd.
 \docType{package}
 \name{flowtrend-package}
-\alias{flowtrend}
 \alias{flowtrend-package}
 \title{flowtrend}
 \description{
 This package implements the \code{flowtrend} method for automatic gating of flow cytometry data using trend filtering.
+It was proposed in \url{https://arxiv.org/abs/2504.12287}.  To learn
+more about this package, please visit its website
+\url{https://sangwon-hyun/flowtrend-project}.
 }
 \author{
 \strong{Maintainer}: Sangwon Hyun \email{sangwonh@ucsc.edu}
+
+Authors:
+\itemize{
+  \item Tim Coleman \email{tscoleman226@gmail.com}
+  \item Francois Ribalet \email{ribalet@uw.edu}
+  \item Jacob Bien \email{jbien@usc.edu}
+}
 
 }
 \keyword{internal}

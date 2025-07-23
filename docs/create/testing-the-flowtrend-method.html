@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>8 Testing the flowtrend method | Creating the flowtrend R package</title>
+<meta name="description" content="8 Testing the flowtrend method | Creating the flowtrend R package">
+<meta name="generator" content="bookdown 0.43 and GitBook 2.6.7">
+<meta property="og:title" content="8 Testing the flowtrend method | Creating the flowtrend R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8 Testing the flowtrend method | Creating the flowtrend R package">
+<meta name="author" content="Sangwon Hyun, Tim Coleman, Francois Ribalet, Jacob Bien">
+<meta name="date" content="2025-07-22">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="tuning-lambda.html">
+<link rel="next" href="helpers-for-simulations.html">
+<script src="libs/header-attrs-2.29/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
+</head>
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation"><ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="overview.html">
+<a href="overview.html"><i class="fa fa-check"></i><b>2</b> Overview</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="overview.html"><a href="overview.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="3" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>3</b> Package setup</a></li>
+<li class="chapter" data-level="4" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html"><i class="fa fa-check"></i><b>4</b> Generating and plotting data</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data"><i class="fa fa-check"></i><b>4.1</b> 1d data</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-1d-data"><i class="fa fa-check"></i><b>4.1.1</b> Generating 1d data</a></li>
+<li class="chapter" data-level="4.1.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-1d-data"><i class="fa fa-check"></i><b>4.1.2</b> Plotting 1d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.2" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-1"><i class="fa fa-check"></i><b>4.2</b> 2d data</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-2d-data"><i class="fa fa-check"></i><b>4.2.1</b> Generating 2d data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-2d-data"><i class="fa fa-check"></i><b>4.2.2</b> Plotting 2d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.3" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-2"><i class="fa fa-check"></i><b>4.3</b> 3d data</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-3d-data"><i class="fa fa-check"></i><b>4.3.1</b> Plotting 3d data</a></li>
+<li class="chapter" data-level="4.3.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-3d-data"><i class="fa fa-check"></i><b>4.3.2</b> Generating 3d data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="chapter" data-level="5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html"><i class="fa fa-check"></i><b>5</b> Building the model/algorithm</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#trend-filtering"><i class="fa fa-check"></i><b>5.1</b> Trend filtering</a></li>
+<li class="chapter" data-level="5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#objective-data-log-likelihood"><i class="fa fa-check"></i><b>5.2</b> Objective (data log-likelihood)</a></li>
+<li class="chapter" data-level="5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#initial-parameters-for-em-algorithm"><i class="fa fa-check"></i><b>5.3</b> Initial parameters for EM algorithm</a></li>
+<li class="chapter" data-level="5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#e-step"><i class="fa fa-check"></i><b>5.4</b> E step</a></li>
+<li class="chapter" data-level="5.5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html#m-step"><i class="fa fa-check"></i><b>5.5</b> M step</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-pi"><i class="fa fa-check"></i><b>5.5.1</b> M step for <span class="math inline">\(\pi\)</span></a></li>
+<li class="chapter" data-level="5.5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-sigma"><i class="fa fa-check"></i><b>5.5.2</b> M step for <span class="math inline">\(\Sigma\)</span></a></li>
+<li class="chapter" data-level="5.5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-mu"><i class="fa fa-check"></i><b>5.5.3</b> M step for <span class="math inline">\(\mu\)</span></a></li>
+<li class="chapter" data-level="5.5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#helpers-for-m-step-mu"><i class="fa fa-check"></i><b>5.5.4</b> Helpers for M step (<span class="math inline">\(\mu\)</span>)</a></li>
+<li class="chapter" data-level="5.5.5" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#all-rcpp-functions"><i class="fa fa-check"></i><b>5.5.5</b> All Rcpp functions</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="5.6" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#the-main-flowtrend-function"><i class="fa fa-check"></i><b>5.6</b> The main “flowtrend” function</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="6" data-path="reordering-clusters.html"><a href="reordering-clusters.html"><i class="fa fa-check"></i><b>6</b> Reordering clusters</a></li>
+<li class="chapter" data-level="7" data-path="tuning-lambda.html">
+<a href="tuning-lambda.html"><i class="fa fa-check"></i><b>7</b> Tuning <span class="math inline">\(\lambda\)</span></a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="tuning-lambda.html"><a href="tuning-lambda.html#predicting-and-evaluating-on-new-time-points"><i class="fa fa-check"></i><b>7.1</b> Predicting and evaluating on new time points</a></li>
+<li class="chapter" data-level="7.2" data-path="tuning-lambda.html"><a href="tuning-lambda.html#maximum-lambda_mu-lambda_pi-values-to-test"><i class="fa fa-check"></i><b>7.2</b> Maximum <span class="math inline">\((\lambda_\mu, \lambda_\pi)\)</span> values to test</a></li>
+<li class="chapter" data-level="7.3" data-path="tuning-lambda.html"><a href="tuning-lambda.html#define-cv-data-folds"><i class="fa fa-check"></i><b>7.3</b> Define CV data folds</a></li>
+<li class="chapter" data-level="7.4" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-many-single-jobs"><i class="fa fa-check"></i><b>7.4</b> CV = many single jobs</a></li>
+<li class="chapter" data-level="7.5" data-path="tuning-lambda.html"><a href="tuning-lambda.html#running-cross-validation"><i class="fa fa-check"></i><b>7.5</b> Running cross-validation</a></li>
+<li class="chapter" data-level="7.6" data-path="tuning-lambda.html"><a href="tuning-lambda.html#summarizing-the-output"><i class="fa fa-check"></i><b>7.6</b> Summarizing the output</a></li>
+<li class="chapter" data-level="7.7" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-on-your-own-computer"><i class="fa fa-check"></i><b>7.7</b> CV on your own computer</a></li>
+<li class="chapter" data-level="7.8" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-produces-too-many-files-no-problem"><i class="fa fa-check"></i><b>7.8</b> CV produces too many files? No problem</a></li>
+<li class="chapter" data-level="7.9" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-for-unevenly-spaced-data"><i class="fa fa-check"></i><b>7.9</b> CV for unevenly spaced data</a></li>
+<li class="chapter" data-level="7.10" data-path="tuning-lambda.html"><a href="tuning-lambda.html#documenting-the-package-and-building"><i class="fa fa-check"></i><b>7.10</b> Documenting the package and building</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="8" data-path="testing-the-flowtrend-method.html">
+<a href="testing-the-flowtrend-method.html"><i class="fa fa-check"></i><b>8</b> Testing the flowtrend method</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_1d-example"><i class="fa fa-check"></i><b>8.1</b> 1d example</a></li>
+<li class="chapter" data-level="8.2" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#testing-monotonicity-of-objective-values"><i class="fa fa-check"></i><b>8.2</b> Testing monotonicity of objective values</a></li>
+<li class="chapter" data-level="8.3" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_2d-example"><i class="fa fa-check"></i><b>8.3</b> 2d example</a></li>
+<li class="chapter" data-level="8.4" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#working-with-binned-dataset"><i class="fa fa-check"></i><b>8.4</b> Working with “binned” dataset</a></li>
+<li class="chapter" data-level="8.5" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#unevenly-spaced-inputs-x"><i class="fa fa-check"></i><b>8.5</b> Unevenly spaced inputs (x)</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="9" data-path="helpers-for-simulations.html">
+<a href="helpers-for-simulations.html"><i class="fa fa-check"></i><b>9</b> Helpers for simulations</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#two-alternative-clusterings"><i class="fa fa-check"></i><b>9.1</b> Two alternative clusterings</a></li>
+<li class="chapter" data-level="9.2" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#evaluating-performance-soft-rand-index"><i class="fa fa-check"></i><b>9.2</b> Evaluating performance: soft RAND index</a></li>
+<li class="chapter" data-level="9.3" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#helpers-in-generating-pseudo-real-data"><i class="fa fa-check"></i><b>9.3</b> Helpers in generating pseudo-real data</a></li>
+<li class="chapter" data-level="9.4" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#miscellaneous-helpers"><i class="fa fa-check"></i><b>9.4</b> Miscellaneous helpers</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="10" data-path="documenting-the-package-and-building-1.html"><a href="documenting-the-package-and-building-1.html"><i class="fa fa-check"></i><b>10</b> Documenting the package and building</a></li>
+</ul></nav>
+</div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating the <code>flowtrend</code> R package</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-"><div id="testing-the-flowtrend-method" class="section level1 hasAnchor" number="8">
+<h1>
+<span class="header-section-number">8</span> Testing the flowtrend method<a href="testing-the-flowtrend-method.html#testing-the-flowtrend-method" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
+<div id="id_1d-example" class="section level2 hasAnchor" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> 1d example<a href="testing-the-flowtrend-method.html#id_1d-example" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>First, we’ll generate data.</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="testing-the-flowtrend-method.html#cb150-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb150-2"><a href="testing-the-flowtrend-method.html#cb150-2" tabindex="-1"></a>dt       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">100</span>), <span class="at">offset =</span> <span class="dv">4</span>)</span>
+<span id="cb150-3"><a href="testing-the-flowtrend-method.html#cb150-3" tabindex="-1"></a>dt_model <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">100</span>), <span class="at">return_model =</span> <span class="cn">TRUE</span>, <span class="at">offset=</span><span class="dv">4</span>)</span>
+<span id="cb150-4"><a href="testing-the-flowtrend-method.html#cb150-4" tabindex="-1"></a>ylist <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>()</span>
+<span id="cb150-5"><a href="testing-the-flowtrend-method.html#cb150-5" tabindex="-1"></a>x <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <span class="fu">pull</span>(time) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<span id="cb150-6"><a href="testing-the-flowtrend-method.html#cb150-6" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(ylist)</span></code></pre></div>
+<p><img src="_main_files/figure-html/1d-example-1.png" width="672"></p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="testing-the-flowtrend-method.html#cb151-1" tabindex="-1"></a>dt_model <span class="sc">%&gt;%</span> <span class="fu">select</span>(time, cluster, prob) <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y=</span>prob, <span class="at">group=</span>cluster, <span class="at">col =</span> cluster))</span></code></pre></div>
+<p><img src="_main_files/figure-html/1d-example-2.png" width="672"></p>
+<p>Next, we fit a model (with hand-picked lambda values).</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="testing-the-flowtrend-method.html#cb152-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">18</span>)</span>
+<span id="cb152-2"><a href="testing-the-flowtrend-method.html#cb152-2" tabindex="-1"></a>obj <span class="ot">&lt;-</span> <a href="building-the-modelalgorithm.html#flowtrend">flowtrend</a>(<span class="at">ylist =</span> ylist,</span>
+<span id="cb152-3"><a href="testing-the-flowtrend-method.html#cb152-3" tabindex="-1"></a>                 <span class="at">x =</span> x,</span>
+<span id="cb152-4"><a href="testing-the-flowtrend-method.html#cb152-4" tabindex="-1"></a>                 <span class="at">maxdev =</span> <span class="dv">1</span>,</span>
+<span id="cb152-5"><a href="testing-the-flowtrend-method.html#cb152-5" tabindex="-1"></a>                 <span class="at">numclust =</span> <span class="dv">3</span>,</span>
+<span id="cb152-6"><a href="testing-the-flowtrend-method.html#cb152-6" tabindex="-1"></a>                 <span class="at">l =</span> <span class="dv">2</span>,</span>
+<span id="cb152-7"><a href="testing-the-flowtrend-method.html#cb152-7" tabindex="-1"></a>                 <span class="at">l_prob =</span> <span class="dv">1</span>,</span>
+<span id="cb152-8"><a href="testing-the-flowtrend-method.html#cb152-8" tabindex="-1"></a>                 <span class="at">lambda =</span> .<span class="dv">1</span>,</span>
+<span id="cb152-9"><a href="testing-the-flowtrend-method.html#cb152-9" tabindex="-1"></a>                 <span class="at">lambda_prob =</span> .<span class="dv">1</span>,</span>
+<span id="cb152-10"><a href="testing-the-flowtrend-method.html#cb152-10" tabindex="-1"></a>                 <span class="at">nrestart =</span> <span class="dv">5</span>)</span>
+<span id="cb152-11"><a href="testing-the-flowtrend-method.html#cb152-11" tabindex="-1"></a> </span>
+<span id="cb152-12"><a href="testing-the-flowtrend-method.html#cb152-12" tabindex="-1"></a><span class="do">## Also reorder the cluster labels of the truth, to match the fitted model.</span></span>
+<span id="cb152-13"><a href="testing-the-flowtrend-method.html#cb152-13" tabindex="-1"></a>ord <span class="ot">=</span> obj<span class="sc">$</span>mn[,<span class="dv">1</span>,] <span class="sc">%&gt;%</span> <span class="fu">colSums</span>() <span class="sc">%&gt;%</span> <span class="fu">order</span>(<span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
+<span id="cb152-14"><a href="testing-the-flowtrend-method.html#cb152-14" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>obj<span class="sc">$</span>numclust), ord)</span>
+<span id="cb152-15"><a href="testing-the-flowtrend-method.html#cb152-15" tabindex="-1"></a>dt_model<span class="sc">$</span>cluster <span class="ot">=</span> lookup[<span class="fu">as.numeric</span>(dt_model<span class="sc">$</span>cluster)] <span class="sc">%&gt;%</span> <span class="fu">as.factor</span>()</span>
+<span id="cb152-16"><a href="testing-the-flowtrend-method.html#cb152-16" tabindex="-1"></a></span>
+<span id="cb152-17"><a href="testing-the-flowtrend-method.html#cb152-17" tabindex="-1"></a><span class="do">## Reorder the cluster lables of the fitted model.</span></span>
+<span id="cb152-18"><a href="testing-the-flowtrend-method.html#cb152-18" tabindex="-1"></a>obj <span class="ot">=</span> <a href="reordering-clusters.html#reorder_clust">reorder_clust</a>(obj)</span></code></pre></div>
+<p>The data and estimated model are shown here, along with the true means in dashed black lines.</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="testing-the-flowtrend-method.html#cb153-1" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(<span class="at">ylist =</span> ylist, <span class="at">obj =</span> obj, <span class="at">x =</span> x) <span class="sc">+</span></span>
+<span id="cb153-2"><a href="testing-the-flowtrend-method.html#cb153-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">group =</span> cluster),</span>
+<span id="cb153-3"><a href="testing-the-flowtrend-method.html#cb153-3" tabindex="-1"></a>            <span class="at">data =</span> dt_model,<span class="do">## %&gt;% subset(time %ni% held_out),</span></span>
+<span id="cb153-4"><a href="testing-the-flowtrend-method.html#cb153-4" tabindex="-1"></a>            <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size=</span><span class="dv">2</span>, <span class="at">alpha =</span> .<span class="dv">7</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/1d-example-plot-mean-1.png" width="672"></p>
+<p>Also, the estimated probabilities are shown here.</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="testing-the-flowtrend-method.html#cb154-1" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_prob">plot_prob</a>(<span class="at">obj=</span>obj, <span class="at">x=</span>x) <span class="sc">+</span></span>
+<span id="cb154-2"><a href="testing-the-flowtrend-method.html#cb154-2" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> prob, <span class="at">group =</span> cluster, <span class="at">color =</span> cluster),</span>
+<span id="cb154-3"><a href="testing-the-flowtrend-method.html#cb154-3" tabindex="-1"></a>            <span class="at">data =</span> dt_model, <span class="at">linetype =</span> <span class="st">"dashed"</span>)  <span class="sc">+</span></span>
+<span id="cb154-4"><a href="testing-the-flowtrend-method.html#cb154-4" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>cluster)</span></code></pre></div>
+<p><img src="_main_files/figure-html/1d-example-plot-prob-1.png" width="672"></p>
+</div>
+<div id="testing-monotonicity-of-objective-values" class="section level2 hasAnchor" number="8.2">
+<h2>
+<span class="header-section-number">8.2</span> Testing monotonicity of objective values<a href="testing-the-flowtrend-method.html#testing-monotonicity-of-objective-values" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>The objective value (that is, the penalized log likelihood) should be monotone
+decreasing across EM algorithm iterations.</p>
+<!-- (Note: because the admm is imperfect and stops early sometimes, the objective is -->
+<!-- sometimes non-monotone. See the example from a few sections up!) -->
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="testing-the-flowtrend-method.html#cb155-1" tabindex="-1"></a>testthat<span class="sc">::</span><span class="fu">test_that</span>(<span class="st">"Objective value decreases over EM iterations."</span>,{</span>
+<span id="cb155-2"><a href="testing-the-flowtrend-method.html#cb155-2" tabindex="-1"></a>  </span>
+<span id="cb155-3"><a href="testing-the-flowtrend-method.html#cb155-3" tabindex="-1"></a>  glist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb155-4"><a href="testing-the-flowtrend-method.html#cb155-4" tabindex="-1"></a>  <span class="cf">for</span>(iseed <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>){</span>
+<span id="cb155-5"><a href="testing-the-flowtrend-method.html#cb155-5" tabindex="-1"></a></span>
+<span id="cb155-6"><a href="testing-the-flowtrend-method.html#cb155-6" tabindex="-1"></a>    <span class="do">## Generate synthetic data</span></span>
+<span id="cb155-7"><a href="testing-the-flowtrend-method.html#cb155-7" tabindex="-1"></a>    <span class="fu">set.seed</span>(iseed<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb155-8"><a href="testing-the-flowtrend-method.html#cb155-8" tabindex="-1"></a>    dt       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">10</span>, <span class="dv">100</span>))</span>
+<span id="cb155-9"><a href="testing-the-flowtrend-method.html#cb155-9" tabindex="-1"></a>    dt_model       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">10</span>, <span class="dv">100</span>), <span class="at">return_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb155-10"><a href="testing-the-flowtrend-method.html#cb155-10" tabindex="-1"></a>    ylist <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>()</span>
+<span id="cb155-11"><a href="testing-the-flowtrend-method.html#cb155-11" tabindex="-1"></a>    x <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <span class="fu">pull</span>(time) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<span id="cb155-12"><a href="testing-the-flowtrend-method.html#cb155-12" tabindex="-1"></a>    </span>
+<span id="cb155-13"><a href="testing-the-flowtrend-method.html#cb155-13" tabindex="-1"></a>    <span class="do">## Fit model</span></span>
+<span id="cb155-14"><a href="testing-the-flowtrend-method.html#cb155-14" tabindex="-1"></a>    obj <span class="ot">&lt;-</span> <a href="building-the-modelalgorithm.html#flowtrend_once">flowtrend_once</a>(<span class="at">ylist =</span> ylist,</span>
+<span id="cb155-15"><a href="testing-the-flowtrend-method.html#cb155-15" tabindex="-1"></a>                          <span class="at">x =</span> x,</span>
+<span id="cb155-16"><a href="testing-the-flowtrend-method.html#cb155-16" tabindex="-1"></a>                          <span class="at">maxdev =</span> <span class="dv">5</span>,</span>
+<span id="cb155-17"><a href="testing-the-flowtrend-method.html#cb155-17" tabindex="-1"></a>                          <span class="at">numclust =</span> <span class="dv">3</span>,</span>
+<span id="cb155-18"><a href="testing-the-flowtrend-method.html#cb155-18" tabindex="-1"></a>                          <span class="at">lambda =</span> <span class="fl">0.02</span>,</span>
+<span id="cb155-19"><a href="testing-the-flowtrend-method.html#cb155-19" tabindex="-1"></a>                          <span class="at">l =</span> <span class="dv">1</span>,</span>
+<span id="cb155-20"><a href="testing-the-flowtrend-method.html#cb155-20" tabindex="-1"></a>                          <span class="at">l_prob =</span> <span class="dv">2</span>,</span>
+<span id="cb155-21"><a href="testing-the-flowtrend-method.html#cb155-21" tabindex="-1"></a>                          <span class="at">lambda_prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb155-22"><a href="testing-the-flowtrend-method.html#cb155-22" tabindex="-1"></a></span>
+<span id="cb155-23"><a href="testing-the-flowtrend-method.html#cb155-23" tabindex="-1"></a>    <span class="do">## Test objective monotonicity</span></span>
+<span id="cb155-24"><a href="testing-the-flowtrend-method.html#cb155-24" tabindex="-1"></a>    niter_end <span class="ot">=</span> <span class="fu">length</span>(obj<span class="sc">$</span>objective)</span>
+<span id="cb155-25"><a href="testing-the-flowtrend-method.html#cb155-25" tabindex="-1"></a>    testthat<span class="sc">::</span><span class="fu">expect_true</span>(<span class="fu">all</span>(<span class="fu">diff</span>(obj<span class="sc">$</span>objective) <span class="sc">&lt;</span> <span class="fl">1E-3</span>))</span>
+<span id="cb155-26"><a href="testing-the-flowtrend-method.html#cb155-26" tabindex="-1"></a>  </span>
+<span id="cb155-27"><a href="testing-the-flowtrend-method.html#cb155-27" tabindex="-1"></a></span>
+<span id="cb155-28"><a href="testing-the-flowtrend-method.html#cb155-28" tabindex="-1"></a>    <span class="do">## Make a plot</span></span>
+<span id="cb155-29"><a href="testing-the-flowtrend-method.html#cb155-29" tabindex="-1"></a>    g <span class="ot">=</span> <span class="fu">ggplot</span>(<span class="fu">tibble</span>(<span class="at">iter=</span><span class="dv">1</span><span class="sc">:</span>niter_end, <span class="at">objective=</span>obj<span class="sc">$</span>objectives)) <span class="sc">+</span></span>
+<span id="cb155-30"><a href="testing-the-flowtrend-method.html#cb155-30" tabindex="-1"></a>      <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>iter, <span class="at">y=</span>objective)) <span class="sc">+</span></span>
+<span id="cb155-31"><a href="testing-the-flowtrend-method.html#cb155-31" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>iter, <span class="at">y=</span>objective)) <span class="sc">+</span></span>
+<span id="cb155-32"><a href="testing-the-flowtrend-method.html#cb155-32" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">"Seed="</span>, iseed<span class="sc">*</span><span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb155-33"><a href="testing-the-flowtrend-method.html#cb155-33" tabindex="-1"></a>      <span class="fu">xlab</span>(<span class="st">"EM iteration"</span>)</span>
+<span id="cb155-34"><a href="testing-the-flowtrend-method.html#cb155-34" tabindex="-1"></a>    glist[[iseed]] <span class="ot">=</span> g</span>
+<span id="cb155-35"><a href="testing-the-flowtrend-method.html#cb155-35" tabindex="-1"></a>  }</span>
+<span id="cb155-36"><a href="testing-the-flowtrend-method.html#cb155-36" tabindex="-1"></a>  title <span class="ot">=</span> cowplot<span class="sc">::</span><span class="fu">ggdraw</span>() <span class="sc">+</span> cowplot<span class="sc">::</span><span class="fu">draw_label</span>(<span class="st">"Objective values over EM iterations"</span>, <span class="at">fontface=</span><span class="st">'bold'</span>)</span>
+<span id="cb155-37"><a href="testing-the-flowtrend-method.html#cb155-37" tabindex="-1"></a>  main_plot <span class="ot">=</span> cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(<span class="at">plotlist =</span> glist, <span class="at">ncol=</span><span class="dv">5</span>, <span class="at">nrow=</span><span class="dv">1</span>) </span>
+<span id="cb155-38"><a href="testing-the-flowtrend-method.html#cb155-38" tabindex="-1"></a>  cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(title, main_plot, <span class="at">ncol=</span><span class="dv">1</span>, <span class="at">rel_heights=</span><span class="fu">c</span>(<span class="fl">0.1</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span>
+<span id="cb155-39"><a href="testing-the-flowtrend-method.html#cb155-39" tabindex="-1"></a>})</span></code></pre></div>
+<p><img src="_main_files/figure-html/test-objective-1.png" width="864"></p>
+<pre><code>## Test passed 🎉</code></pre>
+</div>
+<div id="id_2d-example" class="section level2 hasAnchor" number="8.3">
+<h2>
+<span class="header-section-number">8.3</span> 2d example<a href="testing-the-flowtrend-method.html#id_2d-example" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>Next, we try out <code>flowtrend</code> on a synthetic 2d data example.</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="testing-the-flowtrend-method.html#cb157-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>) </span>
+<span id="cb157-2"><a href="testing-the-flowtrend-method.html#cb157-2" tabindex="-1"></a>TT <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb157-3"><a href="testing-the-flowtrend-method.html#cb157-3" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_2d">gendat_2d</a>(TT, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="at">times =</span> TT))</span>
+<span id="cb157-4"><a href="testing-the-flowtrend-method.html#cb157-4" tabindex="-1"></a>x <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span>TT</span>
+<span id="cb157-5"><a href="testing-the-flowtrend-method.html#cb157-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10</span>)</span>
+<span id="cb157-6"><a href="testing-the-flowtrend-method.html#cb157-6" tabindex="-1"></a>obj <span class="ot">&lt;-</span> <a href="building-the-modelalgorithm.html#flowtrend">flowtrend</a>(<span class="at">ylist =</span> dt<span class="sc">$</span>ylist,</span>
+<span id="cb157-7"><a href="testing-the-flowtrend-method.html#cb157-7" tabindex="-1"></a>                 <span class="at">x =</span> x,</span>
+<span id="cb157-8"><a href="testing-the-flowtrend-method.html#cb157-8" tabindex="-1"></a>                 <span class="at">maxdev =</span> <span class="dv">3</span>,</span>
+<span id="cb157-9"><a href="testing-the-flowtrend-method.html#cb157-9" tabindex="-1"></a>                 <span class="at">numclust =</span> <span class="dv">3</span>,</span>
+<span id="cb157-10"><a href="testing-the-flowtrend-method.html#cb157-10" tabindex="-1"></a>                 <span class="at">l =</span> <span class="dv">2</span>,</span>
+<span id="cb157-11"><a href="testing-the-flowtrend-method.html#cb157-11" tabindex="-1"></a>                 <span class="at">l_prob =</span> <span class="dv">2</span>,</span>
+<span id="cb157-12"><a href="testing-the-flowtrend-method.html#cb157-12" tabindex="-1"></a>                 <span class="at">lambda =</span> <span class="fl">0.01</span>,</span>
+<span id="cb157-13"><a href="testing-the-flowtrend-method.html#cb157-13" tabindex="-1"></a>                 <span class="at">lambda_prob =</span> .<span class="dv">01</span>,</span>
+<span id="cb157-14"><a href="testing-the-flowtrend-method.html#cb157-14" tabindex="-1"></a>                 <span class="at">rho_init =</span> <span class="fl">0.01</span>, <span class="at">nrestart =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>These are some snapshots at time <span class="math inline">\(t=10\)</span> and <span class="math inline">\(t=20\)</span>.</p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="testing-the-flowtrend-method.html#cb158-1" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(dt<span class="sc">$</span>ylist, <span class="at">obj =</span> obj, <span class="at">tt =</span> <span class="dv">10</span>, <span class="at">bin =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">coord_fixed</span>() <span class="sc">+</span> <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/plot-2d-1.png" width="384"></p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="testing-the-flowtrend-method.html#cb159-1" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(dt<span class="sc">$</span>ylist, <span class="at">obj =</span> obj, <span class="at">tt =</span> <span class="dv">20</span>, <span class="at">bin =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">coord_fixed</span>() <span class="sc">+</span> <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">3</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/plot-2d-2.png" width="384"></p>
+</div>
+<div id="working-with-binned-dataset" class="section level2 hasAnchor" number="8.4">
+<h2>
+<span class="header-section-number">8.4</span> Working with “binned” dataset<a href="testing-the-flowtrend-method.html#working-with-binned-dataset" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>Recall that “binning” means we will use binned frequency histogram estimates of
+the original particle-level dataset; this is useful when there are too many
+particles.</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="testing-the-flowtrend-method.html#cb160-1" tabindex="-1"></a><span class="do">## library(flowmix)</span></span>
+<span id="cb160-2"><a href="testing-the-flowtrend-method.html#cb160-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">10232</span>)</span>
+<span id="cb160-3"><a href="testing-the-flowtrend-method.html#cb160-3" tabindex="-1"></a>TT <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb160-4"><a href="testing-the-flowtrend-method.html#cb160-4" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_2d">gendat_2d</a>(TT, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="at">times =</span> TT))</span>
+<span id="cb160-5"><a href="testing-the-flowtrend-method.html#cb160-5" tabindex="-1"></a>manual_grid <span class="ot">=</span> flowmix<span class="sc">::</span><span class="fu">make_grid</span>(dt<span class="sc">$</span>ylist, <span class="at">gridsize =</span> <span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## Warning: replacing previous import 'RcppArmadillo::fastLmPure' by 'RcppEigen::fastLmPure' when loading 'flowmix'</code></pre>
+<pre><code>## Warning: replacing previous import 'RcppArmadillo::fastLm' by 'RcppEigen::fastLm' when loading 'flowmix'</code></pre>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="testing-the-flowtrend-method.html#cb163-1" tabindex="-1"></a>binres <span class="ot">=</span> flowmix<span class="sc">::</span><span class="fu">bin_many_cytograms</span>(dt<span class="sc">$</span>ylist, <span class="at">manual.grid =</span> manual_grid)</span>
+<span id="cb163-2"><a href="testing-the-flowtrend-method.html#cb163-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb163-3"><a href="testing-the-flowtrend-method.html#cb163-3" tabindex="-1"></a>obj <span class="ot">=</span> <a href="building-the-modelalgorithm.html#flowtrend">flowtrend</a>(<span class="at">ylist =</span> binres<span class="sc">$</span>ybin_list,</span>
+<span id="cb163-4"><a href="testing-the-flowtrend-method.html#cb163-4" tabindex="-1"></a>                <span class="at">countslist =</span> binres<span class="sc">$</span>counts_list,</span>
+<span id="cb163-5"><a href="testing-the-flowtrend-method.html#cb163-5" tabindex="-1"></a>                <span class="at">maxdev =</span> <span class="dv">2</span>,</span>
+<span id="cb163-6"><a href="testing-the-flowtrend-method.html#cb163-6" tabindex="-1"></a>                <span class="at">numclust =</span> <span class="dv">3</span>,</span>
+<span id="cb163-7"><a href="testing-the-flowtrend-method.html#cb163-7" tabindex="-1"></a>                <span class="at">l =</span> <span class="dv">2</span>,</span>
+<span id="cb163-8"><a href="testing-the-flowtrend-method.html#cb163-8" tabindex="-1"></a>                <span class="at">l_prob =</span> <span class="dv">2</span>,</span>
+<span id="cb163-9"><a href="testing-the-flowtrend-method.html#cb163-9" tabindex="-1"></a>                <span class="at">lambda =</span> .<span class="dv">01</span>,</span>
+<span id="cb163-10"><a href="testing-the-flowtrend-method.html#cb163-10" tabindex="-1"></a>                <span class="at">lambda_prob =</span> .<span class="dv">005</span>,</span>
+<span id="cb163-11"><a href="testing-the-flowtrend-method.html#cb163-11" tabindex="-1"></a>                <span class="at">rho_init =</span> .<span class="dv">01</span>,</span>
+<span id="cb163-12"><a href="testing-the-flowtrend-method.html#cb163-12" tabindex="-1"></a>                <span class="at">nrestart =</span> <span class="dv">1</span>)</span>
+<span id="cb163-13"><a href="testing-the-flowtrend-method.html#cb163-13" tabindex="-1"></a></span>
+<span id="cb163-14"><a href="testing-the-flowtrend-method.html#cb163-14" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(<span class="at">ylist =</span> binres<span class="sc">$</span>ybin_list,</span>
+<span id="cb163-15"><a href="testing-the-flowtrend-method.html#cb163-15" tabindex="-1"></a>       <span class="at">countslist =</span> binres<span class="sc">$</span>counts_list,</span>
+<span id="cb163-16"><a href="testing-the-flowtrend-method.html#cb163-16" tabindex="-1"></a>       <span class="at">obj =</span> obj, <span class="at">tt =</span> <span class="dv">10</span>, <span class="at">bin =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">coord_fixed</span>()</span></code></pre></div>
+<pre><code>## Warning: Raster pixels are placed at uneven horizontal intervals and will be shifted
+## ℹ Consider using `geom_tile()` instead.</code></pre>
+<pre><code>## Warning: Raster pixels are placed at uneven horizontal intervals and will be shifted
+## ℹ Consider using `geom_tile()` instead.</code></pre>
+<p><img src="_main_files/figure-html/binned-1.png" width="480"></p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="testing-the-flowtrend-method.html#cb166-1" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_2d">plot_2d</a>(<span class="at">ylist =</span> binres<span class="sc">$</span>ybin_list,</span>
+<span id="cb166-2"><a href="testing-the-flowtrend-method.html#cb166-2" tabindex="-1"></a>       <span class="at">countslist =</span> binres<span class="sc">$</span>counts_list,</span>
+<span id="cb166-3"><a href="testing-the-flowtrend-method.html#cb166-3" tabindex="-1"></a>       <span class="at">obj =</span> obj, <span class="at">tt =</span> <span class="dv">100</span>, <span class="at">bin =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">coord_fixed</span>()</span></code></pre></div>
+<pre><code>## Warning: Raster pixels are placed at uneven horizontal intervals and will be shifted
+## ℹ Consider using `geom_tile()` instead.</code></pre>
+<p><img src="_main_files/figure-html/binned-2.png" width="480"></p>
+<p>Also plot the cluster probabilities:</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="testing-the-flowtrend-method.html#cb168-1" tabindex="-1"></a>true_prob_long <span class="ot">=</span> dt<span class="sc">$</span>probs <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">add_column</span>(<span class="at">time =</span> <span class="dv">1</span><span class="sc">:</span>TT) <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="sc">-</span>time)</span>
+<span id="cb168-2"><a href="testing-the-flowtrend-method.html#cb168-2" tabindex="-1"></a><a href="generating-and-plotting-data.html#plot_prob">plot_prob</a>(obj) <span class="sc">+</span></span>
+<span id="cb168-3"><a href="testing-the-flowtrend-method.html#cb168-3" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> value, <span class="at">group =</span> name), <span class="at">data =</span> true_prob_long, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb168-4"><a href="testing-the-flowtrend-method.html#cb168-4" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">""</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/binned-prob-plot-1.png" width="672"></p>
+</div>
+<div id="unevenly-spaced-inputs-x" class="section level2 hasAnchor" number="8.5">
+<h2>
+<span class="header-section-number">8.5</span> Unevenly spaced inputs (x)<a href="testing-the-flowtrend-method.html#unevenly-spaced-inputs-x" class="anchor-section" aria-label="Anchor link to header"></a>
+</h2>
+<p>Let’s try the EM algorithm out with unevenly spaced inputs.</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="testing-the-flowtrend-method.html#cb169-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb169-2"><a href="testing-the-flowtrend-method.html#cb169-2" tabindex="-1"></a>dt       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="at">TT=</span><span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">10</span>, <span class="at">times=</span><span class="dv">100</span>))</span>
+<span id="cb169-3"><a href="testing-the-flowtrend-method.html#cb169-3" tabindex="-1"></a>dt_model       <span class="ot">&lt;-</span> <a href="generating-and-plotting-data.html#gendat_1d">gendat_1d</a>(<span class="at">TT=</span><span class="dv">100</span>, <span class="fu">rep</span>(<span class="dv">100</span>, <span class="at">times=</span><span class="dv">100</span>), <span class="at">return_model =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb169-4"><a href="testing-the-flowtrend-method.html#cb169-4" tabindex="-1"></a>ylist_orig <span class="ot">=</span> dt <span class="sc">%&gt;%</span> <a href="generating-and-plotting-data.html#dt2ylist">dt2ylist</a>()</span>
+<span id="cb169-5"><a href="testing-the-flowtrend-method.html#cb169-5" tabindex="-1"></a></span>
+<span id="cb169-6"><a href="testing-the-flowtrend-method.html#cb169-6" tabindex="-1"></a><span class="do">## Two ways of removing some time points</span></span>
+<span id="cb169-7"><a href="testing-the-flowtrend-method.html#cb169-7" tabindex="-1"></a>ind_rm_list <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">seq</span>(<span class="at">from=</span><span class="dv">10</span>, <span class="at">to=</span><span class="dv">100</span>, <span class="at">by=</span><span class="dv">10</span>),</span>
+<span id="cb169-8"><a href="testing-the-flowtrend-method.html#cb169-8" tabindex="-1"></a>                   <span class="at">ind_rm =</span> <span class="dv">30</span><span class="sc">:</span><span class="dv">50</span>)</span>
+<span id="cb169-9"><a href="testing-the-flowtrend-method.html#cb169-9" tabindex="-1"></a></span>
+<span id="cb169-10"><a href="testing-the-flowtrend-method.html#cb169-10" tabindex="-1"></a><span class="do">## Try both ways, and see that the objective values</span></span>
+<span id="cb169-11"><a href="testing-the-flowtrend-method.html#cb169-11" tabindex="-1"></a>objlist <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb169-12"><a href="testing-the-flowtrend-method.html#cb169-12" tabindex="-1"></a><span class="cf">for</span>(ii <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>){</span>
+<span id="cb169-13"><a href="testing-the-flowtrend-method.html#cb169-13" tabindex="-1"></a>  ind_rm <span class="ot">=</span> ind_rm_list[[ii]]</span>
+<span id="cb169-14"><a href="testing-the-flowtrend-method.html#cb169-14" tabindex="-1"></a>  x <span class="ot">=</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)[<span class="sc">-</span>ind_rm]</span>
+<span id="cb169-15"><a href="testing-the-flowtrend-method.html#cb169-15" tabindex="-1"></a>  ylist <span class="ot">=</span> ylist_orig[x]</span>
+<span id="cb169-16"><a href="testing-the-flowtrend-method.html#cb169-16" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb169-17"><a href="testing-the-flowtrend-method.html#cb169-17" tabindex="-1"></a>  obj <span class="ot">&lt;-</span> <a href="building-the-modelalgorithm.html#flowtrend_once">flowtrend_once</a>(<span class="at">ylist =</span> ylist, </span>
+<span id="cb169-18"><a href="testing-the-flowtrend-method.html#cb169-18" tabindex="-1"></a>                        <span class="at">x =</span> x,</span>
+<span id="cb169-19"><a href="testing-the-flowtrend-method.html#cb169-19" tabindex="-1"></a>                        <span class="at">maxdev =</span> <span class="dv">100</span>,</span>
+<span id="cb169-20"><a href="testing-the-flowtrend-method.html#cb169-20" tabindex="-1"></a>                        <span class="at">numclust =</span> <span class="dv">3</span>,</span>
+<span id="cb169-21"><a href="testing-the-flowtrend-method.html#cb169-21" tabindex="-1"></a>                        <span class="at">l =</span> <span class="dv">2</span>,</span>
+<span id="cb169-22"><a href="testing-the-flowtrend-method.html#cb169-22" tabindex="-1"></a>                        <span class="at">l_prob =</span> <span class="dv">2</span>,</span>
+<span id="cb169-23"><a href="testing-the-flowtrend-method.html#cb169-23" tabindex="-1"></a>                        <span class="at">lambda =</span> <span class="fl">0.1</span>,</span>
+<span id="cb169-24"><a href="testing-the-flowtrend-method.html#cb169-24" tabindex="-1"></a>                        <span class="at">lambda_prob =</span> <span class="fl">0.1</span>, </span>
+<span id="cb169-25"><a href="testing-the-flowtrend-method.html#cb169-25" tabindex="-1"></a>                        <span class="at">admm_local_adapt =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb169-26"><a href="testing-the-flowtrend-method.html#cb169-26" tabindex="-1"></a>                        <span class="at">rho_init =</span> <span class="fl">0.01</span>,</span>
+<span id="cb169-27"><a href="testing-the-flowtrend-method.html#cb169-27" tabindex="-1"></a>                        <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb169-28"><a href="testing-the-flowtrend-method.html#cb169-28" tabindex="-1"></a>  objlist[[ii]] <span class="ot">=</span> obj</span>
+<span id="cb169-29"><a href="testing-the-flowtrend-method.html#cb169-29" tabindex="-1"></a>}</span>
+<span id="cb169-30"><a href="testing-the-flowtrend-method.html#cb169-30" tabindex="-1"></a></span>
+<span id="cb169-31"><a href="testing-the-flowtrend-method.html#cb169-31" tabindex="-1"></a><span class="do">## Plot both results (and objectives)</span></span>
+<span id="cb169-32"><a href="testing-the-flowtrend-method.html#cb169-32" tabindex="-1"></a>ii <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb169-33"><a href="testing-the-flowtrend-method.html#cb169-33" tabindex="-1"></a>ind_rm <span class="ot">=</span> ind_rm_list[[ii]]</span>
+<span id="cb169-34"><a href="testing-the-flowtrend-method.html#cb169-34" tabindex="-1"></a>x <span class="ot">=</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)[<span class="sc">-</span>ind_rm]</span>
+<span id="cb169-35"><a href="testing-the-flowtrend-method.html#cb169-35" tabindex="-1"></a>gg1 <span class="ot">=</span> <a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(<span class="at">obj =</span> objlist[[<span class="dv">1</span>]], <span class="at">ylist =</span> ylist_orig[x], <span class="at">x =</span> x) <span class="sc">+</span></span>
+<span id="cb169-36"><a href="testing-the-flowtrend-method.html#cb169-36" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'Randomly missing time points'</span>)</span>
+<span id="cb169-37"><a href="testing-the-flowtrend-method.html#cb169-37" tabindex="-1"></a>all_objectives <span class="ot">=</span> objlist[[<span class="dv">1</span>]]<span class="sc">$</span>objectives </span>
+<span id="cb169-38"><a href="testing-the-flowtrend-method.html#cb169-38" tabindex="-1"></a>gg2 <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">iter =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(all_objectives), <span class="at">objectives =</span> all_objectives) <span class="sc">%&gt;%</span></span>
+<span id="cb169-39"><a href="testing-the-flowtrend-method.html#cb169-39" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> iter, <span class="at">y =</span> objectives)) <span class="sc">+</span></span>
+<span id="cb169-40"><a href="testing-the-flowtrend-method.html#cb169-40" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb169-41"><a href="testing-the-flowtrend-method.html#cb169-41" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"EM objectives"</span>)</span>
+<span id="cb169-42"><a href="testing-the-flowtrend-method.html#cb169-42" tabindex="-1"></a></span>
+<span id="cb169-43"><a href="testing-the-flowtrend-method.html#cb169-43" tabindex="-1"></a></span>
+<span id="cb169-44"><a href="testing-the-flowtrend-method.html#cb169-44" tabindex="-1"></a>ii<span class="ot">=</span><span class="dv">2</span></span>
+<span id="cb169-45"><a href="testing-the-flowtrend-method.html#cb169-45" tabindex="-1"></a>ind_rm <span class="ot">=</span> ind_rm_list[[ii]]</span>
+<span id="cb169-46"><a href="testing-the-flowtrend-method.html#cb169-46" tabindex="-1"></a>x <span class="ot">=</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)[<span class="sc">-</span>ind_rm]</span>
+<span id="cb169-47"><a href="testing-the-flowtrend-method.html#cb169-47" tabindex="-1"></a>gg3 <span class="ot">=</span> <a href="generating-and-plotting-data.html#plot_1d">plot_1d</a>(<span class="at">obj =</span> objlist[[<span class="dv">2</span>]], <span class="at">ylist =</span> ylist_orig[x], <span class="at">x =</span> x) <span class="sc">+</span></span>
+<span id="cb169-48"><a href="testing-the-flowtrend-method.html#cb169-48" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'Chunks of missing time points'</span>)</span>
+<span id="cb169-49"><a href="testing-the-flowtrend-method.html#cb169-49" tabindex="-1"></a>all_objectives <span class="ot">=</span> objlist[[<span class="dv">2</span>]]<span class="sc">$</span>objectives </span>
+<span id="cb169-50"><a href="testing-the-flowtrend-method.html#cb169-50" tabindex="-1"></a>gg4 <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">iter =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(all_objectives), <span class="at">objectives =</span> all_objectives) <span class="sc">%&gt;%</span></span>
+<span id="cb169-51"><a href="testing-the-flowtrend-method.html#cb169-51" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> iter, <span class="at">y =</span> objectives)) <span class="sc">+</span></span>
+<span id="cb169-52"><a href="testing-the-flowtrend-method.html#cb169-52" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb169-53"><a href="testing-the-flowtrend-method.html#cb169-53" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"EM objectives"</span>)</span>
+<span id="cb169-54"><a href="testing-the-flowtrend-method.html#cb169-54" tabindex="-1"></a></span>
+<span id="cb169-55"><a href="testing-the-flowtrend-method.html#cb169-55" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(gg1, gg2, gg3, gg4)</span></code></pre></div>
+<p><img src="_main_files/figure-html/uneven-test-1.png" width="864"></p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="testing-the-flowtrend-method.html#cb170-1" tabindex="-1"></a><span class="do">## %&gt;%  ggsave(filename = file.path("inst",</span></span>
+<span id="cb170-2"><a href="testing-the-flowtrend-method.html#cb170-2" tabindex="-1"></a><span class="do">##                               "uneven-spaced-data-objectives.png"), width = 5, height = 3)</span></span></code></pre></div>
+<!-- ![Model and objective values across EM iterations, for unevenly spaced data.](inst/uneven-spaced-data-test.png) -->
+<p>(The dashed black lines are the truth, and the solid colored lines are the estimated means.)</p>
+
+</div>
+</div>
+            </section>
+</div>
+        </div>
+      </div>
+<a href="tuning-lambda.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="helpers-for-simulations.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

@@ -38,8 +38,6 @@ gen_tf_mat <- function(n, k, x = NULL){
 
       }
       return(prd * ifelse(xi >= x[max(ind)], 1, 0))
-      ## if(k >= 1) prd = prod(xi - x[(j-k):(j-1)]) 
-      ## return(prd * ifelse(xi >= x[(j-1)], 1, 0)) 
     }
   }
 

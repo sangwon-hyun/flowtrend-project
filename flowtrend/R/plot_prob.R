@@ -8,6 +8,7 @@
 plot_prob <- function(obj, x = NULL){
 
   ## Basic checks
+  if(!is.null(obj)) stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   if(!is.null(x)){
     times = x
   } else {

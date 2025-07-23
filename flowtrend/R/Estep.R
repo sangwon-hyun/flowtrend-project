@@ -10,6 +10,9 @@
 #' @param denslist_by_clust
 #' @param first_iter
 #' @param countslist
+#' @param padding A small amount of padding to add to the weighted
+#'   densities. Note, a very small value (like 1E-20) should be used, otherwise
+#'   the probabilitistic (soft) gating can be affected quite noticably.
 #'
 #' @return
 #' @export
@@ -37,15 +40,20 @@ Estep <- function(mn, sigma, prob, ylist = NULL, numclust, denslist_by_clust = N
   }
   ## Calculate posterior probability of membership of $y_{it}$.
   ncol.prob = ncol(prob)
+  empty_row = rbind(1:numclust)[-1,]
   for (tt in 1:TT) {
     ylist_tt = ylist[[tt]]
-    densmat <- sapply(1:numclust, calculate_dens, tt, ylist_tt,
-                      mn, sigma, denslist_by_clust, first_iter)
-    wt.densmat <- matrix(prob[tt, ], nrow = ntlist[tt],
-                         ncol = ncol.prob, byrow = TRUE) * densmat
-    wt.densmat = wt.densmat + padding##1e-20
-    wt.densmat <- wt.densmat/rowSums(wt.densmat)
-    resp[[tt]] <- wt.densmat
+    if(nrow(ylist_tt) == 0){
+      resp[[tt]] <- empty_row
+    } else {
+      densmat <- sapply(1:numclust, calculate_dens, tt, ylist_tt,
+                        mn, sigma, denslist_by_clust, first_iter)
+      wt.densmat <- matrix(prob[tt, ], nrow = ntlist[tt],
+                           ncol = ncol.prob, byrow = TRUE) * densmat
+      wt.densmat = wt.densmat + padding##1e-20
+      wt.densmat <- wt.densmat/rowSums(wt.densmat)
+      resp[[tt]] <- wt.densmat
+    }
   }
 
   ## Weight the responsibilities by $C_{it}$.

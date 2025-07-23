@@ -1,8 +1,8 @@
 # Generated from _main.Rmd: do not edit by hand
 
 #' Reorder the cluster numbers for a new flowtrend object \code{newres}; the best
-#' permutation (reordering) is to match the original flowmix object
-#' \code{origres}.
+#' permutation (reordering) is to match the original flowtrend object
+#' \code{origres}. Also works for flowmix objects.
 #'
 #' @param newres New flowtrend object to reorder.
 #' @param origres Original flowtrend object.
@@ -10,7 +10,7 @@
 #' @param fac Defaults to 100, to take 1/100'th of the particles from each time point.
 #' @param verbose Loud or not?
 #'
-#' @return Reordered res
+#' @return Reordered flowtrend object.
 #'
 #' @export
 reorder_kl <- function(newres, origres, ylist_particle, fac = 100, verbose = FALSE){

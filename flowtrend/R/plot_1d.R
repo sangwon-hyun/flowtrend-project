@@ -15,6 +15,7 @@ plot_1d <- function(ylist, countslist=NULL, obj=NULL, x = NULL, alpha = .1, bin 
                     plot_band = TRUE){
 
   ## Basic checks
+  if(!is.null(obj))stopifnot(class(obj) %in% c("flowmix", "flowtrend"))
   if(!is.null(x)){
     stopifnot(length(x) == length(ylist))
     times = x
@@ -62,8 +63,7 @@ plot_1d <- function(ylist, countslist=NULL, obj=NULL, x = NULL, alpha = .1, bin 
     gg = gg + geom_path(aes(x = time, y = mean, linewidth = prob, group = cluster, color = cluster),
                         data = est_long,
                         lineend = "round", linejoin="mitre") +
-      scale_linewidth(range = c(0.05,5), limits = c(0, 1))
-    ## TODO: make it ignore the missing values at the gaps; currently this is not coded as NAs.
+      scale_linewidth(range = c(0.05, 5), limits = c(0, 1))
 
     if(plot_band){
       ## Add the estimated 95% probability regions for data.

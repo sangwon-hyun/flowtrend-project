@@ -12,7 +12,6 @@ cv_aggregate_res <- function(destin){
 
   load(file.path(destin, "meta.Rdata"))
 
-  ## df.mat = matrix(NA, ncol=cv_gridsize, nrow=cv_gridsize)
   res.list = list()
   for(iprob in 1:cv_gridsize){
     for(imu in 1:cv_gridsize){ 

@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{projCmat}
 \alias{projCmat}
-\title{Project /rows/ of matrix |mat| into a ball of size C.}
+\title{Project rows of matrix \code{mat} into a ball of size \code{C}.}
 \usage{
 projCmat(mat, C)
 }
@@ -15,5 +15,5 @@ projCmat(mat, C)
 Projected matrix.
 }
 \description{
-Project /rows/ of matrix |mat| into a ball of size C.
+Project rows of matrix \code{mat} into a ball of size \code{C}.
 }

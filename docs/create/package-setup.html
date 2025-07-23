@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>3 Package setup | Creating the flowtrend R package</title>
+<meta name="description" content="3 Package setup | Creating the flowtrend R package">
+<meta name="generator" content="bookdown 0.43 and GitBook 2.6.7">
+<meta property="og:title" content="3 Package setup | Creating the flowtrend R package">
+<meta property="og:type" content="book">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="3 Package setup | Creating the flowtrend R package">
+<meta name="author" content="Sangwon Hyun, Tim Coleman, Francois Ribalet, Jacob Bien">
+<meta name="date" content="2025-07-22">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="prev" href="overview.html">
+<link rel="next" href="generating-and-plotting-data.html">
+<script src="libs/header-attrs-2.29/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet">
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet">
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet">
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script><style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">fieldset.chunkfield {border:1px dotted black;padding-bottom: 0px;padding-top: 0px;margin:0 2px;padding:.35em .625em .75em}
+    legend.chunklegend {padding:0;width:auto;border:0; border-bottom: none; margin-bottom:0}
+    </style>
+</head>
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation"><ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="overview.html">
+<a href="overview.html"><i class="fa fa-check"></i><b>2</b> Overview</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="overview.html"><a href="overview.html#background"><i class="fa fa-check"></i><b>2.1</b> Background</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="3" data-path="package-setup.html"><a href="package-setup.html"><i class="fa fa-check"></i><b>3</b> Package setup</a></li>
+<li class="chapter" data-level="4" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html"><i class="fa fa-check"></i><b>4</b> Generating and plotting data</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data"><i class="fa fa-check"></i><b>4.1</b> 1d data</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-1d-data"><i class="fa fa-check"></i><b>4.1.1</b> Generating 1d data</a></li>
+<li class="chapter" data-level="4.1.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-1d-data"><i class="fa fa-check"></i><b>4.1.2</b> Plotting 1d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.2" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-1"><i class="fa fa-check"></i><b>4.2</b> 2d data</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-2d-data"><i class="fa fa-check"></i><b>4.2.1</b> Generating 2d data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-2d-data"><i class="fa fa-check"></i><b>4.2.2</b> Plotting 2d data</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="4.3" data-path="generating-and-plotting-data.html">
+<a href="generating-and-plotting-data.html#d-data-2"><i class="fa fa-check"></i><b>4.3</b> 3d data</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#plotting-3d-data"><i class="fa fa-check"></i><b>4.3.1</b> Plotting 3d data</a></li>
+<li class="chapter" data-level="4.3.2" data-path="generating-and-plotting-data.html"><a href="generating-and-plotting-data.html#generating-3d-data"><i class="fa fa-check"></i><b>4.3.2</b> Generating 3d data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="chapter" data-level="5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html"><i class="fa fa-check"></i><b>5</b> Building the model/algorithm</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#trend-filtering"><i class="fa fa-check"></i><b>5.1</b> Trend filtering</a></li>
+<li class="chapter" data-level="5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#objective-data-log-likelihood"><i class="fa fa-check"></i><b>5.2</b> Objective (data log-likelihood)</a></li>
+<li class="chapter" data-level="5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#initial-parameters-for-em-algorithm"><i class="fa fa-check"></i><b>5.3</b> Initial parameters for EM algorithm</a></li>
+<li class="chapter" data-level="5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#e-step"><i class="fa fa-check"></i><b>5.4</b> E step</a></li>
+<li class="chapter" data-level="5.5" data-path="building-the-modelalgorithm.html">
+<a href="building-the-modelalgorithm.html#m-step"><i class="fa fa-check"></i><b>5.5</b> M step</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-pi"><i class="fa fa-check"></i><b>5.5.1</b> M step for <span class="math inline">\(\pi\)</span></a></li>
+<li class="chapter" data-level="5.5.2" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-sigma"><i class="fa fa-check"></i><b>5.5.2</b> M step for <span class="math inline">\(\Sigma\)</span></a></li>
+<li class="chapter" data-level="5.5.3" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#m-step-for-mu"><i class="fa fa-check"></i><b>5.5.3</b> M step for <span class="math inline">\(\mu\)</span></a></li>
+<li class="chapter" data-level="5.5.4" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#helpers-for-m-step-mu"><i class="fa fa-check"></i><b>5.5.4</b> Helpers for M step (<span class="math inline">\(\mu\)</span>)</a></li>
+<li class="chapter" data-level="5.5.5" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#all-rcpp-functions"><i class="fa fa-check"></i><b>5.5.5</b> All Rcpp functions</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="5.6" data-path="building-the-modelalgorithm.html"><a href="building-the-modelalgorithm.html#the-main-flowtrend-function"><i class="fa fa-check"></i><b>5.6</b> The main “flowtrend” function</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="6" data-path="reordering-clusters.html"><a href="reordering-clusters.html"><i class="fa fa-check"></i><b>6</b> Reordering clusters</a></li>
+<li class="chapter" data-level="7" data-path="tuning-lambda.html">
+<a href="tuning-lambda.html"><i class="fa fa-check"></i><b>7</b> Tuning <span class="math inline">\(\lambda\)</span></a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="tuning-lambda.html"><a href="tuning-lambda.html#predicting-and-evaluating-on-new-time-points"><i class="fa fa-check"></i><b>7.1</b> Predicting and evaluating on new time points</a></li>
+<li class="chapter" data-level="7.2" data-path="tuning-lambda.html"><a href="tuning-lambda.html#maximum-lambda_mu-lambda_pi-values-to-test"><i class="fa fa-check"></i><b>7.2</b> Maximum <span class="math inline">\((\lambda_\mu, \lambda_\pi)\)</span> values to test</a></li>
+<li class="chapter" data-level="7.3" data-path="tuning-lambda.html"><a href="tuning-lambda.html#define-cv-data-folds"><i class="fa fa-check"></i><b>7.3</b> Define CV data folds</a></li>
+<li class="chapter" data-level="7.4" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-many-single-jobs"><i class="fa fa-check"></i><b>7.4</b> CV = many single jobs</a></li>
+<li class="chapter" data-level="7.5" data-path="tuning-lambda.html"><a href="tuning-lambda.html#running-cross-validation"><i class="fa fa-check"></i><b>7.5</b> Running cross-validation</a></li>
+<li class="chapter" data-level="7.6" data-path="tuning-lambda.html"><a href="tuning-lambda.html#summarizing-the-output"><i class="fa fa-check"></i><b>7.6</b> Summarizing the output</a></li>
+<li class="chapter" data-level="7.7" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-on-your-own-computer"><i class="fa fa-check"></i><b>7.7</b> CV on your own computer</a></li>
+<li class="chapter" data-level="7.8" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-produces-too-many-files-no-problem"><i class="fa fa-check"></i><b>7.8</b> CV produces too many files? No problem</a></li>
+<li class="chapter" data-level="7.9" data-path="tuning-lambda.html"><a href="tuning-lambda.html#cv-for-unevenly-spaced-data"><i class="fa fa-check"></i><b>7.9</b> CV for unevenly spaced data</a></li>
+<li class="chapter" data-level="7.10" data-path="tuning-lambda.html"><a href="tuning-lambda.html#documenting-the-package-and-building"><i class="fa fa-check"></i><b>7.10</b> Documenting the package and building</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="8" data-path="testing-the-flowtrend-method.html">
+<a href="testing-the-flowtrend-method.html"><i class="fa fa-check"></i><b>8</b> Testing the flowtrend method</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_1d-example"><i class="fa fa-check"></i><b>8.1</b> 1d example</a></li>
+<li class="chapter" data-level="8.2" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#testing-monotonicity-of-objective-values"><i class="fa fa-check"></i><b>8.2</b> Testing monotonicity of objective values</a></li>
+<li class="chapter" data-level="8.3" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#id_2d-example"><i class="fa fa-check"></i><b>8.3</b> 2d example</a></li>
+<li class="chapter" data-level="8.4" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#working-with-binned-dataset"><i class="fa fa-check"></i><b>8.4</b> Working with “binned” dataset</a></li>
+<li class="chapter" data-level="8.5" data-path="testing-the-flowtrend-method.html"><a href="testing-the-flowtrend-method.html#unevenly-spaced-inputs-x"><i class="fa fa-check"></i><b>8.5</b> Unevenly spaced inputs (x)</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="9" data-path="helpers-for-simulations.html">
+<a href="helpers-for-simulations.html"><i class="fa fa-check"></i><b>9</b> Helpers for simulations</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#two-alternative-clusterings"><i class="fa fa-check"></i><b>9.1</b> Two alternative clusterings</a></li>
+<li class="chapter" data-level="9.2" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#evaluating-performance-soft-rand-index"><i class="fa fa-check"></i><b>9.2</b> Evaluating performance: soft RAND index</a></li>
+<li class="chapter" data-level="9.3" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#helpers-in-generating-pseudo-real-data"><i class="fa fa-check"></i><b>9.3</b> Helpers in generating pseudo-real data</a></li>
+<li class="chapter" data-level="9.4" data-path="helpers-for-simulations.html"><a href="helpers-for-simulations.html#miscellaneous-helpers"><i class="fa fa-check"></i><b>9.4</b> Miscellaneous helpers</a></li>
+</ul>
+</li>
+<li class="chapter" data-level="10" data-path="documenting-the-package-and-building-1.html"><a href="documenting-the-package-and-building-1.html"><i class="fa fa-check"></i><b>10</b> Documenting the package and building</a></li>
+</ul></nav>
+</div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Creating the <code>flowtrend</code> R package</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-"><div id="package-setup" class="section level1 hasAnchor" number="3">
+<h1>
+<span class="header-section-number">3</span> Package setup<a href="package-setup.html#package-setup" class="anchor-section" aria-label="Anchor link to header"></a>
+</h1>
+<p>The DESCRIPTION file is created using this code.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="package-setup.html#cb2-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">create_package</span>(</span>
+<span id="cb2-2"><a href="package-setup.html#cb2-2" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">"."</span>,</span>
+<span id="cb2-3"><a href="package-setup.html#cb2-3" tabindex="-1"></a>  <span class="at">fields =</span> <span class="fu">list</span>(</span>
+<span id="cb2-4"><a href="package-setup.html#cb2-4" tabindex="-1"></a>    <span class="at">Package =</span> params<span class="sc">$</span>package_name,</span>
+<span id="cb2-5"><a href="package-setup.html#cb2-5" tabindex="-1"></a>    <span class="at">Version =</span> <span class="st">"0.0.0.9000"</span>,</span>
+<span id="cb2-6"><a href="package-setup.html#cb2-6" tabindex="-1"></a>    <span class="at">Title =</span> <span class="st">"flowtrend"</span>,</span>
+<span id="cb2-7"><a href="package-setup.html#cb2-7" tabindex="-1"></a>    <span class="at">Description =</span> <span class="st">"Time-smooth mixture modeling for flow cytometry data (Hyun et al. 2025)."</span>,</span>
+<span id="cb2-8"><a href="package-setup.html#cb2-8" tabindex="-1"></a>    <span class="st">`</span><span class="at">Authors@R</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb2-9"><a href="package-setup.html#cb2-9" tabindex="-1"></a>        <span class="fu">person</span>(</span>
+<span id="cb2-10"><a href="package-setup.html#cb2-10" tabindex="-1"></a>            <span class="at">given =</span> <span class="st">"Sangwon"</span>,</span>
+<span id="cb2-11"><a href="package-setup.html#cb2-11" tabindex="-1"></a>            <span class="at">family =</span> <span class="st">"Hyun"</span>,</span>
+<span id="cb2-12"><a href="package-setup.html#cb2-12" tabindex="-1"></a>            <span class="at">email =</span> <span class="st">"sangwonh@ucsc.edu"</span>,</span>
+<span id="cb2-13"><a href="package-setup.html#cb2-13" tabindex="-1"></a>            <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>, <span class="st">"cre"</span>)),</span>
+<span id="cb2-14"><a href="package-setup.html#cb2-14" tabindex="-1"></a>        <span class="fu">person</span>(</span>
+<span id="cb2-15"><a href="package-setup.html#cb2-15" tabindex="-1"></a>            <span class="at">given =</span> <span class="st">"Tim"</span>,</span>
+<span id="cb2-16"><a href="package-setup.html#cb2-16" tabindex="-1"></a>            <span class="at">family =</span> <span class="st">"Coleman"</span>,</span>
+<span id="cb2-17"><a href="package-setup.html#cb2-17" tabindex="-1"></a>            <span class="at">email =</span> <span class="st">"tscoleman226@gmail.com"</span>,</span>
+<span id="cb2-18"><a href="package-setup.html#cb2-18" tabindex="-1"></a>            <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>)</span>
+<span id="cb2-19"><a href="package-setup.html#cb2-19" tabindex="-1"></a>        ),</span>
+<span id="cb2-20"><a href="package-setup.html#cb2-20" tabindex="-1"></a>        <span class="fu">person</span>(</span>
+<span id="cb2-21"><a href="package-setup.html#cb2-21" tabindex="-1"></a>            <span class="at">given =</span> <span class="st">"Francois"</span>,</span>
+<span id="cb2-22"><a href="package-setup.html#cb2-22" tabindex="-1"></a>            <span class="at">family =</span> <span class="st">"Ribalet"</span>,</span>
+<span id="cb2-23"><a href="package-setup.html#cb2-23" tabindex="-1"></a>            <span class="at">email =</span> <span class="st">"ribalet@uw.edu"</span>,</span>
+<span id="cb2-24"><a href="package-setup.html#cb2-24" tabindex="-1"></a>            <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>)</span>
+<span id="cb2-25"><a href="package-setup.html#cb2-25" tabindex="-1"></a>        ),</span>
+<span id="cb2-26"><a href="package-setup.html#cb2-26" tabindex="-1"></a>        <span class="fu">person</span>(</span>
+<span id="cb2-27"><a href="package-setup.html#cb2-27" tabindex="-1"></a>            <span class="at">given =</span> <span class="st">"Jacob"</span>,</span>
+<span id="cb2-28"><a href="package-setup.html#cb2-28" tabindex="-1"></a>            <span class="at">family =</span> <span class="st">"Bien"</span>,</span>
+<span id="cb2-29"><a href="package-setup.html#cb2-29" tabindex="-1"></a>            <span class="at">email =</span> <span class="st">"jbien@usc.edu"</span>,</span>
+<span id="cb2-30"><a href="package-setup.html#cb2-30" tabindex="-1"></a>            <span class="at">role =</span> <span class="fu">c</span>(<span class="st">"aut"</span>)</span>
+<span id="cb2-31"><a href="package-setup.html#cb2-31" tabindex="-1"></a>        )</span>
+<span id="cb2-32"><a href="package-setup.html#cb2-32" tabindex="-1"></a>    )</span>
+<span id="cb2-33"><a href="package-setup.html#cb2-33" tabindex="-1"></a>  )</span>
+<span id="cb2-34"><a href="package-setup.html#cb2-34" tabindex="-1"></a>)</span>
+<span id="cb2-35"><a href="package-setup.html#cb2-35" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_mit_license</span>(<span class="at">copyright_holder =</span> <span class="st">"Sangwon Hyun"</span>)</span></code></pre></div>
+<p>The following is what will show up when someone types <code>package?flowtrend</code> in the
+console.</p>
+<pre class="package_doc"><code>#' flowtrend
+#'
+#' This package implements the `flowtrend` method for automatic gating of flow cytometry data using trend filtering.
+#' It was proposed in &lt;https://arxiv.org/abs/2504.12287&gt;.  To learn
+#' more about this package, please visit its website
+#' &lt;https://sangwon-hyun/flowtrend-project&gt;.
+#' 
+#' @docType package</code></pre>
+<p>This package will have some dependancies:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="package-setup.html#cb4-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="package-setup.html#cb4-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-3"><a href="package-setup.html#cb4-3" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">"tidyverse"</span>, <span class="at">type =</span> <span class="st">"depends"</span>) </span>
+<span id="cb4-4"><a href="package-setup.html#cb4-4" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb4-5"><a href="package-setup.html#cb4-5" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pipe</span>()</span>
+<span id="cb4-6"><a href="package-setup.html#cb4-6" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">"glmnet"</span>)</span>
+<span id="cb4-7"><a href="package-setup.html#cb4-7" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_package</span>(<span class="st">"clue"</span>)</span></code></pre></div>
+
+</div>
+            </section>
+</div>
+        </div>
+      </div>
+<a href="overview.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="generating-and-plotting-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script><script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script><script src="libs/gitbook-2.6.7/js/plugin-search.js"></script><script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script><script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script><script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script><script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script><script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script><script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
+});
+});
+</script><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

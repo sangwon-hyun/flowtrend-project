@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{Mstep_mu_cvxr}
 \alias{Mstep_mu_cvxr}
-\title{Testing against \code{Mstep_mu()}, for ONE cluster.}
+\title{Used as a fallback or to test against \code{Mstep_mu()}.}
 \usage{
 Mstep_mu_cvxr(
   ylist,
@@ -25,5 +25,5 @@ Mstep_mu_cvxr(
 \item{x}{covariates}
 }
 \description{
-Testing against \code{Mstep_mu()}, for ONE cluster.
+Used as a fallback or to test against \code{Mstep_mu()}.
 }

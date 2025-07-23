@@ -1,13 +1,18 @@
 Package: flowtrend
 Title: flowtrend
 Version: 0.0.0.9000
-Authors@R: 
-    person("Sangwon", "Hyun", , "sangwonh@ucsc.edu", role = c("aut", "cre"))
-Description: Time-smooth mixture modeling for flow cytometry data.
+Authors@R: c(
+    person("Sangwon", "Hyun", , "sangwonh@ucsc.edu", role = c("aut", "cre")),
+    person("Tim", "Coleman", , "tscoleman226@gmail.com", role = "aut"),
+    person("Francois", "Ribalet", , "ribalet@uw.edu", role = "aut"),
+    person("Jacob", "Bien", , "jbien@usc.edu", role = "aut")
+  )
+Description: Time-smooth mixture modeling for flow cytometry data (Hyun et
+    al. 2025).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Depends: 
     tidyverse
 Imports: 
@@ -24,4 +29,4 @@ LinkingTo:
     RcppArmadillo,
     RcppEigen
 LitrVersionUsed: 0.9.2
-LitrId: f6b6eb9d7ef49d3714a5e379b8edd87f
+LitrId: 98467d468d6e1aa395fad4b5f4e33457

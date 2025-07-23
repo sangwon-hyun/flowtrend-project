@@ -1,0 +1,4 @@
+inst/misc
+inst/rmd_cache*
+.DS_Store
+inst/*

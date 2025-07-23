@@ -1,0 +1,35 @@
+destination: ../docs/
+
+url: ~
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+
+repo:
+  url:
+    home: https://github.com/sangwon-hyun/flowtrend-project/tree/main/flowtrend/   
+    source: https://github.com/sangwon-hyun/flowtrend-project/tree/main/flowtrend/
+    issue: https://github.com/sangwon-hyun/flowtrend-project/issues
+    user: https://github.com/
+
+authors:
+  Sangwon Hyun:
+    href: https://sangwon-hyun.org/
+  Jacob Bien:
+    href: http://faculty.marshall.usc.edu/jacob-bien/
+
+navbar:
+  structure:
+    left:  [reference, articles]
+    right: [github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/sangwon-hyun/flowtrend-project/tree/main/flowtrend/
+reference:
+- title: All functions
+  contents:
+  - -starts_with("check")
+- title: internal
+  contents:
+  - starts_with("check")

@@ -6,13 +6,20 @@ This directory contains code that directly generates a software package called
 ~1description.Rmd~, ~2generate-data.Rmd~, and so forth -- contain code that
 directly builds the R package.
 
-The resulting "knitted" documentation from these files is [[https://htmlpreview.github.io/?https://github.com/sangwon-hyun/flowtrend/blob/main/_book/index.html][here]], and..
+* For package users
+
+The official package website is [[https://sangwon-hyun/flowtrend-project/][here]]; go directly here to get started.
+
+* For developers
+
+The resulting "knitted" bookdown that defines the package can be found [[https://sangwon-hyun/flowtrend-project/create/][here]].
 
 The resulting R package is in the subdirectory [[./flowtrend]], and can be
 installed as follows.
 
 #+begin_src R
-remotes::install_github("sangwon-hyun/flowtrend", subdir = "flowtrend")
+remotes::install_github("sangwon-hyun/flowtrend-project", subdir = "flowtrend")
 #+end_src
 
-The repository is currently private.
+Lastly, the code that replicates the numerical experiments in the paper can be found in
+the subdirectory [[./inst]], currently placed on zenodo under DOI: ~10.5281/zenodo.16352652~.

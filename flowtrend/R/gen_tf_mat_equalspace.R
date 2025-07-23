@@ -1,10 +1,11 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Creates trendfiltering regression matrix using Lemma 2 of Ryan Tibshirani's
+#' Creates trend filtering regression matrix using Lemma 2 of Ryan Tibshirani's
 #' trendfilter paper (2014); works on equally spaced data only.
 #'
-#' @param n Number of data points
+#' @param n Number of data points.
 #' @param k Order of trend filter. 0 is fused lasso, and so on.
+#' 
 #' @examples 
 #' ord = 1
 #' H_tf <- gen_tf_mat_equalspace(n = 100, k = ord)
@@ -14,6 +15,7 @@
 #' H_tf[,4] * 100
 #' H_tf[,99] * 100
 #' H_tf[,100] * 100
+#' 
 #' @return n by n matrix.
 gen_tf_mat_equalspace <- function(n, k){
   nn = n

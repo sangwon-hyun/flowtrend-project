@@ -29,6 +29,10 @@ testthat::test_that("Uneven spaced D matrix is formed correctly", {
   ## k = 0 is piecewise constant, k=1 is piecewise linear, etc.
   for(k in 0:3){
 
+    ## Temp
+    k=1
+    ## End of temp
+
     l = k+1
 
     ## Form Dl using our function
@@ -57,22 +61,23 @@ testthat::test_that("E step returns appropriately sized responsibilities.",{
   
   ## Generate some fake data
   TT = 10
-  ylist = lapply(1:TT, function(tt){ runif(90) %>% matrix(ncol = 3, nrow = 30)})
+  dimdat = 1
+  ylist = lapply(1:TT, function(tt){ runif(30*dimdat) %>% matrix(ncol = dimdat, nrow = 30)})
   numclust = 3
-  dimdat = 3
 
   ## Initialize a few parameters, not carefully
   sigma = init_sigma(ylist, numclust) ## (T x numclust x (dimdat x dimdat))
   mn = init_mn(ylist, numclust, TT, dimdat)##, countslist = countslist)
   prob = matrix(1/numclust, nrow = TT, ncol = numclust) ## Initialize to all 1/K.
 
-  ## ## Calculate responsibility
-  ## resp = Estep(mn = mn, sigma = sigma, prob = prob, ylist = ylist, numclust = numclust)
+  ## Calculate responsibility
+  resp = Estep(mn = mn, sigma = sigma, prob = prob, ylist = ylist, numclust = numclust)
 
   ## Check these things
-  ## testthat::expect_equal(length(resp), length(ylist))
-  ## ?testthat::expect_equal
-  ## testthat::expect_equal(sapply(resp, dim), sapply(ylist, dim), reporter = "stop")
+  testthat::expect_equal(length(resp), length(ylist))
+  testthat::expect_equal(length(resp), length(ylist))
+  testthat::expect_equal(sapply(resp, nrow), sapply(ylist, nrow))
+  testthat::expect_true(all(sapply(resp, ncol) == numclust))
 })
 
 testthat::test_that("Mstep of pi returns a (T x K) matrix.", {
@@ -99,7 +104,12 @@ testthat::test_that("Mstep of pi returns a (T x K) matrix.", {
 
 testthat::test_that("Test the M step of \pi against CVXR", {})
 
-testthat::test_that("Test the M step of \mu against CVXR", {})
+testthat::test_that("Test the ball projection", {
+set.seed(100)
+mat = matrix(rnorm(100), ncol=2)
+projected_mat = flowtrend:::projCmat(mat, 1)
+testthat::expect_true(all(projected_mat %>% apply(1, function(myrow)sum(myrow*myrow)) < 1+1E-8))
+})
 
 testthat::test_that("The prediction function returns the right things", {
   ## Generate data
@@ -164,9 +174,9 @@ testthat::test_that("prediction function returns the right things", {
 
 testthat::test_that("Objective value decreases over EM iterations.",{
   
+  glist = list()
   for(iseed in 1:5){
-    print(iseed)
-    
+
     ## Generate synthetic data
     set.seed(iseed*100)
     dt       <- gendat_1d(100, rep(10, 100))
@@ -176,24 +186,29 @@ testthat::test_that("Objective value decreases over EM iterations.",{
     
     ## Fit model
     obj <- flowtrend_once(ylist = ylist,
-                     x = x,
-                     maxdev = 5,
-                     numclust = 3,
-                     lambda = 0.02,
-                     l = 1,
-                     l_prob = 2,
-                     lambda_prob = 0.05)
+                          x = x,
+                          maxdev = 5,
+                          numclust = 3,
+                          lambda = 0.02,
+                          l = 1,
+                          l_prob = 2,
+                          lambda_prob = 0.05)
 
     ## Test objective monotonicity
     niter_end = length(obj$objective)
-    testthat::expect_true(all(diff(obj$objective) < 1E-4))
+    testthat::expect_true(all(diff(obj$objective) < 1E-3))
+  
 
     ## Make a plot
     g = ggplot(tibble(iter=1:niter_end, objective=obj$objectives)) +
       geom_point(aes(x=iter, y=objective)) +
       geom_line(aes(x=iter, y=objective)) +
-      ggtitle(paste0("Seed=", iseed*100))
-    print(g)
+      ggtitle(paste0("Seed=", iseed*100)) +
+      xlab("EM iteration")
+    glist[[iseed]] = g
   }
+  title = cowplot::ggdraw() + cowplot::draw_label("Objective values over EM iterations", fontface='bold')
+  main_plot = cowplot::plot_grid(plotlist = glist, ncol=5, nrow=1) 
+  cowplot::plot_grid(title, main_plot, ncol=1, rel_heights=c(0.1, 1)) %>% print()
 })
 

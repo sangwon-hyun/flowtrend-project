@@ -1,10 +1,8 @@
 # Generated from _main.Rmd: do not edit by hand
 
-#' Computes the M step for mu. TODO: use templates for the argument. As shown
-#' here:
-#' https://stackoverflow.com/questions/15100129/using-roxygen2-template-tags
+#' Computes the M step for mu.
 #' 
-#' @param resp Responsbilities of each particle.
+#' @param resp Responsibilities of each particle.
 #' @param ylist 
 #' @param lambda
 #' @param l
@@ -29,6 +27,8 @@
 #' @param zerothresh
 #' @param local_adapt
 #' @param local_adapt_niter
+#' @param rho_init
+#' @param iter
 #'
 #' @return
 #' @export
@@ -109,15 +109,11 @@ Mstep_mu <- function(resp,
   ## Run ADMM separately on each cluster ##
   #########################################
   admm_niters = admm_inner_iters = vector(length = numclust, mode = "list")
-  if(first_iter) mus = vector(length = numclust, mode = "list")
- # if(first_iter){
-    Zs <- lapply(1:numclust, function(x) matrix(0, nrow = TT, ncol = dimdat))
-    Ws <- lapply(1:numclust, function(x) matrix(0, nrow = TT - l, ncol = dimdat))
-    uzs <- lapply(1:numclust, function(x) matrix(0, nrow = TT, ncol = dimdat))
-    uws <- lapply(1:numclust, function(x) matrix(0, nrow = TT - l, ncol = dimdat))
-
-   # Zs =  Ws =  Us  = vector(length = numclust, mode = "list")
- # }
+  if(first_iter){ mus = vector(length = numclust, mode = "list") }
+  Zs <- lapply(1:numclust, function(x) matrix(0, nrow = TT, ncol = dimdat))
+  Ws <- lapply(1:numclust, function(x) matrix(0, nrow = TT - l, ncol = dimdat))
+  uzs <- lapply(1:numclust, function(x) matrix(0, nrow = TT, ncol = dimdat))
+  uws <- lapply(1:numclust, function(x) matrix(0, nrow = TT - l, ncol = dimdat))
 
   ## For every cluster, run LA-ADMM
   start.time = Sys.time()
@@ -155,12 +151,11 @@ Mstep_mu <- function(resp,
 
                            ## Warm starts from previous *EM* iteration
                            first_iter = first_iter,
-                           ## mu = mus[[iclust]], ## I think we want this.
                            uw = uws[[iclust]],
                            uz = uzs[[iclust]],
                            z = Zs[[iclust]],
                            w = Ws[[iclust]])
-    ## print(res$rho)
+
 
     ## Store the results
     mus[[iclust]] = res$mu
@@ -168,13 +163,10 @@ Mstep_mu <- function(resp,
     admm_inner_iters[[iclust]] = res$inner.iter
 
     ## Store other things for for warmstart
-    ## mus[[iclust]] = res$mu
     Zs[[iclust]] = res$Z
     uzs[[iclust]] = res$uz
     uws[[iclust]] = res$uw
     Ws[[iclust]] = res$W
-    ## The upper triangular matrix remains the same. (code missing?)
-
   }
 
   ## Aggregate the yhats into one array

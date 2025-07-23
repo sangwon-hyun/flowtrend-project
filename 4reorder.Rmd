@@ -6,8 +6,8 @@ It's useful to be able to reorder, or *permute*, one model's cluster labels
 probabilities of the particles in `ylist_particle` (row-binded to be a $\sum_t
 n_t \times K$ matrix), and then (2) using a Hungarian algorithm
 [@kuhn-hungarian] to best match the two elongated matrices $A$ and $B$ by
-measuring the (symmetric? TODO check) KL divergence between all permutations of
-the $K$ columns
+measuring the symmetric KL divergence between all permutations of
+the two matrices' $K$ columns.
 
 
 ```{r reorder_kl}
@@ -217,3 +217,5 @@ plot_1d(ylist, newres, x = x) + ggtitle("before reordering, model 1")
 plot_1d(ylist, origres, x = x) + ggtitle("model 2")
 plot_1d(ylist, newres_reordered, x = x) + ggtitle("reordered model 1")
 ```
+
+

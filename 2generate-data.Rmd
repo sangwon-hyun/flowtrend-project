@@ -1,3 +1,5 @@
+# Generating and plotting data
+
 ## 1d data
 
 ### Generating 1d data
@@ -249,15 +251,16 @@ plot_1d(ylist = ylist, x = x) +
 Voilà!
 
 
-When we have a model fit on 3d data but want to visualize it in 1d, you can use:
+Adding a model is easy, you can use:
 
 `plot_1d(ylist, countslist) %>% plot_1d_add_model(obj = obj, idim = 1)`
 
 ```{r}
-#' Add a model.
+#' Add a model to an existing plot from \code{plot_1d()}.
+#' This actually can take a model \code{obj}, and just plot the 1-dimensional projections of the model in the \code{idim} dimension.
 #' 
+#' @param gg0 ggplot object from running \code{plot_1d}.
 #' @param obj Model
-#' @param gg0 result of plot_1d
 #' @param idim dimension
 #' @param plot_band If TRUE, plot a +1.96 standard deviation band.
 #'
@@ -265,7 +268,8 @@ When we have a model fit on 3d data but want to visualize it in 1d, you can use:
 #'
 #' @export
 plot_1d_add_model <- function(gg0, obj, idim, plot_band = TRUE){
-  times = obj$x ## 1:(obj$TT) ## resolve this!
+
+  times = obj$x
   numclust = obj$numclust
   mnmat = obj$mn %>% .[,idim,] %>%  `colnames<-`(1:numclust) %>% as_tibble() %>% 
     add_column(time = times)
@@ -275,7 +279,6 @@ plot_1d_add_model <- function(gg0, obj, idim, plot_band = TRUE){
   prob_long = probmat %>% pivot_longer(-time, names_to = "cluster", values_to = "prob") %>% 
     mutate(cluster = factor(cluster, levels=sapply(1:10, toString)))
   est_long = full_join(mn_long, prob_long, by = c("time","cluster"))
-  ## est_long = est_long %>% mutate(cluster = factor(cluster, levels=sapply(1:10, toString)))
   gg = gg0 + geom_path(aes(x = time, y = mean, linewidth = prob, group = cluster, color = cluster),
                        data = est_long, lineend = "round", linejoin="mitre") +
     scale_linewidth(range = c(0.05, 5), limits = c(0, 1))
@@ -295,7 +298,7 @@ plot_1d_add_model <- function(gg0, obj, idim, plot_band = TRUE){
                         data = band_long, size = rel(.7), alpha = .5) +
       geom_line(aes(x = time, y = lower, group = cluster, color = cluster),
                 data = band_long, size = rel(.7), alpha = .5) +
-      guides(size = "none") # To turn off line size from legend
+      guides(size = "none") 
   }
   return(gg)
 }
@@ -779,33 +782,6 @@ plot_3d <- function(ylist, obj = NULL, tt, countslist = NULL,
   return(p_combined)
 }
 ```
-	
-(This is test code.)
-
-```{r, eval = FALSE}
-litr::load_all("~/repos/flowtrend/index.Rmd")
-load("~/repos/flowmix/paper-data/MGL1704-hourly-only-binned.Rdata", verbose=TRUE)
-load("~/repos/flowmix/paper-data/cvres-2-64-10.Rdata", verbose=TRUE)
-
-## Shift/scale data to make it equivalent to what the model used for fitting.
-range.diam = c(-0.6706111,  1.3070264)
-range.chl =  c(0.101313, 7.955767)
-range.pe = c(0.101313, 7.955767)
-ybin_list = lapply(ybin_list, function(y){
-  y[,1]  = y[,1] - min(range.diam)
-  y[,1] = y[,1] / width.diam
-  y[,1] = y[,1] * max(range.chl)
-  return(y)
-})
-
-## For back-compatibility
-res = cvres$bestres
-res$prob = res$pie
-
-## Make the plot
-plot_3d(ylist = ybin_list, countslist = biomass_list, obj = res, tt = 280)
-```
-
 
 ### Generating 3d data
 
@@ -905,21 +881,12 @@ gendat_3d <- function(TT, ntlist){
 ```
 
 
-Now, trying `plot_3d` out on some synthetic data and estimated model.
+Now, let's try using `plot_3d` on some synthetic data.
 
 
 ```{r plot-3d-test, eval = TRUE, fig.width = 15, fig.height = 5}
 set.seed(2321)
 datobj = gendat_3d(100, rep(30,100))
 plot_3d(ylist = datobj$ylist, tt = 1, bin = FALSE)
-## Later when |flowtrend()| is developed, we can do this:
-## obj = flowtrend(ylist = datobj$ylist,
-##                 l = 2, l_prob = 1,
-##                 lambda = .01, lambda_prob = .01,
-##                 numclust = 3, verbose = FALSE,
-##                 maxdev = 3,
-##                 niter = 50,
-##                 nrestart = 1)
-## plot_3d(ylist = datobj$ylist, tt = 30, obj = obj, bin = FALSE)
 ```
 

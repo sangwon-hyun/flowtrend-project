@@ -13,7 +13,8 @@ plot_3d(
   labels = NULL,
   bin = TRUE,
   plot_title = NULL,
-  return_list_of_plots = FALSE
+  return_list_of_plots = FALSE,
+  zero_one_list_censored = NULL
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ plot_3d(
 
 \item{return_list_of_plots}{If TRUE, return the list of three plots instead
 of the combined plot}
+
+\item{zero_one_list_censored}{A list of zeros and 1s marking the censored
+points.}
 }
 \description{
 Makes three 2-dimensional plots of the 3d data

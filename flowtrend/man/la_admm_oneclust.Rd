@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{la_admm_oneclust}
 \alias{la_admm_oneclust}
-\title{Locally adaptive ADMM.}
+\title{Locally adaptive ADMM; wrapper to \code{admm_oneclust()}.}
 \usage{
 la_admm_oneclust(K, ...)
 }
@@ -10,5 +10,5 @@ la_admm_oneclust(K, ...)
 \item{...}{}
 }
 \description{
-Locally adaptive ADMM.
+Locally adaptive ADMM; wrapper to \code{admm_oneclust()}.
 }

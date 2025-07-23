@@ -1363,7 +1363,7 @@ load_Rdata <- function(filename){
 #' @export
 cv_makebest <- function(destin){  
 
-  ## ## Read the meta data (for |nfold|, |cv_gridsize|, |nrestart|, |lambda_means|, |lambda_probs|)
+  ## Read the meta data (for |nfold|, |cv_gridsize|, |nrestart|, |lambda_means|, |lambda_probs|)
   load(file = file.path(destin, 'meta.Rdata'), verbose = FALSE)
   
   ## This loads all the necessary things; just double-checking.
@@ -1616,7 +1616,6 @@ cv_aggregate_res <- function(destin){
 
   load(file.path(destin, "meta.Rdata"))
 
-  ## df.mat = matrix(NA, ncol=cv_gridsize, nrow=cv_gridsize)
   res.list = list()
   for(iprob in 1:cv_gridsize){
     for(imu in 1:cv_gridsize){ 
@@ -1660,46 +1659,29 @@ laptop, using `cv_flowtrend()`.
 
 Let's try it out.
 
-```{r, eval = FALSE}
+(Note: We're not running this code while building the package because it requires saving some output to an offline directory.)
+
+```{r cv-offline, eval = FALSE}
 cv_gridsize = 3
 l = 1
 l_prob = 1
 set.seed(332)
 ylist = gendat_1d(10, rep(100,10)) %>% dt2ylist()
 plot_1d(ylist)
-folds = make_cv_folds(lapply(1:100, function(ii) cbind(runif(10))), nfold = 5, TT = length(ylist)) ## What is this doing? FISHY
+folds = make_cv_folds(lapply(1:100, function(ii) cbind(runif(10))), nfold = 3, TT = length(ylist)) ## What is this doing? FISHY
 lambda_means =  lambda_probs = logspace(min = 1E-5, max = 1, length = cv_gridsize)
-for(refit in c(FALSE, TRUE)){
-  cv_flowtrend(ylist = ylist, countslist = NULL, 
-                destin = "~/repos/flowtrend/inst/output/test", 
-                lambda_means = lambda_means,
-                lambda_probs = lambda_probs,
-                l = l, l_prob = l_prob,
-                maxdev = NULL, numclust = 3, nfold = 3, nrestart = 3,
-                niter = 3,
-                verbose = TRUE, refit = refit, save_meta = TRUE, mc.cores = 6)
-}
+destin = "~/repos/flowtrend/inst/test-output/cv-offline"
+dir.create(destin, recursive=TRUE)
 ```
 
-Once all jobs are run, use `cv_makebest()` to go over all the output, and (1)
-retain the best model out of the 5 replicates (random restarts), and (2) delete
-4 of the the 5 replicates.
+A realistic application would start with a call to `get_max_lambda()`:
 
 ```{r, eval = FALSE}
-## Clean the output directory to keep only the "best" results
-cv_makebest(destin = "~/repos/flowtrend/inst/output/test")
+## This is where all the output is
+destin = "~/repos/flowtrend/inst/test-output/cv-offline"
 
-## Plot the final result
-obj = cv_summary(destin = "~/repos/flowtrend/inst/output/test")
-plot_1d(ylist, obj$bestres)
-```
-
-Okay, now we know it's *possible* to run on (say) a laptop. A more realistic
-application would go something like this:
-
-```{r, eval = FALSE}
-litr::load_all("~/repos/flowtrend/index.Rmd")
-get_max_lambda("~/repos/flowtrend/inst/output/test",
+## Get the maximum lambda values
+get_max_lambda(destin = destin,
                maxres_file = "maxres.Rdata",
                ylist,
                countslist = NULL,
@@ -1709,39 +1691,88 @@ get_max_lambda("~/repos/flowtrend/inst/output/test",
                max_lambda_mean = 3000000,
                verbose = TRUE,
                l = 1, l_prob = 1)
-load("maxres.Rdata", verbose = TRUE) ## Loads "maxres" object
-lambda_means = logspace(max = maxres$means, length = 5)
-lambda_probs = logspace(max = maxres$prob, length = 5)
+```
 
+Next, with this `maxres` object, run the cross-validation.
+
+```{r, eval = FALSE}
+## Loads "maxres" object
+load(file.path(destin, "maxres.Rdata"), verbose = TRUE) 
+
+## Run the cross-validation
+lambda_means = logspace(max = maxres$mean, length = 5)
+lambda_probs = logspace(max = maxres$prob, length = 5)
 for(refit in c(FALSE, TRUE)){
   cv_flowtrend(ylist = ylist,
                countslist = NULL, 
-               destin = "~/repos/flowtrend/tempoutput", 
+               destin = destin, 
                lambda_means = lambda_means,
                lambda_probs = lambda_probs,
                l = 2,
                l_prob = 1,
                maxdev = 2,
                numclust = 3,
-               nfold = 5,
-               nrestart = 5,
+               nfold = 3,
+               folds = folds,
+               nrestart = 3,
                verbose = TRUE,
                refit = refit,
                save_meta = TRUE,
+               blocksize = 1,
                mc.cores = 6)
 }
+cvres = cv_summary(destin = destin, save=TRUE)
+
+## Plot the result
+oneplot = plot_1d(ylist = ylist) %>% plot_1d_add_model(obj = cvres$bestres, idim=1, plot_band = TRUE) +
+  geom_line(aes(x=time, y=mean, group = cluster),
+            data = gendat_1d(10, ntlist = rep(100, 10), return_model = TRUE), linetype = 'dashed') 
+oneplot %>%  ggsave(filename = file.path(destin, "..", "..", "cv-offline-test.png"), width = 5, height = 3)
+```
+
+![Cross-validated model estimates (on *evenly* spaced data).](inst/cv-offline-test.png)
+
+(The dashed black lines are the truth, and the solid colored lines are the estimated means.)
+
+
+## CV produces too many files? No problem
+
+Once all jobs are run, you can use `cv_makebest()` which goes over all the
+output, and (1) retains the best model out of the 3 replicates (random
+restarts), and (2) deletes the output from the remaining 2 of the 3
+replicates. `cv_summary()` still works fine with the reduced number of files.
+
+
+```{r, eval = FALSE}
+## This is where all the output is
+destin = "~/repos/flowtrend/inst/test-output/cv-offline"
+
+## There are a lot of individual files here.
+list.files(destin) %>% length() %>% print()
+
+## Clean the output directory to keep only the "best" results
+cv_makebest(destin = destin)
+
+## There are much fewer individual files here.
+list.files(destin) %>% length() %>% print()
 ```
 
 
+
+## CV for unevenly spaced data
+
 Next, we test whether `cv_flowtrend` works for unevenly spaced points. 
+
+(Note: We're not running this code while building the package because it requires saving some output to an offline directory.)
 
 ```{r, eval = FALSE}
 ## Setup
 l = 1
 l_prob = 1
-destin = "~/repos/flowtrend/inst/output/test2"
+destin = "inst/test-output/uneven-test"
+dir.create(destin, recursive = TRUE)
 
-## Generate data
+## Generate data, and subset it at unevenly spaced x values.
 set.seed(332)
 TT = 50
 nt = 100
@@ -1753,7 +1784,8 @@ ylist = ylist[x]
 datobj = list(ylist = ylist, x = x, countslist = NULL)
 saveRDS(datobj, file = file.path(destin, "datobj.RDS"))
 
-folds = make_cv_folds(ylist, nfold = nfold, TT = length(ylist)) ## What is this doing? FISHY
+nfold = 3
+folds = make_cv_folds(ylist, nfold = nfold, TT = length(ylist)) 
 lambda_means =  lambda_probs = logspace(min = 1E-5, max = 1, length = 5)
 for(refit in c(FALSE, TRUE)){
   cv_flowtrend(ylist = ylist, countslist = NULL,
@@ -1762,209 +1794,32 @@ for(refit in c(FALSE, TRUE)){
                lambda_means = lambda_means,
                lambda_probs = lambda_probs,
                l = l, l_prob = l_prob,
-               maxdev = 1, numclust = 3, nfold = 3, nrestart = 3,
+               maxdev = 1, numclust = 3, nfold = nfold, nrestart = 3,
                niter = 100,
                folds = folds,
                verbose = TRUE, refit = refit, save_meta = TRUE, mc.cores = 4)
 }
 cvres = cv_summary(destin = destin, save=TRUE)
-my_load()
-plot_1d(ylist = ylist, x=x)  %>%
-  plot_1d_add_model(obj = cvres$bestres, idim=1, plot_band = TRUE)
 
 ## Plot it!
-plot_1d(ylist = ylist, x=x)  %>% plot_1d_add_model(obj = cvres$bestres, idim=1, plot_band = TRUE) +
+oneplot = plot_1d(ylist = ylist, x=x)  %>% plot_1d_add_model(obj = cvres$bestres, idim=1, plot_band = TRUE) +
   geom_line(aes(x=time, y=mean, group = cluster),
-            data = gendat_1d(TT, ntlist = rep(nt, TT), return_model = TRUE) )
+            data = gendat_1d(TT, ntlist = rep(nt, TT), return_model = TRUE), linetype = 'dashed') 
+oneplot %>%  ggsave(filename = file.path(destin, "..", "..", "uneven-spaced-data-test.png"), width = 5, height = 3)
 ```
 
+![Cross-validated model estimates on unevenly spaced data.](inst/uneven-spaced-data-test.png)
+
+(The dashed black lines are the truth, and the solid colored lines are the estimated means.)
 
 
 
 
+## Documenting the package and building
 
-## Plotting
+We finish by running commands that will document, build, and install the package.  It may also be a good idea to check the package from within this file.
 
-This function `plot_from_summary()` creates summary plots from the results of
-the cross-validation.
-
-```{r plot_from_summary}
-#' Makes a series of plots.
-#' 
-#' @param destin This directly has (1) summary.RDS, (2) meta.Rdata, and (3) datobj.RDS; optionally, it may have a dt_model
-#' @return Nothing; but the pdf plots are created.
-#' 
-#' @export
-plot_from_summary <- function(destin){
-  ## Load the results 
-  cvres = readRDS(file.path(destin, paste0("summary.RDS")))
-  load(file.path(destin, paste0("meta.Rdata")), verbose=TRUE)
-##  datobj = readRDS(file.path(destin, paste0("datobj.RDS")))
-  if(file.exists(file.path(destin, "dt_model.RDS"))){
-    dt.model = readRDS(file.path(destin, paste0("dt_model.RDS")))
-  } else {
-    dt.model = NULL
-  }
-
-  ##ylist = datobj$ybin_list %>% lapply(cbind)
-  ##countslist = datobj$counts_list
-  
-  ## rows are prob, cols are means
-  pdf(file.path(destin, "cvscoremat.pdf"), width = 6, height = 6)
-  cvscoremat_lattice_plot =  
-  cvres$cvscore.mat %>% drawmat_precise(ylab = "lambda_prob", xlab = "lambda_mean") +
-    latticeExtra::layer(lattice::panel.points(x = cvres$min.inds[2],
-                                              y = nrow(cvres$cvscore.mat) + 1 - cvres$min.inds[1], 
-                                              pch = 4, col = "orange", cex=2)) +
-    latticeExtra::layer(lattice::panel.points(x = cvres$min.inds.1se[2],
-                                              y = nrow(cvres$cvscore.mat) + 1 - cvres$min.inds.1se[1], 
-                                              pch = 4, col = "orange", cex=2))
-  plot(cvscoremat_lattice_plot) ## Need to load library(lattice) before this.
-  graphics.off()
-  
-  ## The minimum values.
-  min_lam_prob = lambda_probs[cvres$min.inds[2]]
-  min_lam_mean = lambda_means[cvres$min.inds[1]]
-  
-  ## each line is a different lambda_mean
-  pdf(file.path(destin, "cvscoremat-lines-over-means.pdf"), width = 7, height = 7)
-  a = cvres$cvscore.mat %>% t() %>% matplot(x = lambda_probs, type='o', col = 'grey', main = "each line is a different lambda_mean", log = "x")
-
-  abline(v=min_lam_prob, col = 'red')
-  graphics.off()
-  
-  pdf(file.path(destin, "cvscoremat-lines-over-probs.pdf"), width = 7, height = 7)
-  cvres$cvscore.mat %>% matplot(x=lambda_means, type='o', col = 'grey', main = "each line is a different lambda_prob", log = "x")
-  abline(v=min_lam_mean, col = 'red')
-  graphics.off()
-
-  n_lam_prob = nrow(cvres$cvscore.mat)
-  n_lam_mean = ncol(cvres$cvscore.mat)
-  
-  ## Reorder clusters
-  cvres$bestres = reorder_clust(cvres$bestres)
-  for(ii in 1:n_lam_prob){
-    print(ii)
-    for(jj in 1:n_lam_mean){
-      ## Reorder the cluster labels of the fitted ("best") models.
-      reordered_obj = reorder_kl(newres = cvres$bestreslist[[paste0(ii, "-", jj)]],
-                                 origres = cvres$bestres,##cvres$bestreslist[["1-1"]],
-                                 ylist_particle = datobj$ylist)
-      cvres$bestreslist[[paste0(ii, "-", jj)]] = reordered_obj
-    }
-  }
-  
-  ## Dependign on the dimension of the data, make a different plot
-  ## if(obj$dimdat == 1) idim = 1
-  ##  if(obj$dimdat > 1) idim = 1
-  for(idim in 1:3){
-    print(idim)
-
-  ## Make plots of the "best" model
-  g1 = flowtrend::plot_1d(ylist = ylist,
-                          countslist = countslist,
-                          obj=cvres$bestres,
-                          idim = idim)
-  if(!is.null(dt.model)){
-    g1 = g1 + geom_line(aes(x = time, y = mean, group = cluster),
-                        data = dt.model,## %>% subset(time %ni% held_out),
-                        linetype = "dashed", size=1, alpha = .7)
-  }
-  
-  g2 = flowtrend::plot_prob(cvres$bestres, x=1:length(ylist))
-  if(!is.null(dt.model)){
-    g2 = g2 + geom_line(aes(x=time, y=prob, group = cluster), linetype = "dashed",
-                        data=dt.model  %>% select(time, cluster, prob) %>% unique())
-  }
-  do.call(ggpubr::ggarrange, c(list(g1, g2), ncol = 1, nrow = 2)) -> g
-  g %>% ggsave(file = file.path(destin, paste0("mean-and-prob-idim-", idim, ".pdf")), width = 10, height=7)
-  }
-  
-  
-  ## Make all model plots
-  lambda_means = colnames(cvres$cvscore.mat) %>% as.numeric()
-  lambda_probs = rownames(cvres$cvscore.mat) %>% as.numeric()
-
-  for(idim in 1:3){
-    
-  kk = 1
-  glist = list()
-  for(ii in 1:n_lam_prob){
-    for(jj in 1:n_lam_mean){
-
-      ## Calculate number of knots (complexity, df)
-      knots_mean = sapply(1:2, function(iclust){
-        abs_means = cvres$bestreslist[[paste0(ii, "-", jj)]] %>% .$mn %>% .[,1,iclust] %>% diff(differences=3) %>% abs()
-        df = sum(abs_means > 1E-4)
-      })
-      knots_prob = sapply(1:2, function(iclust){
-        abs_probs = cvres$bestreslist[[paste0(ii, "-", jj)]] %>% .$prob_link %>% .[,iclust] %>% diff(differences=2) %>% abs()
-        df = sum(abs_probs > 1E-4)
-      })
-
-      ## Visualize
-      g = flowtrend::plot_1d(ylist = ylist, countslist = countslist, obj = cvres$bestreslist[[paste0(ii, "-", jj)]], idim = idim)
-      g = g + ggtitle(paste0("lam=", signif(lambda_means[[jj]],3), ", lam_prob=", signif(lambda_probs[[ii]], 3)))
-      g = g + theme(legend.position="none")
-
-      g = g + annotate("text",  x=Inf, y = Inf,
-                       label = paste0("knots(prob,mean)=", knots_prob,", ",knots_mean), vjust=1, hjust=1)
-
-
-      optimal = ((ii == cvres$min.inds[1]) & (jj == cvres$min.inds[2]))
-      onese = ((ii == cvres$min.inds.1se[1]) & (jj == cvres$min.inds.1se[2]))
-      if(optimal | onese){
-        g = g + theme(panel.border = element_rect(colour = "black", fill=NA, size=5))
-      }
-
-      ## Save plot
-      glist[[kk]] = g
-      kk = kk + 1
-    }
-  }
-  all_bestres = do.call(ggpubr::ggarrange, c(glist, ncol = n_lam_mean, nrow = n_lam_prob))
-  all_bestres %>%
-    ggsave(file = file.path(destin, paste0("all_bestres-idim-", idim, ".pdf")),
-           width = 40, height=30)
-  }
-  
-  ##  All probabilities
-  lambda_means = colnames(cvres$cvscore.mat) %>% as.numeric()
-  kk = 1
-  glist = list()
-  for(ii in 1:n_lam_prob){
-    for(jj in 1:n_lam_mean){
-      ## Visualize
-      g = flowtrend::plot_prob(obj = cvres$bestreslist[[paste0(ii, "-", jj)]], x=1:length(ylist))
-      g = g + ggtitle(paste0("lam=", signif(lambda_means[[jj]],3), ", lam_prob=", signif(lambda_probs[[ii]], 3)))
-      if(!is.null(dt.model)){
-        g = g + geom_line(aes(x = time, y = prob, group = cluster),##, color = cluster),
-                          data = dt.model, linetype = "dashed") 
-      }
-      g = g + theme(legend.position = "none")
-
-      optimal = ((ii == cvres$min.inds[1]) & (jj == cvres$min.inds[2]))
-      onese = ((ii == cvres$min.inds.1se[1]) & (jj == cvres$min.inds.1se[2]))
-      if(optimal | onese){
-        g = g + theme(panel.border = element_rect(colour = "black", fill=NA, size=5))
-      }
-  
-      ## Save plot
-      glist[[kk]] = g
-      kk = kk + 1
-    }
-  }
-  
-  all_probs = do.call(ggpubr::ggarrange, c(glist, ncol=n_lam_mean, nrow=n_lam_prob))
-  all_probs %>%
-    ggsave(file = file.path(destin, paste0("all_probs.pdf")),
-           width = 40, height=30)
-  list_of_plots = list(all_probs = all_probs, all_bestres = all_bestres,
-                       cvscoremat_lattice_plot = cvscoremat_lattice_plot ,
-                       mean_plot = g1, prob_plot = g2)
-  return(list_of_plots)
-}
+```{r, results='hide'}
+litr::document() # <-- use instead of devtools::document()
 ```
-
-
 

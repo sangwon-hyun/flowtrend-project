@@ -2,7 +2,7 @@
 % Please edit documentation in _main.Rmd.
 \name{get_rand_from_table}
 \alias{get_rand_from_table}
-\title{RAND index.}
+\title{Calculate RAND index from a contingency table.}
 \usage{
 get_rand_from_table(tab)
 }
@@ -14,5 +14,5 @@ entries; e.g., from make_contingency_table().}
 Rand index.
 }
 \description{
-RAND index.
+Calculate RAND index from a contingency table.
 }

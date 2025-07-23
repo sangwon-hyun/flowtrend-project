@@ -15,7 +15,6 @@
 #' @param lambda_prob
 #' @param alpha
 #' @param beta
-#' @param denslist_by_clust
 #' @param countslist
 #' @param unpenalized if TRUE, return the unpenalized out-of-sample fit.
 #'
@@ -31,7 +30,6 @@ objective <- function(mu, prob, prob_link = NULL, sigma,
                       Dlp1_prob = NULL,
                       lambda_prob = 0,
                       alpha = NULL, beta = NULL,
-                      denslist_by_clust = NULL,
                       countslist = NULL,
                       unpenalized = FALSE){
 
@@ -48,12 +46,7 @@ objective <- function(mu, prob, prob_link = NULL, sigma,
 
   ## Calculate the log likelihood
   loglik = sapply(1:TT, function(tt){
-    if(is.null(denslist_by_clust)){
-      return(loglik_tt(ylist, tt, mu, sigma, prob, countslist, numclust = numclust, dimdat = dimdat))
-    } else {
-      ## TODO: This function doesn't exist yet, but might need to, since.. speed!
-      return(loglik_tt_precalculate(ylist, tt, denslist_by_clust, prob, countslist, numclust))
-    }
+    return(loglik_tt(ylist, tt, mu, sigma, prob, countslist, numclust = numclust, dimdat = dimdat))
   })
 
   if(unpenalized){
