@@ -39,10 +39,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// prox_dp
+arma::vec prox_dp(arma::vec z, double lam);
+RcppExport SEXP _flowtrend_prox_dp(SEXP zSEXP, SEXP lamSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type lam(lamSEXP);
+    rcpp_result_gen = Rcpp::wrap(prox_dp(z, lam));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_flowtrend_matrix_function_solve_triangular_sylvester_barebonesC2", (DL_FUNC) &_flowtrend_matrix_function_solve_triangular_sylvester_barebonesC2, 3},
     {"_flowtrend_dmvnorm_arma_fast", (DL_FUNC) &_flowtrend_dmvnorm_arma_fast, 4},
+    {"_flowtrend_prox_dp", (DL_FUNC) &_flowtrend_prox_dp, 2},
     {NULL, NULL, 0}
 };
 

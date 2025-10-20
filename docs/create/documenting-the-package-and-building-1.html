@@ -6,18 +6,18 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>10 Documenting the package and building | Creating the flowtrend R package</title>
 <meta name="description" content="10 Documenting the package and building | Creating the flowtrend R package">
-<meta name="generator" content="bookdown 0.43 and GitBook 2.6.7">
+<meta name="generator" content="bookdown 0.45 and GitBook 2.6.7">
 <meta property="og:title" content="10 Documenting the package and building | Creating the flowtrend R package">
 <meta property="og:type" content="book">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="10 Documenting the package and building | Creating the flowtrend R package">
 <meta name="author" content="Sangwon Hyun, Tim Coleman, Francois Ribalet, Jacob Bien">
-<meta name="date" content="2025-07-23">
+<meta name="date" content="2025-10-20">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="prev" href="helpers-for-simulations.html">
-<script src="libs/header-attrs-2.29/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script><link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet">
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet">
@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </h1>
 <p>We finish by running commands that will document, build, and install the
 package. It may also be a good idea to check the package from within this file.</p>
-<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="documenting-the-package-and-building-1.html#cb181-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document() </span></span></code></pre></div>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="documenting-the-package-and-building-1.html#cb184-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">document</span>() <span class="co"># &lt;-- use instead of devtools::document() </span></span></code></pre></div>
 <pre><code>## ℹ Updating flowtrend documentation
 ## ℹ Loading flowtrend
 ## ℹ Re-compiling flowtrend (debug build)
@@ -303,6 +303,30 @@ package. It may also be a good idea to check the package from within this file.<
 ## ✖ objective.R:24: @examples requires a value.
 ## ✖ overfit_gmm.R:7: @return requires a value.
 ## ✖ plot_3d.R:15: @return requires a value.
+## ✖ rand_old.R:118: @return Could not resolve link to topic "1:2,1:2" in the dependencies or base packages.
+## ℹ If you haven't documented "1:2,1:2" yet, or just changed its name, this is normal. Once "1:2,1:2" is documented, this
+##   warning goes away.
+## ℹ Make sure that the name of the topic is spelled correctly.
+## ℹ Always list the linked package as a dependency.
+## ℹ Alternatively, you can fully qualify the link with a package name.
+## ✖ rand_old.R:118: @return Could not resolve link to topic ",3" in the dependencies or base packages.
+## ℹ If you haven't documented ",3" yet, or just changed its name, this is normal. Once ",3" is documented, this warning goes
+##   away.
+## ℹ Make sure that the name of the topic is spelled correctly.
+## ℹ Always list the linked package as a dependency.
+## ℹ Alternatively, you can fully qualify the link with a package name.
+## ✖ rand_old.R:118: @return Could not resolve link to topic "3," in the dependencies or base packages.
+## ℹ If you haven't documented "3," yet, or just changed its name, this is normal. Once "3," is documented, this warning goes
+##   away.
+## ℹ Make sure that the name of the topic is spelled correctly.
+## ℹ Always list the linked package as a dependency.
+## ℹ Alternatively, you can fully qualify the link with a package name.
+## ✖ rand_old.R:132: @param Could not resolve link to topic "1:2,1:2" in the dependencies or base packages.
+## ℹ If you haven't documented "1:2,1:2" yet, or just changed its name, this is normal. Once "1:2,1:2" is documented, this
+##   warning goes away.
+## ℹ Make sure that the name of the topic is spelled correctly.
+## ℹ Always list the linked package as a dependency.
+## ℹ Alternatively, you can fully qualify the link with a package name.
 ## ✖ rand_old.R:148: @param requires two parts: an argument name and a description.
 ## ✖ soft_gate_one_responsibility_matrix.R:7: @return requires a value.
 ## ✖ underfit_gmm.R:7: @return requires a value.
@@ -316,6 +340,7 @@ package. It may also be a good idea to check the package from within this file.<
 ## Writing 'Mstep_prob.Rd'
 ## Writing 'Mstep_sigma.Rd'
 ## Writing 'matrix_function_solve_triangular_sylvester_barebonesC2.Rd'
+## Writing 'prox_dp.Rd'
 ## Writing 'W_update_fused.Rd'
 ## Writing 'projCmat.Rd'
 ## Writing 'admm_oneclust.Rd'
@@ -399,17 +424,13 @@ package. It may also be a good idea to check the package from within this file.<
 ## Writing 'symmetric_kl.Rd'
 ## Writing 'underfit_gmm.Rd'
 ## Writing 'pipe.Rd'</code></pre>
-<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="documenting-the-package-and-building-1.html#cb183-1" tabindex="-1"></a><span class="do">## Temporarily here; This tricks litr::render(minimal_eval=TRUE) into running this code.</span></span>
-<span id="cb183-2"><a href="documenting-the-package-and-building-1.html#cb183-2" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">add_readme</span>(<span class="st">"../setup/readme-for-r-package.Rmd"</span>) <span class="do">## adds readme to R package</span></span></code></pre></div>
-<pre><code>## ✔ Writing 'README.Rmd'.
-## ✔ Adding "^README\\.Rmd$" to '.Rbuildignore'.
-## ✔ Creating '.git/hooks/'.
-## ✔ Writing '.git/hooks/pre-commit'.</code></pre>
-<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb185-1"><a href="documenting-the-package-and-building-1.html#cb185-1" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">add_pkgdown</span>(<span class="st">"../setup/_pkgdown.yml"</span>)  <span class="do">## adds pkgdown site</span></span></code></pre></div>
-<pre><code>## ✔ Adding "^_pkgdown\\.yml$", "^docs$", and "^pkgdown$" to '.Rbuildignore'.</code></pre>
-<pre><code>## Warning in readLines(con, warn = readLines.warn): incomplete final line found on './_pkgdown.yml'</code></pre>
-<pre><code>## ── Installing package flowtrend into temporary library ───────────────────────────────────────────────────────────────────────
-## ── Finished building pkgdown site for package flowtrend ──────────────────────────────────────────────────────────────────────</code></pre>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="documenting-the-package-and-building-1.html#cb186-1" tabindex="-1"></a><span class="do">## Note to self: the fancier readme and pkgdown features don't seem to work</span></span>
+<span id="cb186-2"><a href="documenting-the-package-and-building-1.html#cb186-2" tabindex="-1"></a><span class="do">## during the knitting; need to be done manually afterwards, which is fine.</span></span>
+<span id="cb186-3"><a href="documenting-the-package-and-building-1.html#cb186-3" tabindex="-1"></a><span class="cf">if</span>(<span class="cn">FALSE</span>){</span>
+<span id="cb186-4"><a href="documenting-the-package-and-building-1.html#cb186-4" tabindex="-1"></a><span class="do">## Temporarily here; This tricks litr::render(minimal_eval=TRUE) into running this code.</span></span>
+<span id="cb186-5"><a href="documenting-the-package-and-building-1.html#cb186-5" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">add_readme</span>(<span class="st">"../setup/readme-for-r-package.Rmd"</span>) <span class="do">## adds readme to R package</span></span>
+<span id="cb186-6"><a href="documenting-the-package-and-building-1.html#cb186-6" tabindex="-1"></a>litr<span class="sc">::</span><span class="fu">add_pkgdown</span>(<span class="st">"../setup/_pkgdown.yml"</span>)  <span class="do">## adds pkgdown site</span></span>
+<span id="cb186-7"><a href="documenting-the-package-and-building-1.html#cb186-7" tabindex="-1"></a>}</span></code></pre></div>
 
 </div>
             </section>

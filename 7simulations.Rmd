@@ -711,8 +711,12 @@ package.  It may also be a good idea to check the package from within this file.
 ```{r, results='hide'}
 litr::document() # <-- use instead of devtools::document() 
 
+## Note to self: the fancier readme and pkgdown features don't seem to work
+## during the knitting; need to be done manually afterwards, which is fine.
+if(FALSE){
 ## Temporarily here; This tricks litr::render(minimal_eval=TRUE) into running this code.
 litr::add_readme("../setup/readme-for-r-package.Rmd") ## adds readme to R package
 litr::add_pkgdown("../setup/_pkgdown.yml")  ## adds pkgdown site
+}
 ```
 

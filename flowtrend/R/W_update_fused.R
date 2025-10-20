@@ -27,39 +27,10 @@ W_update_fused <- function(l, TT, mu, uw, rho, lambda, Dl){
 
   ## Running the fused LASSO
   ## which solves min_zhat 1/2 |z-zhat|_2^2 + lambda |D^{(1)}zhat|
-  ## fit <- prox(z = xi, lam = mod_lam)
-  ## fit <- prox_dp(z = xi, lam = mod_lam) ## instead of FlowTF::prox()
-  ## fit <- flowtrendprox::prox_dp(z = xi, lam = mod_lam) 
-  fit <- FlowTF::prox(z = xi, lam = mod_lam) 
-  ## TODO: eventually change to  fit <- flowtrendprox::prox(z = xi, lam = mod_lam)
+  fit <- prox_dp(z = xi, lam = mod_lam) 
 
   return(fit)
 }
-
-## This function is in FlowTF now. It's the last function there!
-## #' Fused LASSO for scalar inputs.
-## #'
-## #' @param z scalar input to be smoothed via the fused LASSO
-## #' @param lam  Fused LASSO smoothing parameter
-## #'
-## #' @return Estimates of the fused LASSO solution
-## #' @export prox
-## #'
-## #' @references All credit for writing this function goes to Ryan Tibshirani. See
-## #'   the original code for calling this function at
-## #'
-## #' @useDynLib FlowTF prox_dp 
-## prox <-  function(z, lam) {
-##   o <- .C("prox_dp",  
-##           as.integer(length(z)),
-##           as.double(z),
-##           as.double(lam),
-##           as.double(numeric(length(z))),
-##           #  dup=FALSE,
-##           PACKAGE="FlowTF")
-
-##   return(o[[4]])
-## }
 
 Z_update  <- function(m, Uz, C, rho){
   mat = m + Uz/rho

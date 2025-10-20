@@ -47,7 +47,7 @@ Estep <- function(mn, sigma, prob, ylist = NULL, numclust, denslist_by_clust = N
       resp[[tt]] <- empty_row
     } else {
       densmat <- sapply(1:numclust, calculate_dens, tt, ylist_tt,
-                        mn, sigma, denslist_by_clust, first_iter)
+                        mn, sigma, denslist_by_clust, first_iter) 
       wt.densmat <- matrix(prob[tt, ], nrow = ntlist[tt],
                            ncol = ncol.prob, byrow = TRUE) * densmat
       wt.densmat = wt.densmat + padding##1e-20

@@ -21,9 +21,9 @@ installed as follows.
 remotes::install_github("sangwon-hyun/flowtrend-project", subdir = "flowtrend")
 #+end_src
 
-(Note, you should install the standalone R package ~/FlowTF_0.1.0.tar.gz~, using
-~install.packages("FlowTF_0.1.0.tar.gz", repos=NULL, type="source")~, prior to
-this package. This package contains one function written in Rcpp that is
+(Note, you should install the standalone R package ~flowtrendprox_0.0.0.9000.tar.gz~
+using ~install.packages("flowtrendprox_0.0.0.9000.tar.gz", repos=NULL, type="source")~, prior to
+this installing this package. This package contains one function written in Rcpp that is
 required. )
 
 

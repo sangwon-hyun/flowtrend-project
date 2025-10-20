@@ -27,20 +27,33 @@ the paper.
 
 ## Background
 
-The documentation and package are both created using
-simple commands:
+The documentation and package are both created using simple commands:
 
 ```{r render, eval = FALSE}
+## To render full evaluation -- running all code.
+litr::render("index.Rmd", output_dir = "docs/create")
+```
+
+
+(These are other convenient commands for a developer.)
+
+
+```{r render-other, eval = FALSE}
 ## To render with MINIMUM evaluation -- not running code, and only defining functions.
-litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE), output_dir = "docs/create")
+litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE),
+             output_dir = "docs/create")
+
 
 ## To render full evaluation -- running all code.
-litr::render("~/repos/flowtrend-project/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = FALSE),
+litr::render("index.Rmd",
+             output_format = litr::litr_gitbook(minimal_eval = FALSE),
              output_dir = "docs/create")
+
 
 ## Installing the package locally
 ## litr::render("index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
 install.packages("~/repos/flowtrend-project/flowtrend", repos = NULL, type = "source")
+
 
 ## Loading the packaging
 library(flowtrend)
@@ -48,10 +61,10 @@ library(flowtrend)
 ## This is helpful for package building
 litr::load_all("index.Rmd")
 
-## Somewhat equivalent to the above
+## Somewhat equivalent to the above litr::load_all()
 my_load <- function(){
-  litr::render("~/repos/flowtrend/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
-  devtools::load_all("~/repos/flowtrend/flowtrend")
+  litr::render("~/repos/flowtrend-project/index.Rmd", output_format = litr::litr_gitbook(minimal_eval = TRUE))
+  devtools::load_all("~/repos/flowtrend-project/flowtrend")
 }
 my_load()
 ```

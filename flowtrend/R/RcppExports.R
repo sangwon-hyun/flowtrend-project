@@ -15,3 +15,13 @@ dmvnorm_arma_fast <- function(x, mean, sigma, logd = FALSE) {
     .Call(`_flowtrend_dmvnorm_arma_fast`, x, mean, sigma, logd)
 }
 
+#' Implements the dynamic programming algorithm for the 1D Fused Lasso proximal operator.
+#'
+#' @param z A numeric vector of input values ($\mathbf{y}$).
+#' @param lam A numeric scalar, the regularization parameter ($\lambda$).
+#' @return A numeric vector, the result of the proximal operation ($\boldsymbol{\beta}$).
+#' @export
+prox_dp <- function(z, lam) {
+    .Call(`_flowtrend_prox_dp`, z, lam)
+}
+
